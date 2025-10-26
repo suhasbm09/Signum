@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+firebase-admin
+pydantic
+google-generativeai
+langchain
+langchain-google-genai
+chromadb
+requests
+pillow
