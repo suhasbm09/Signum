@@ -123,7 +123,7 @@ solana/program/programs/**/*.so
 deploy/
 solana/program/deploy/
 solana/program/target/deploy/
-paper.md
+
 
 solana/program/target/types/
 
@@ -251,6 +251,7 @@ TODO_PRIVATE.md
 
 # Certificate previews (if regenerated)
 certificate_preview.html
+paper.md
 
 # Backup files
 *.backup
