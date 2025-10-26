@@ -123,7 +123,7 @@ solana/program/programs/**/*.so
 deploy/
 solana/program/deploy/
 solana/program/target/deploy/
-
+paper.md
 
 solana/program/target/types/
 
