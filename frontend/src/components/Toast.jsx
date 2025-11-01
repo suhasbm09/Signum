@@ -25,7 +25,7 @@ export function useToast() {
             ? 'bg-red-500/20 border-red-500/40 text-red-300 shadow-red-500/20'
             : toast.type === 'warning'
             ? 'bg-yellow-500/20 border-yellow-500/40 text-yellow-300 shadow-yellow-500/20'
-            : 'bg-blue-500/20 border-blue-500/40 text-blue-300 shadow-blue-500/20'
+            : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-200 shadow-emerald-500/15'
         }`}>
           {toast.type === 'success' && (
             <div className="flex-shrink-0">

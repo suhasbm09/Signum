@@ -15,7 +15,7 @@ const courseCatalog = [
     stats: [
       { label: 'Level', value: 'Intermediate' },
     ],
-    topics: ['Arrays', 'Stacks & Queues', 'Trees'],
+    topics: ['Arrays', 'Linked Lists', 'Stacks & Queues', 'Trees'],
     ctaText: 'Enroll Now',
   },
   {

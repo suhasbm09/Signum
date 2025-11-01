@@ -31,7 +31,7 @@ function AIHelper({ topic, courseId }) {
     return (
       <button
         onClick={() => setShowHelper(true)}
-        className="fixed bottom-24 right-6 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-gray-100 font-quantico-bold rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105"
+        className="fixed bottom-24 right-6 px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-gray-100 font-quantico-bold rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105"
       >
         🎓 Quick AI Help
       </button>
@@ -39,9 +39,9 @@ function AIHelper({ topic, courseId }) {
   }
 
   return (
-    <div className="fixed bottom-24 right-6 w-96 bg-glossy-black rounded-xl border border-purple-500/30 shadow-2xl shadow-purple-500/10 overflow-hidden z-30">
+    <div className="fixed bottom-24 right-6 w-96 bg-glossy-black rounded-xl border border-emerald-500/30 shadow-2xl shadow-emerald-500/10 overflow-hidden z-30">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-900/50 to-pink-900/50 p-3 border-b border-purple-500/30 flex items-center justify-between">
+      <div className="bg-gradient-to-r from-emerald-900/50 to-green-900/50 p-3 border-b border-emerald-500/30 flex items-center justify-between">
         <h3 className="text-gray-100 font-quantico-bold text-sm">AI Quick Help</h3>
         <button
           onClick={() => setShowHelper(false)}
@@ -59,7 +59,7 @@ function AIHelper({ topic, courseId }) {
           onClick={() => setActiveTab('explain')}
           className={`flex-1 py-2 px-3 text-xs font-quantico transition-colors ${
             activeTab === 'explain'
-              ? 'bg-purple-600/30 text-purple-300 border-b-2 border-purple-500'
+              ? 'bg-emerald-600/30 text-emerald-300 border-b-2 border-emerald-500'
               : 'text-gray-400 hover:text-gray-100 hover:bg-gray-800/50'
           }`}
         >
@@ -69,7 +69,7 @@ function AIHelper({ topic, courseId }) {
           onClick={() => setActiveTab('quiz')}
           className={`flex-1 py-2 px-3 text-xs font-quantico transition-colors ${
             activeTab === 'quiz'
-              ? 'bg-purple-600/30 text-purple-300 border-b-2 border-purple-500'
+              ? 'bg-emerald-600/30 text-emerald-300 border-b-2 border-emerald-500'
               : 'text-gray-400 hover:text-gray-100 hover:bg-gray-800/50'
           }`}
         >
@@ -79,7 +79,7 @@ function AIHelper({ topic, courseId }) {
           onClick={() => setActiveTab('code')}
           className={`flex-1 py-2 px-3 text-xs font-quantico transition-colors ${
             activeTab === 'code'
-              ? 'bg-purple-600/30 text-purple-300 border-b-2 border-purple-500'
+              ? 'bg-emerald-600/30 text-emerald-300 border-b-2 border-emerald-500'
               : 'text-gray-400 hover:text-gray-100 hover:bg-gray-800/50'
           }`}
         >
@@ -92,12 +92,12 @@ function AIHelper({ topic, courseId }) {
         {activeTab === 'explain' && (
           <div className="space-y-3">
             <p className="text-gray-300 text-sm font-quantico">
-              Get a detailed explanation of: <strong className="text-purple-400">{topic}</strong>
+              Get a detailed explanation of: <strong className="text-emerald-400">{topic}</strong>
             </p>
             <button
               onClick={handleExplain}
               disabled={isLoading}
-              className="w-full py-2 px-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-gray-100 font-quantico-bold rounded-lg transition-all duration-300 disabled:opacity-50 text-sm"
+              className="w-full py-2 px-4 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-gray-100 font-quantico-bold rounded-lg transition-all duration-300 disabled:opacity-50 text-sm"
             >
               {isLoading ? 'Explaining...' : 'Explain Topic'}
             </button>
@@ -107,12 +107,12 @@ function AIHelper({ topic, courseId }) {
         {activeTab === 'quiz' && (
           <div className="space-y-3">
             <p className="text-gray-300 text-sm font-quantico">
-              Generate quiz questions about: <strong className="text-purple-400">{topic}</strong>
+              Generate quiz questions about: <strong className="text-emerald-400">{topic}</strong>
             </p>
             <button
               onClick={handleQuiz}
               disabled={isLoading}
-              className="w-full py-2 px-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-gray-100 font-quantico-bold rounded-lg transition-all duration-300 disabled:opacity-50 text-sm"
+              className="w-full py-2 px-4 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-gray-100 font-quantico-bold rounded-lg transition-all duration-300 disabled:opacity-50 text-sm"
             >
               {isLoading ? 'Generating...' : 'Generate Quiz'}
             </button>
@@ -126,12 +126,12 @@ function AIHelper({ topic, courseId }) {
             </p>
             <textarea
               placeholder="Paste your code here..."
-              className="w-full h-24 px-3 py-2 bg-gray-900/80 border border-gray-700 rounded-lg text-gray-100 text-xs font-mono focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 resize-none"
+              className="w-full h-24 px-3 py-2 bg-gray-900/80 border border-gray-700 rounded-lg text-gray-100 text-xs font-mono focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/50 resize-none"
             />
             <button
               onClick={() => handleCodeHelp('// Your code', 'General help')}
               disabled={isLoading}
-              className="w-full py-2 px-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-gray-100 font-quantico-bold rounded-lg transition-all duration-300 disabled:opacity-50 text-sm"
+              className="w-full py-2 px-4 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-gray-100 font-quantico-bold rounded-lg transition-all duration-300 disabled:opacity-50 text-sm"
             >
               {isLoading ? 'Analyzing...' : 'Get Help'}
             </button>
@@ -140,8 +140,8 @@ function AIHelper({ topic, courseId }) {
 
         {/* Result Display */}
         {result && (
-          <div className="mt-4 p-3 bg-gray-900/50 border border-purple-500/30 rounded-lg">
-            <h4 className="text-purple-300 font-quantico-bold text-xs mb-2">AI Response:</h4>
+          <div className="mt-4 p-3 bg-gray-900/50 border border-emerald-500/30 rounded-lg">
+            <h4 className="text-emerald-300 font-quantico-bold text-xs mb-2">AI Response:</h4>
             <p className="text-gray-300 text-xs font-quantico leading-relaxed whitespace-pre-wrap">
               {result.response}
             </p>

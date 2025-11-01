@@ -43,11 +43,15 @@ const CertificationsContent = ({ user }) => {
   const courseId = 'data-structures';
   
   useEffect(() => {
-    checkWalletConnection();
-    loadWalletFromFirebase();
-    loadNFTStatusFromFirebase(); // Load NFT status on mount
-    checkExistingCertificate();
-    setLoading(false);
+    const initializeComponent = async () => {
+      await checkWalletConnection();
+      await loadWalletFromFirebase();
+      await loadNFTStatusFromFirebase(); // Load NFT status after wallet
+      await checkExistingCertificate();
+      setLoading(false);
+    };
+    
+    initializeComponent();
     // Note: Don't mark certifications module as complete for progress tracking
   }, []);
   
@@ -143,6 +147,11 @@ const CertificationsContent = ({ user }) => {
       setNftMinted(false);
       setNftImageUrl('');
       
+      // Reload NFT status to confirm deletion
+      setTimeout(() => {
+        loadNFTStatusFromFirebase();
+      }, 500);
+      
     } catch (error) {
       console.error('Error closing certificate:', error);
       
@@ -163,9 +172,11 @@ const CertificationsContent = ({ user }) => {
   
   const loadWalletFromFirebase = async () => {
     try {
-      const walletData = await progressService.getUserWallet(userId);
-      if (walletData) {
-        setWalletAddress(walletData.wallet_address);
+      // Use user.token for auth and get phantomWalletAddress from profile
+      if (!user?.token) return;
+      const walletAddressFromProfile = await progressService.getUserWallet(user.token);
+      if (walletAddressFromProfile) {
+        setWalletAddress(walletAddressFromProfile);
         setWalletConnected(true);
         console.log('✅ Wallet loaded from Firebase');
       }
@@ -186,23 +197,32 @@ const CertificationsContent = ({ user }) => {
   
   const loadNFTStatusFromFirebase = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/progress/nft-certificate/${userId}/${courseId}`);
+      const response = await fetch(`http://localhost:8000/certification/${courseId}/status?user_id=${userId}`);
       if (response.ok) {
         const data = await response.json();
+        console.log('📡 NFT certificate data from backend:', data);
+        
         if (data.minted) {
           setNftMinted(true);
-          setNftImageUrl(data.certificate_image_url || '');
-          console.log('✅ NFT certificate status loaded from Firebase');
+          const imageUrl = data.certificate_image_url || '';
+          setNftImageUrl(imageUrl);
+          console.log('✅ NFT certificate status loaded. Image URL:', imageUrl);
+        } else {
+          console.log('ℹ️ No NFT certificate minted yet');
         }
+      } else {
+        console.log('ℹ️ No NFT certificate found in database');
       }
     } catch (error) {
-      console.log('No existing NFT certificate found in Firebase');
+      console.error('❌ Error loading NFT certificate:', error);
     }
   };
 
   const saveNFTStatusToFirebase = async (imageUrl, transactionSignature, mintAddress) => {
     try {
-      const response = await fetch('http://localhost:8000/progress/nft-certificate', {
+      console.log('💾 Saving NFT certificate to backend with image URL:', imageUrl);
+      
+      const response = await fetch(`http://localhost:8000/certification/${courseId}/save`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -216,26 +236,28 @@ const CertificationsContent = ({ user }) => {
       });
       
       if (response.ok) {
-        console.log('✅ NFT certificate status saved to Firebase');
+        const result = await response.json();
+        console.log('✅ NFT certificate status saved:', result);
       } else {
-        console.error('❌ Failed to save NFT status to Firebase');
+        const errorText = await response.text();
+        console.error('❌ Failed to save NFT status:', errorText);
       }
     } catch (error) {
-      console.error('❌ Error saving NFT status to Firebase:', error);
+      console.error('❌ Error saving NFT status:', error);
     }
   };
 
   const clearNFTStatusFromFirebase = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/progress/nft-certificate/${userId}/${courseId}`, {
+      const response = await fetch(`http://localhost:8000/certification/${courseId}/delete?user_id=${userId}`, {
         method: 'DELETE',
       });
       
       if (response.ok) {
-        console.log('✅ NFT certificate status cleared from Firebase');
+        console.log('✅ NFT certificate status cleared');
       }
     } catch (error) {
-      console.error('❌ Error clearing NFT status from Firebase:', error);
+      console.error('❌ Error clearing NFT status:', error);
     }
   };
   
@@ -376,13 +398,12 @@ const CertificationsContent = ({ user }) => {
       
       showToast('📡 Requesting metadata from backend...', 'info');
       
-      // Get metadata from backend
-      const metadataResponse = await fetch('http://localhost:8000/blockchain/mint', {
+            // Get metadata from backend
+      const metadataResponse = await fetch(`http://localhost:8000/certification/${courseId}/mint`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           user_id: userId,
-          course_id: courseId,
           wallet_address: provider.wallet.publicKey.toString(),
           user_name: user?.displayName || 'Student'
         })
@@ -393,7 +414,11 @@ const CertificationsContent = ({ user }) => {
       }
       
       const metadataData = await metadataResponse.json();
-      const { metadata, metadata_uri, final_score } = metadataData.data;
+      console.log('📦 Metadata response from backend:', metadataData);
+      
+      const { metadata, metadata_uri, final_score, image_uri } = metadataData.data;
+      
+      console.log('🖼️ Certificate image URL:', image_uri || metadata.image);
       
       // Ensure quiz_score and completion are integers (u8)
       const quizScoreInt = Math.round(metadataData.data.quiz_score || 0);
@@ -459,12 +484,21 @@ const CertificationsContent = ({ user }) => {
       console.log('✅ Transaction:', tx);
       console.log('🎉 Mint Address:', mint.publicKey.toString());
       
+      // Use image_uri from backend response (preferred) or fallback to metadata.image
+      const certificateImageUrl = image_uri || metadata.image;
+      console.log('💾 Saving certificate with image URL:', certificateImageUrl);
+      
       // Set NFT data in state
-      setNftImageUrl(metadata.image);
+      setNftImageUrl(certificateImageUrl);
       setNftMinted(true);
       
       // Save NFT status to Firebase for persistence
-      await saveNFTStatusToFirebase(metadata.image, tx, mint.publicKey.toString());
+      await saveNFTStatusToFirebase(certificateImageUrl, tx, mint.publicKey.toString());
+      
+      // Reload NFT status from Firebase to confirm it was saved correctly
+      setTimeout(() => {
+        loadNFTStatusFromFirebase();
+      }, 1000);
       
       showToast('🎉 NFT Certificate minted successfully! Check your Phantom wallet.', 'success');
       

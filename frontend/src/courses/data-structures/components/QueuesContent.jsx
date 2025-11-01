@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 import QueueVisualization from '../visualizations/QueueVisualization';
 import CompletionTracker from '../../../components/CompletionTracker';
@@ -10,6 +10,11 @@ const QueuesContent = ({ onNavigate, courseId }) => {
   const [implementationLang, setImplementationLang] = useState('python');
   const [circularLang, setCircularLang] = useState('python');
   const [applicationsLang, setApplicationsLang] = useState('python');
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   // Language selector component
   const LanguageSelector = ({ currentLang, setLang }) => (
@@ -953,13 +958,22 @@ print(f"Size: {q.size()}")        # Output: 3`}
                 <h3 className="text-xl font-semibold text-emerald-300">1. Implement Queue using Stacks</h3>
                 <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-sm">Easy</span>
               </div>
-              <p className="text-gray-300 mb-3">
+              <p className="text-gray-300 mb-4">
                 Build a queue data structure using two stacks.
               </p>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2 flex-wrap mb-4">
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Amazon</span>
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Microsoft</span>
               </div>
+              <a 
+                href="https://leetcode.com/problems/implement-queue-using-stacks/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-semibold rounded-lg transition-all duration-300 hover:scale-105"
+              >
+                <span>Solve on LeetCode</span>
+                <span>→</span>
+              </a>
             </div>
 
             <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
@@ -967,13 +981,22 @@ print(f"Size: {q.size()}")        # Output: 3`}
                 <h3 className="text-xl font-semibold text-emerald-300">2. Design Circular Queue</h3>
                 <span className="px-3 py-1 bg-yellow-500/20 text-yellow-300 rounded-full text-sm">Medium</span>
               </div>
-              <p className="text-gray-300 mb-3">
+              <p className="text-gray-300 mb-4">
                 Implement circular queue with fixed size and all operations.
               </p>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2 flex-wrap mb-4">
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Google</span>
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Facebook</span>
               </div>
+              <a 
+                href="https://leetcode.com/problems/design-circular-queue/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-semibold rounded-lg transition-all duration-300 hover:scale-105"
+              >
+                <span>Solve on LeetCode</span>
+                <span>→</span>
+              </a>
             </div>
 
             <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
@@ -981,13 +1004,22 @@ print(f"Size: {q.size()}")        # Output: 3`}
                 <h3 className="text-xl font-semibold text-emerald-300">3. First Non-Repeating Character in Stream</h3>
                 <span className="px-3 py-1 bg-yellow-500/20 text-yellow-300 rounded-full text-sm">Medium</span>
               </div>
-              <p className="text-gray-300 mb-3">
+              <p className="text-gray-300 mb-4">
                 Find first non-repeating character in a stream of characters.
               </p>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2 flex-wrap mb-4">
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Amazon</span>
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Apple</span>
               </div>
+              <a 
+                href="https://leetcode.com/problems/first-unique-character-in-a-string/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-semibold rounded-lg transition-all duration-300 hover:scale-105"
+              >
+                <span>Solve on LeetCode</span>
+                <span>→</span>
+              </a>
             </div>
 
             <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
@@ -995,51 +1027,42 @@ print(f"Size: {q.size()}")        # Output: 3`}
                 <h3 className="text-xl font-semibold text-emerald-300">4. Sliding Window Maximum</h3>
                 <span className="px-3 py-1 bg-red-500/20 text-red-300 rounded-full text-sm">Hard</span>
               </div>
-              <p className="text-gray-300 mb-3">
+              <p className="text-gray-300 mb-4">
                 Find maximum in all sliding windows of size k using deque.
               </p>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2 flex-wrap mb-4">
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Google</span>
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Amazon</span>
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Microsoft</span>
               </div>
+              <a 
+                href="https://leetcode.com/problems/sliding-window-maximum/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-semibold rounded-lg transition-all duration-300 hover:scale-105"
+              >
+                <span>Solve on LeetCode</span>
+                <span>→</span>
+              </a>
             </div>
           </div>
         </section>
 
         {/* Next Steps */}
-        <section className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-2xl p-8 border border-emerald-500/30">
-          <h2 className="text-3xl font-bold mb-6 text-emerald-400">Next Steps</h2>
-          <p className="text-gray-300 mb-6 text-lg">
-            Fantastic progress! You've mastered fundamental linear data structures. Now let's explore hierarchical data structures.
+        <div className="mt-10 p-6 bg-gradient-to-r from-emerald-500/10 to-green-500/10 border border-emerald-500/30 rounded-xl">
+          <h3 className="text-lg font-quantico-bold text-emerald-300 mb-2 flex items-center gap-2">
+            <span>🚀</span> Next Steps
+          </h3>
+          <p className="text-gray-300 mb-4">
+            Great job! You've mastered queues. Now let's explore <strong>Trees</strong>!
           </p>
-          
-          {/* Continue Navigation Button */}
           <button
             onClick={() => onNavigate('course', { courseId, topic: 'trees-intro' })}
-            className="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
+            className="px-6 py-3 bg-gradient-to-r from-emerald-500/20 to-green-500/20 border border-emerald-500/40 text-emerald-300 rounded-lg hover:bg-emerald-500/30 transition-all duration-300 hover-lift"
           >
-            <span className="text-lg">Continue to Trees →</span>
+            Continue to Trees →
           </button>
-          
-          <div className="grid md:grid-cols-3 gap-4 mt-6">
-            <div className="bg-gray-800/50 rounded-lg p-4 border border-emerald-500/20 hover:border-emerald-500/40 transition-all cursor-pointer hover-lift">
-              <div className="text-2xl mb-2">🔗</div>
-              <h3 className="text-lg font-semibold text-emerald-300 mb-2">Linked Lists</h3>
-              <p className="text-gray-400 text-sm">Dynamic memory structures</p>
-            </div>
-            <div className="bg-gray-800/50 rounded-lg p-4 border border-emerald-500/20 hover:border-emerald-500/40 transition-all cursor-pointer hover-lift">
-              <div className="text-2xl mb-2">🌳</div>
-              <h3 className="text-lg font-semibold text-emerald-300 mb-2">Trees</h3>
-              <p className="text-gray-400 text-sm">Hierarchical data structures</p>
-            </div>
-            <div className="bg-gray-800/50 rounded-lg p-4 border border-emerald-500/20 hover:border-emerald-500/40 transition-all cursor-pointer hover-lift">
-              <div className="text-2xl mb-2">🕸️</div>
-              <h3 className="text-lg font-semibold text-emerald-300 mb-2">Graphs</h3>
-              <p className="text-gray-400 text-sm">Network structures</p>
-            </div>
-          </div>
-        </section>
+        </div>
 
       </div>
 

@@ -12,6 +12,14 @@ export const dataStructuresOutline = [
     ],
   },
   {
+    id: 'linked-lists',
+    title: 'Linked Lists',
+    children: [
+      { id: 'linked-list-singly', title: 'Singly Linked List' },
+      { id: 'linked-list-doubly', title: 'Doubly Linked List' },
+    ],
+  },
+  {
     id: 'stacks-queues',
     title: 'Stacks & Queues',
     children: [

@@ -19,6 +19,7 @@ function Profile({ user, onLogout, onNavigate, onUserUpdate }) {
   const [newInterest, setNewInterest] = useState('');
   const [walletConnected, setWalletConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -193,23 +194,23 @@ function Profile({ user, onLogout, onNavigate, onUserUpdate }) {
   };
 
   const deleteAccount = async () => {
-    if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-      try {
-        const response = await fetch('http://localhost:8000/auth/account', {
-          method: 'DELETE',
-          credentials: 'include',
-        });
+    setShowDeleteConfirm(false);
+    
+    try {
+      const response = await fetch('http://localhost:8000/auth/account', {
+        method: 'DELETE',
+        credentials: 'include',
+      });
 
-        if (response.ok) {
-          showToast('✅ Account deleted successfully', 'success');
-          setTimeout(() => onLogout(), 2000); // Wait for toast to show
-        } else {
-          showToast('❌ Failed to delete account. Please try again.', 'error');
-        }
-      } catch (error) {
-        console.error('Error deleting account:', error);
-        showToast('❌ Error deleting account. Please check your connection.', 'error');
+      if (response.ok) {
+        showToast('✅ Account deleted successfully', 'success');
+        setTimeout(() => onLogout(), 2000); // Wait for toast to show
+      } else {
+        showToast('❌ Failed to delete account. Please try again.', 'error');
       }
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      showToast('❌ Error deleting account. Please check your connection.', 'error');
     }
   };
 
@@ -441,7 +442,7 @@ function Profile({ user, onLogout, onNavigate, onUserUpdate }) {
               <div className="border-t border-red-500/20 pt-6">
                 <h3 className="text-lg font-quantico-bold text-red-400 mb-4">Danger Zone</h3>
                 <button
-                  onClick={deleteAccount}
+                  onClick={() => setShowDeleteConfirm(true)}
                   className="bg-red-600 hover:bg-red-700 text-gray-100 px-4 py-2 rounded-lg transition-colors font-quantico-bold"
                 >
                   Delete Account
@@ -453,6 +454,47 @@ function Profile({ user, onLogout, onNavigate, onUserUpdate }) {
             </div>
           </div>
         </div>
+
+        {/* Delete Confirmation Modal */}
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-red-500/50 rounded-2xl p-8 max-w-md mx-4 shadow-2xl shadow-red-500/20">
+              <div className="text-center mb-6">
+                <div className="text-6xl mb-4">⚠️</div>
+                <h2 className="text-2xl font-quantico-bold text-red-400 mb-3">Delete Account?</h2>
+                <p className="text-gray-300 font-quantico">
+                  Are you sure you want to delete your account? This action cannot be undone.
+                </p>
+              </div>
+
+              <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-4 mb-6">
+                <h4 className="text-red-300 font-quantico-bold text-sm mb-2">This will permanently delete:</h4>
+                <ul className="text-gray-300 text-sm space-y-1 font-quantico">
+                  <li>• All your course progress</li>
+                  <li>• Quiz and coding challenge scores</li>
+                  <li>• NFT certificates (marked as invalidated)</li>
+                  <li>• Your profile and preferences</li>
+                  <li>• All associated data</li>
+                </ul>
+              </div>
+
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-100 px-6 py-3 rounded-lg font-quantico-bold transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={deleteAccount}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-gray-100 px-6 py-3 rounded-lg font-quantico-bold transition-colors"
+                >
+                  Yes, Delete Account
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </Layout>
   );

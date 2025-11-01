@@ -20,7 +20,9 @@ export const courseConfigs = {
       learningModules: [
         'overview',
         'arrays-1d',
-        'arrays-2d', 
+        'arrays-2d',
+        'linked-list-singly',
+        'linked-list-doubly',
         'stacks',
         'queues',
         'trees-intro'
@@ -36,7 +38,7 @@ export const courseConfigs = {
       ],
       
       // Total number of learning modules for percentage calculation
-      totalLearningModules: 6
+      totalLearningModules: 8
     },
     
     // Final exam configuration
@@ -56,13 +58,13 @@ export const courseConfigs = {
           id: 'coding-challenge',
           name: 'Coding Challenge',
           weight: 0.5,  // 50% of final score
-          passingScore: 70,
+          passingScore: 80,
           required: true
         }
       ],
       
       // Overall passing criteria
-      passingScore: 77.5,  // (85*0.5 + 70*0.5) minimum
+      passingScore: 82.5,  // (85*0.5 + 80*0.5) minimum
       
       // Unlock certification if final exam is passed
       unlocksCertification: true
@@ -73,7 +75,7 @@ export const courseConfigs = {
       requirements: {
         completionPercentage: 100,  // Must complete all learning modules
         finalExamPassed: true,       // Must pass final exam
-        minimumFinalScore: 77.5
+        minimumFinalScore: 82.5
       }
     }
   },

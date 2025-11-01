@@ -25,7 +25,7 @@ function Header({ user, onLogout, currentPage, onNavigate }) {
               alt="Signum Logo" 
               className="w-10 h-10 object-contain brightness-110"
             />
-            <h1 className="text-xl font-quantico-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-quantico-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
               Signum 
             </h1>
           </div>
@@ -36,8 +36,8 @@ function Header({ user, onLogout, currentPage, onNavigate }) {
               onClick={() => onNavigate('dashboard')}
               className={`px-4 py-2 rounded-lg transition-all duration-300 font-quantico-bold text-sm ${
                 currentPage === 'dashboard'
-                  ? 'btn-primary text-gray-100'
-                  : 'text-gray-300 hover:text-gray-100 hover:bg-gray-700/50'
+                  ? 'bg-gradient-to-r from-emerald-600/30 to-green-600/30 border border-emerald-500/50 text-emerald-200'
+                  : 'text-gray-300 hover:text-gray-100 hover:bg-gray-700/50 border border-transparent'
               }`}
             >
               Dashboard
@@ -46,8 +46,8 @@ function Header({ user, onLogout, currentPage, onNavigate }) {
               onClick={() => onNavigate('profile')}
               className={`px-4 py-2 rounded-lg transition-all duration-300 font-quantico-bold text-sm ${
                 currentPage === 'profile'
-                  ? 'btn-primary text-gray-100'
-                  : 'text-gray-300 hover:text-gray-100 hover:bg-gray-700/50'
+                  ? 'bg-gradient-to-r from-emerald-600/30 to-green-600/30 border border-emerald-500/50 text-emerald-200'
+                  : 'text-gray-300 hover:text-gray-100 hover:bg-gray-700/50 border border-transparent'
               }`}
             >
               Profile
@@ -56,8 +56,8 @@ function Header({ user, onLogout, currentPage, onNavigate }) {
               onClick={() => onNavigate('about')}
               className={`px-4 py-2 rounded-lg transition-all duration-300 font-quantico-bold text-sm ${
                 currentPage === 'about'
-                  ? 'btn-primary text-gray-100'
-                  : 'text-gray-300 hover:text-gray-100 hover:bg-gray-700/50'
+                  ? 'bg-gradient-to-r from-emerald-600/30 to-green-600/30 border border-emerald-500/50 text-emerald-200'
+                  : 'text-gray-300 hover:text-gray-100 hover:bg-gray-700/50 border border-transparent'
               }`}
             >
               About

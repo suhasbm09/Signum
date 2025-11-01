@@ -76,9 +76,20 @@ export const ProgressProvider = ({ children }) => {
       setLoading(true);
       const progress = await progressService.getCourseProgress(userId, courseId);
       
+      // Extract modules - include coding-challenge if coding is completed
+      const modules = progress.modules_completed || [];
+      const codingCompleted = progress.coding?.completed || false;
+      
+      // Ensure coding-challenge is in modules if coding is completed
+      if (codingCompleted && !modules.includes('coding-challenge')) {
+        modules.push('coding-challenge');
+      }
+      
       const progressData = {
-        modules: progress.modules_completed || [],
-        quizScore: progress.quiz_score || null,
+        modules: modules,
+        quizScore: progress.quiz?.best_score || null,
+        codingScore: progress.coding?.best_score || null,
+        codingCompleted: codingCompleted,
         completionPercentage: progress.completion_percentage || 0
       };
       
@@ -112,8 +123,7 @@ export const ProgressProvider = ({ children }) => {
         userId,
         courseId,
         learningModules,
-        progress.completionPercentage,
-        progress.quizScore
+        progress.completionPercentage
       );
       
       console.log('✅ Progress synced to Firebase successfully');

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 import TreeVisualization from '../visualizations/TreeVisualization';
 import CompletionTracker from '../../../components/CompletionTracker';
@@ -9,6 +9,11 @@ const TreesIntroContent = ({ onNavigate, courseId }) => {
   const [implementationLang, setImplementationLang] = useState('python');
   const [traversalLang, setTraversalLang] = useState('python');
   const [applicationsLang, setApplicationsLang] = useState('python');
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   const LanguageSelector = ({ currentLang, setLang }) => (
     <div className="flex gap-2 mb-3">

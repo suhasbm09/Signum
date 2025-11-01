@@ -608,11 +608,10 @@ function QuizContent({ onNavigate, onQuizComplete }) {
         userId,
         courseId,
         scoreResult.score,
-        answersData,
-        [] // violations array - will be passed from QuizPage
+        answersData
       );
       
-      console.log('✅ Quiz results saved to Firebase successfully');
+      console.log('✅ Quiz results saved successfully');
     } catch (error) {
       console.error('❌ Failed to save quiz results to Firebase:', error);
       // Show error to user but don't block completion

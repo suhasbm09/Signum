@@ -1,628 +1,686 @@
-# 🛡️ Signum Anti-Cheat System 
+# Anti-Cheat System Documentation
 
-**Last Updated**: October 25, 2025  
-**Status**: ✅ Fully Operational  
-**Integration**: Quiz System, Coding Challenges, NFT Minting  
-**Layout**: Full-width responsive design with sidebar adaptation
+## Overview
 
----
+Signum implements a **real-time academic integrity monitoring system** for both quiz and coding assessments. The system detects suspicious activities, tracks violations, and enforces progressive blocking to ensure fair evaluation of student performance.
 
-## 📋 Table of Contents
-1. [Overview](#overview)
-2. [Architecture](#architecture)
-3. [Detection Methods](#detection-methods)
-4. [Implementation Details](#implementation-details)
-5. [Violation Management](#violation-management)
-6. [Configuration](#configuration)
-7. [Firebase Integration](#firebase-integration)
-8. [NFT Eligibility Enforcement](#nft-eligibility-enforcement)
-9. [Testing Mode](#testing-mode)
-10. [Future Enhancements](#future-enhancements)
+**Coverage:** Quiz assessments and coding challenges  
+**Detection:** Client-side monitoring with server-side enforcement  
+**Enforcement:** Progressive time-based blocking  
+**Storage:** Immutable violation logs in Firestore  
 
 ---
 
-## 🎯 Overview
+## System Architecture
 
-Signum's Anti-Cheat System is a multi-layered security framework designed to ensure academic integrity across all assessments. It monitors user behavior in real-time and prevents unauthorized actions during quizzes and coding challenges.
+### Components
 
-### Key Design Principles
-- **Real-time Detection** - Instant violation logging
-- **Firebase-backed** - Persistent violation tracking
-- **3-Strike Policy** - Users blocked after 3 violations
-- **NFT Enforcement** - Only clean records can mint certificates
-- **Configurable** - Can be enabled/disabled per feature
+**Frontend (React)**
+- Real-time violation detection
+- Event listeners for suspicious activities
+- Local violation count display
+- Block timer UI
 
----
+**Backend (FastAPI)**
+- Violation logging (`anti_cheat_events` collection)
+- Block creation and management
+- Status checking and validation
+- Auto-expiry handling
 
-## 🏗️ Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    FRONTEND (React 19)                           │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                   │
-│  QuizPage.jsx                                                     │
-│  ├── Event Listeners (Tab, Right-click, Keyboard, DevTools)     │
-│  ├── Violation Detection Logic                                   │
-│  ├── 3-Strike Blocking                                           │
-│  └── Real-time Toast Notifications                               │
-│                                                                   │
-│  CodingChallengePage.jsx                                         │
-│  ├── Same anti-cheat logic as QuizPage                           │
-│  └── Code plagiarism detection (future)                          │
-│                                                                   │
-│  Features Configuration                                           │
-│  └── config/features.js (Enable/Disable toggles)                 │
-│                                                                   │
-└───────────────────────────┬─────────────────────────────────────┘
-                            │
-                    progressService.js
-              (saveViolations, getViolations)
-                            │
-┌───────────────────────────┴─────────────────────────────────────┐
-│                     BACKEND (FastAPI)                            │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                   │
-│  simple_progress.py (Routes)                                     │
-│  ├── POST /progress/violations/save                             │
-│  ├── GET /progress/violations/{user_id}/{course_id}             │
-│  └── DELETE /progress/violations/{user_id}/{course_id}          │
-│                                                                   │
-│  simple_progress_service.py (Firestore Operations)              │
-│  ├── save_violations()                                           │
-│  ├── get_violations()                                            │
-│  ├── delete_violations()                                         │
-│  └── check_anti_cheat_eligibility() (NFT minting check)         │
-│                                                                   │
-└───────────────────────────┬─────────────────────────────────────┘
-                            │
-                     Firestore Database
-              Collection: user_course_progress
-           Document: {user_id}_{course_id}_progress
-                            │
-                    violations: Array[...]
-```
+**Database (Firestore)**
+- Violation records (append-only, immutable)
+- Block records (time-based expiration)
+- Per-user, per-course, per-assessment tracking
 
 ---
 
-## 🔍 Detection Methods
+## Detection Mechanisms
 
-### 1. **Tab/Window Switching** ✅
-**Trigger**: User leaves quiz/coding tab
-**Event**: `visibilitychange`, `blur`
-**Violation**: "Tab/Window Switch Detected"
-**Impact**: Indicates potential external help
+### Quiz Anti-Cheat
 
+**Detected Activities:**
+
+| Violation Type | Description | Detection Method |
+|----------------|-------------|------------------|
+| **Tab/Window Switch** | User switches to another tab or application | `document.visibilitychange` event |
+| **Copy/Paste** | User attempts to copy or paste content | `Ctrl+C`, `Ctrl+V` keyboard events |
+| **Right-Click** | User opens context menu | `contextmenu` event prevention |
+| **Developer Tools** | User opens browser DevTools | Window size difference detection |
+| **Fullscreen Exit** | User exits fullscreen mode | `fullscreenchange` event |
+| **Browser Blur** | Quiz window loses focus | `blur` and `focus` events |
+| **Forbidden Keys** | F5 (refresh), F11 (fullscreen), F12 (devtools) | `keydown` event filtering |
+| **Restricted Shortcuts** | Ctrl+S (save), Ctrl+P (print), Ctrl+U (view source) | Keyboard combination blocking |
+
+**Implementation:**
 ```javascript
-document.addEventListener('visibilitychange', detectTabSwitch);
-window.addEventListener('blur', detectTabSwitch);
+// Frontend Detection (QuizPage.jsx)
+MAX_VIOLATIONS = 3  // Violation threshold before block
+
+// Event Listeners:
+- document.addEventListener('visibilitychange', detectTabSwitch)
+- document.addEventListener('contextmenu', detectRightClick)
+- document.addEventListener('keydown', detectKeyboardShortcuts)
+- window.addEventListener('blur', detectWindowBlur)
+- document.addEventListener('fullscreenchange', detectFullscreenExit)
+```
+
+### Coding Challenge Anti-Cheat
+
+**Detected Activities:**
+
+| Violation Type | Description | Detection Method |
+|----------------|-------------|------------------|
+| **Tab Switch** | User switches away from coding page | `document.hidden` state change |
+| **Copy Attempt** | User tries to copy code | `copy` event prevention |
+| **Paste Attempt** | User tries to paste code | `paste` event prevention |
+| **Window Blur** | Coding window loses focus | `blur` event tracking |
+
+**Implementation:**
+```javascript
+// Frontend Detection (CodingChallengePage.jsx)
+MAX_VIOLATIONS = 3  // Violation threshold before block
+
+// Event Listeners:
+- document.addEventListener('visibilitychange', handleVisibilityChange)
+- document.addEventListener('copy', handleCopy)
+- document.addEventListener('paste', handlePaste)
+- window.addEventListener('blur', handleBlur)
 ```
 
 ---
 
-### 2. **Right-Click Prevention** ✅
-**Trigger**: User right-clicks anywhere
-**Event**: `contextmenu`
-**Violation**: "Right-click Attempted"
-**Impact**: Prevents inspect element, copy/paste via context menu
+## Violation Workflow
+
+### 1. Violation Detection (Frontend)
 
 ```javascript
-document.addEventListener('contextmenu', detectRightClick);
+// User triggers suspicious activity (e.g., tab switch)
+↓
+addViolation(type)
+  ├─ Check if assessment started (quiz/coding)
+  ├─ Check if at MAX_VIOLATIONS (3)
+  ├─ Create violation object:
+  │    {
+  │      type: "Tab Switch",
+  │      timestamp: ISO 8601,
+  │      id: unique ID
+  │    }
+  ├─ Add to local state (violations array)
+  └─ Send to backend API
 ```
 
----
+### 2. Violation Reporting (Backend)
 
-### 3. **Keyboard Shortcut Blocking** ✅
-**Trigger**: Forbidden key combinations pressed
-**Event**: `keydown`
-**Violations**: 
-- `Ctrl+C` (Copy)
-- `Ctrl+V` (Paste)
-- `Ctrl+X` (Cut)
-- `Ctrl+A` (Select All)
-- `Ctrl+S` (Save)
-- `Ctrl+P` (Print)
-- `Ctrl+F` (Find)
-- `Ctrl+Shift+I` (DevTools)
-- `Ctrl+Shift+J` (Console)
-- `Ctrl+U` (View Source)
-- `F12` (DevTools)
-- `F5` (Refresh)
-- `F11` (Fullscreen)
-- `Alt+Tab` (Task Switch)
-
-**Impact**: Prevents copy/paste from external sources
-
-```javascript
-document.addEventListener('keydown', detectKeyboardShortcuts);
 ```
-
----
-
-### 4. **Developer Tools Detection** ✅
-**Trigger**: Browser DevTools opened
-**Method**: Window dimension monitoring
-**Violation**: "Developer Tools Detected"
-**Impact**: Prevents JavaScript debugging, console cheating
-
-```javascript
-setInterval(() => {
-  if (window.outerHeight - window.innerHeight > 160 || 
-      window.outerWidth - window.innerWidth > 160) {
-    addViolation('Developer Tools Detected');
-  }
-}, 1000);
-```
-
----
-
-### 5. **Copy/Paste Blocking** ✅
-**Trigger**: User attempts to paste content
-**Event**: `paste`
-**Violation**: "Copy/Paste Attempted"
-**Impact**: Prevents pasting answers from external sources
-
-```javascript
-document.addEventListener('paste', (e) => {
-  e.preventDefault();
-  addViolation('Copy/Paste Attempted');
-});
-```
-
----
-
-## 🛠️ Implementation Details
-
-### Frontend: QuizPage.jsx
-
-**State Management:**
-```javascript
-const [antiCheatEnabled, setAntiCheatEnabled] = useState(false);
-const [violations, setViolations] = useState([]);
-const [testingMode, setTestingMode] = useState(false);
-const MAX_VIOLATIONS = 3;
-```
-
-**Feature Flag Check:**
-```javascript
-const antiCheatFeatureEnabled = isQuizAntiCheatEnabled();
-// Returns: true/false based on features.js config
-```
-
-**Violation Addition:**
-```javascript
-const addViolation = async (type) => {
-  const newViolation = {
-    type: type,
-    timestamp: Date.now(),
-    date: new Date().toLocaleString()
-  };
-  
-  const updatedViolations = [...violations, newViolation];
-  setViolations(updatedViolations);
-  
-  // Save to Firebase immediately
-  await progressService.saveViolations(userId, courseId, updatedViolations);
-  
-  showToast(`⚠️ Anti-Cheat: ${type}`, 'warning');
-  
-  // Block quiz after 3 violations
-  if (updatedViolations.length >= MAX_VIOLATIONS) {
-    setQuizBlocked(true);
-    showToast('❌ Too many violations! Quiz blocked.', 'error');
-  }
-};
-```
-
-**Event Listener Registration:**
-```javascript
-useEffect(() => {
-  if (antiCheatEnabled && quizStarted) {
-    document.addEventListener('visibilitychange', detectTabSwitch);
-    window.addEventListener('blur', detectTabSwitch);
-    document.addEventListener('contextmenu', detectRightClick);
-    document.addEventListener('keydown', detectKeyboardShortcuts);
-    document.addEventListener('paste', preventPaste);
-    
-    detectDevTools(); // Starts interval monitoring
-    
-    return () => {
-      // Cleanup listeners on unmount
-      document.removeEventListener('visibilitychange', detectTabSwitch);
-      // ... (all other listeners)
-    };
-  }
-}, [antiCheatEnabled, quizStarted]);
-```
-
----
-
-### Backend: simple_progress_service.py
-
-**Save Violations to Firestore:**
-```python
-def save_violations(self, user_id: str, course_id: str, violations: list):
-    """Save anti-cheat violations to Firestore"""
-    doc_id = f"{user_id}_{course_id}_progress"
-    
-    self.db.collection('user_course_progress').document(doc_id).set({
-        'violations': violations
-    }, merge=True)
-    
-    return {"success": True, "violation_count": len(violations)}
-```
-
-**Get Violations from Firestore:**
-```python
-def get_violations(self, user_id: str, course_id: str):
-    """Retrieve anti-cheat violations from Firestore"""
-    doc_id = f"{user_id}_{course_id}_progress"
-    doc = self.db.collection('user_course_progress').document(doc_id).get()
-    
-    if doc.exists:
-        return doc.to_dict().get('violations', [])
-    return []
-```
-
-**NFT Eligibility Check:**
-```python
-def check_anti_cheat_eligibility(self, user_id: str, course_id: str):
-    """Check if user has clean anti-cheat record"""
-    violations = self.get_violations(user_id, course_id)
-    return len(violations) == 0  # Must have ZERO violations
-```
-
----
-
-## 📊 Violation Management
-
-### Violation Object Structure
-```javascript
-{
-  type: "Tab/Window Switch Detected",
-  timestamp: 1698245837000,
-  date: "10/25/2023, 3:30:37 PM"
-}
-```
-
-### 3-Strike Policy
-
-| Violations | Status | Actions Available |
-|-----------|--------|-------------------|
-| 0 | ✅ Clean Record | Quiz, Coding, NFT Minting |
-| 1 | ⚠️ First Warning | Quiz, Coding, No NFT |
-| 2 | ⚠️ Second Warning | Quiz, Coding, No NFT |
-| 3+ | ❌ Blocked | No Quiz, No Coding, No NFT |
-
-**Quiz Blocking After 3 Violations:**
-```javascript
-if (violations.length >= MAX_VIOLATIONS) {
-  setQuizBlocked(true);
-  showToast('❌ Too many anti-cheat violations! Cannot continue.', 'error');
-  // Disable all quiz interactions
-}
-```
-
----
-
-## ⚙️ Configuration
-
-### Feature Toggles: `frontend/src/config/features.js`
-
-```javascript
-export const FEATURES = {
-  QUIZ_ANTI_CHEAT: true,  // Enable anti-cheat for quizzes
-  QUIZ_TESTING_MODE: false, // Admin bypass (disable anti-cheat)
-  // ... other features
-};
-
-export const isQuizAntiCheatEnabled = () => FEATURES.QUIZ_ANTI_CHEAT;
-export const isQuizTestingMode = () => FEATURES.QUIZ_TESTING_MODE;
-```
-
-**Production Settings:**
-- `QUIZ_ANTI_CHEAT`: `true` (Always enabled)
-- `QUIZ_TESTING_MODE`: `false` (Never enabled for students)
-
-**Development Settings:**
-- `QUIZ_ANTI_CHEAT`: `true`
-- `QUIZ_TESTING_MODE`: `true` (For testing by developers)
-
----
-
-## 🔥 Firebase Integration
-
-### Firestore Collection: `user_course_progress`
-
-**Document ID**: `{user_id}_{course_id}_progress`
-
-**Document Structure:**
-```javascript
-{
-  user_id: "user_123",
+POST /assessment/{course_id}/anti-cheat/report
+Body: {
+  user_id: "user123",
   course_id: "data-structures",
-  violations: [
-    {
-      type: "Tab/Window Switch Detected",
-      timestamp: 1698245837000,
-      date: "10/25/2023, 3:30:37 PM"
-    },
-    {
-      type: "Forbidden key combination: Ctrl+C",
-      timestamp: 1698245912000,
-      date: "10/25/2023, 3:31:52 PM"
-    }
-  ],
-  quiz_score: 88,
-  completion_percentage: 95,
-  // ... other progress data
+  assessment_type: "quiz" | "coding",
+  violation_type: "Tab Switch",
+  timestamp: "2025-11-01T12:00:00Z"
+}
+
+↓
+AntiCheatService.report_violation()
+  ├─ AssessmentRepository.record_violation()
+  │    └─ Save to anti_cheat_events collection (UUID)
+  ├─ Get total violation count
+  └─ Check blocking thresholds:
+       └─ If ≥3 violations → Create block
+```
+
+### 3. Progressive Blocking
+
+**Thresholds:**
+
+| Violation Count | Block Duration | Action |
+|----------------|----------------|--------|
+| 1-2 violations | No block | Warning only |
+| 3 violations | 15 minutes | First block |
+| 5 violations | 30 minutes | Extended block |
+| 7+ violations | 60 minutes | Maximum block |
+
+**Block Creation:**
+```
+AntiCheatService.create_block()
+  └─ AssessmentRepository.create_block()
+       ├─ Document ID: {user_id}_{course_id}_{assessment_type}_block
+       ├─ block_end_time: current_time + duration_minutes
+       ├─ violation_count: total violations
+       └─ is_active: true
+```
+
+### 4. Block Enforcement
+
+**Frontend Auto-Block:**
+```javascript
+// Check after each violation
+if (violations.length >= MAX_VIOLATIONS) {
+  blockQuizAccess() // or blockChallengeAccess()
+  ├─ Set blocked state
+  ├─ Start countdown timer
+  ├─ Disable submit button
+  └─ Show block message with time remaining
 }
 ```
 
-### API Endpoints
+**Backend Validation:**
+```
+Before quiz/coding submission:
+  ├─ GET /assessment/{course_id}/anti-cheat/status
+  ├─ Check is_blocked status
+  └─ If blocked:
+       ├─ Return 403 Forbidden
+       ├─ Return time_remaining_ms
+       └─ Reject submission
+```
 
-**Save Violations:**
-```http
-POST /progress/violations/save
-Content-Type: application/json
+### 5. Block Expiration
+
+**Auto-Clear (Frontend):**
+```javascript
+// Countdown timer in QuizPage/CodingChallengePage
+useEffect(() => {
+  if (blockEndTime && timeRemaining > 0) {
+    interval = setInterval(() => {
+      remaining = blockEndTime - now
+      
+      if (remaining <= 0) {
+        ├─ Set blocked = false
+        ├─ Clear violations array
+        ├─ POST /anti-cheat/clear (backend cleanup)
+        └─ Allow new quiz/coding attempt
+      }
+    }, 1000)
+  }
+}, [blockEndTime])
+```
+
+**Backend Status Check:**
+```python
+AssessmentRepository.get_block_status()
+  ├─ Fetch block document
+  ├─ Check block_end_time > now
+  └─ If expired:
+       ├─ Set is_active = false
+       └─ Return is_blocked = false
+```
+
+---
+
+## Data Models
+
+### Violation Event (Firestore)
+
+```javascript
+// Collection: anti_cheat_events
+// Document ID: UUID (auto-generated)
 
 {
-  "user_id": "user_123",
-  "course_id": "data-structures",
-  "violations": [...]
+  id: "550e8400-e29b-41d4-a716-446655440000",
+  user_id: "user123@example.com",
+  course_id: "data-structures",
+  assessment_type: "quiz",  // or "coding"
+  event_type: "violation",
+  violation_type: "Tab Switch",
+  timestamp: "2025-11-01T12:00:00.000Z",
+  created_at: Timestamp  // Firestore server timestamp
 }
 ```
 
-**Get Violations:**
-```http
-GET /progress/violations/{user_id}/{course_id}
+### Block Event (Firestore)
+
+```javascript
+// Collection: anti_cheat_events
+// Document ID: {user_id}_{course_id}_{assessment_type}_block
+
+{
+  id: "user123_data-structures_quiz_block",
+  user_id: "user123@example.com",
+  course_id: "data-structures",
+  assessment_type: "quiz",  // or "coding"
+  event_type: "block",
+  violation_count: 3,
+  block_end_time: Timestamp("2025-11-01T12:15:00.000Z"),
+  blocked_at: Timestamp("2025-11-01T12:00:00.000Z"),
+  is_active: true
+}
+```
+
+---
+
+## API Endpoints
+
+### Report Violation
+```
+POST /assessment/{course_id}/anti-cheat/report
+
+Request Body:
+{
+  "user_id": "user123",
+  "course_id": "data-structures",
+  "assessment_type": "quiz",
+  "violation_type": "Tab Switch",
+  "timestamp": "2025-11-01T12:00:00Z"
+}
 
 Response:
-[
-  { "type": "Tab Switch", "timestamp": 1698245837000, ... },
-  ...
-]
+{
+  "success": true,
+  "data": {
+    "id": "uuid",
+    "violation_type": "Tab Switch",
+    "created_at": "timestamp"
+  }
+}
 ```
 
-**Delete Violations (Admin Only):**
-```http
-DELETE /progress/violations/{user_id}/{course_id}
+### Check Status
+```
+GET /assessment/{course_id}/anti-cheat/status
+Query Params: ?user_id={id}&assessment_type={quiz|coding}
 
-Response: { "success": true }
+Response:
+{
+  "success": true,
+  "data": {
+    "violations": [
+      {
+        "id": "uuid",
+        "violation_type": "Tab Switch",
+        "timestamp": "2025-11-01T12:00:00Z"
+      }
+    ],
+    "violation_count": 3,
+    "is_blocked": true,
+    "block_end_time": "2025-11-01T12:15:00Z",
+    "time_remaining_ms": 900000  // 15 minutes in milliseconds
+  }
+}
+```
+
+### Clear Violations
+```
+POST /assessment/{course_id}/anti-cheat/clear
+Query Params: ?user_id={id}&assessment_type={quiz|coding}
+
+Response:
+{
+  "success": true,
+  "data": {
+    "violations_cleared": 3,
+    "block_cleared": true,
+    "timestamp": "2025-11-01T12:15:00Z"
+  }
+}
 ```
 
 ---
 
-## 🎓 NFT Eligibility Enforcement
+## Feature Flags
 
-### Minting Requirements
-To mint an NFT certificate, users must have:
-1. ✅ Quiz Score ≥ 85%
-2. ✅ Completion ≥ 90%
-3. ✅ **ZERO Anti-Cheat Violations**
+**Configuration File:** `frontend/src/config/features.js`
 
-### Backend Validation: `blockchain.py`
-
-```python
-@router.post("/mint")
-async def mint_certificate(request: MintRequest):
-    # 1. Check quiz score
-    if quiz_score < 85:
-        raise HTTPException(400, "Quiz score must be ≥85%")
-    
-    # 2. Check completion
-    if completion < 90:
-        raise HTTPException(400, "Completion must be ≥90%")
-    
-    # 3. Check anti-cheat violations
-    violations = progress_service.get_violations(user_id, course_id)
-    if len(violations) > 0:
-        raise HTTPException(
-            400, 
-            f"Cannot mint NFT. {len(violations)} anti-cheat violation(s) detected."
-        )
-    
-    # Proceed with minting...
-```
-
-### Frontend Validation: `CertificationsContent.jsx`
-
+### Quiz Anti-Cheat
 ```javascript
-const isEligible = useMemo(() => {
-  const hasQuizScore = quizScore?.score >= 85;
-  const hasCompletion = completionPercentage >= 90;
-  const hasCleanRecord = violations.length === 0;
-  
-  return hasQuizScore && hasCompletion && hasCleanRecord;
-}, [quizScore, completionPercentage, violations]);
+QUIZ_ANTI_CHEAT_ENABLED: true   // Enable/disable anti-cheat
+QUIZ_TESTING_MODE: false         // Bypass anti-cheat for testing
 ```
 
-**Eligibility Display:**
-```jsx
-{violations.length > 0 && (
-  <div className="bg-red-900/30 border border-red-500/50 rounded-lg p-4">
-    <div className="text-red-400 font-quantico-bold mb-2">
-      ❌ NFT Ineligible - Anti-Cheat Violations Detected
-    </div>
-    <div className="text-gray-300 text-sm">
-      You have {violations.length} violation(s). Clean record required for NFT minting.
-    </div>
-  </div>
-)}
-```
+**Behavior:**
+- `QUIZ_ANTI_CHEAT_ENABLED = true` → Full anti-cheat monitoring active
+- `QUIZ_TESTING_MODE = true` → Violations detected but not enforced (testing only)
+- Both `false` → No anti-cheat (not recommended for production)
 
----
-
-## 🧪 Testing Mode
-
-### Purpose
-Allows developers to test quiz functionality without triggering anti-cheat violations.
-
-### Configuration
+### Usage in Code
 ```javascript
-export const FEATURES = {
-  QUIZ_TESTING_MODE: true  // Set to true for development
-};
+import { isQuizAntiCheatEnabled, isQuizTestingMode } from './config/features';
+
+const antiCheatEnabled = isQuizAntiCheatEnabled() && !isQuizTestingMode();
+
+if (antiCheatEnabled) {
+  // Add event listeners and track violations
+}
 ```
 
-### Behavior When Enabled
-- ✅ All anti-cheat detections disabled
-- ✅ Violations not logged to Firebase
-- ✅ Tab switching allowed
-- ✅ Copy/paste allowed
-- ✅ DevTools allowed
-- ✅ Reset violations button visible
+---
 
-### Reset Violations Button (Testing Only)
-```javascript
-{testingMode && (
-  <button
-    onClick={resetViolations}
-    className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg"
-  >
-    🔄 Reset Violations (Testing)
-  </button>
-)}
+## User Experience
+
+### Warning System
+
+**Visual Indicators:**
+- 🔴 **Red Warning Bar:** Appears when violation detected
+- **Violation Counter:** Shows `(1/3)`, `(2/3)`, `(3/3)`
+- **Toast Notifications:** "⚠️ Violation detected: Tab Switch (2/3)"
+
+**Progressive Warnings:**
+```
+1st Violation → Yellow warning: "Warning: 1 violation detected"
+2nd Violation → Orange warning: "Caution: 2 violations detected (1 more = block)"
+3rd Violation → Red alert: "Blocked for 15 minutes"
 ```
 
-**IMPORTANT:** `QUIZ_TESTING_MODE` must be `false` in production!
+### Block UI
+
+**Quiz Block Screen:**
+```
+┌─────────────────────────────────────────┐
+│   🚫 Quiz Access Blocked                │
+│                                         │
+│   You have exceeded the maximum number  │
+│   of violations (3).                    │
+│                                         │
+│   Time Remaining: 14:32                 │
+│                                         │
+│   Please wait before retrying.          │
+│                                         │
+│   Violations:                           │
+│   • Tab Switch (12:00:05)               │
+│   • Copy Attempt (12:01:23)             │
+│   • Right-click (12:02:45)              │
+└─────────────────────────────────────────┘
+```
+
+**Coding Challenge Block Screen:**
+```
+┌─────────────────────────────────────────┐
+│   ⚠️ Challenge Access Blocked           │
+│                                         │
+│   Anti-cheat violations detected.       │
+│   Cooldown: 14:32 remaining             │
+│                                         │
+│   [Clear Violations] (Testing Mode Only)│
+└─────────────────────────────────────────┘
+```
 
 ---
 
-## 🔮 Future Enhancements
+## System Constraints
 
-### 1. **AI-Powered Plagiarism Detection** 🔜
-- Analyze quiz answer patterns for similarity
-- Cross-reference with known cheat sources
-- Detect copy/paste from external websites
+**Assessment Context:**
+- Violations only tracked when quiz/coding is **actively started**
+- Browsing quiz page before starting does NOT trigger violations
+- Violations cleared when user returns to page after block expiry
 
-### 2. **Webcam Proctoring** 🔜
-- Face detection to ensure single person
-- Eye-tracking for suspicious behavior
-- Movement alerts
+**Testing Mode:**
+- `QUIZ_TESTING_MODE = true` disables all enforcement
+- Violations still logged but not counted
+- Used for development/debugging only
 
-### 3. **Screen Recording** 🔜
-- Record entire quiz session
-- Review flagged sessions manually
-- Store recordings for audit trail
+**Block Behavior:**
+- Blocks are time-based, not attempt-based
+- User can retry immediately after block expires
+- Violations reset after successful completion
 
-### 4. **Behavioral Analytics** 🔜
-- Answer time patterns (too fast = suspicious)
-- Mouse movement analysis
-- Typing speed consistency
+**Scope:**
+- Anti-cheat only applies to quiz and coding assessments
+- Does NOT monitor learning modules, course reading, AI chat, or profile pages
 
-### 5. **Code Plagiarism Detection** 🔜
-- Compare coding solutions against known solutions
-- Detect copy/paste from GitHub, StackOverflow
-- Check variable naming patterns
-
-### 6. **Multi-Device Detection** 🔜
-- Detect same user on multiple devices
-- Block simultaneous quiz attempts
-
-### 7. **Advanced Reporting Dashboard** 🔜
-- Admin panel to review all violations
-- User violation history across courses
-- Export reports for academic integrity board
+**Database:**
+- Violation records are append-only (immutable)
+- Block records auto-expire based on timestamp
+- Manual clearing available via testing mode only
 
 ---
 
-## 📈 Statistics & Metrics
+## Visual System Diagram
 
-### Current Implementation (October 25, 2025)
-- ✅ **5 Detection Methods** (Tab, Right-click, Keyboard, DevTools, Paste)
-- ✅ **3-Strike Policy** enforced with quiz blocking
-- ✅ **Firebase Persistence** for all violations
-- ✅ **Real-time Toast Notifications** for user feedback
-- ✅ **NFT Minting Block** for violators (zero tolerance)
-- ✅ **Testing Mode** for development/debugging
-- ✅ **Full-Width Responsive Layout** adapts to sidebar state
+```
+┌───────────────────────────────────────────────────────────────────────┐
+│                    ANTI-CHEAT SYSTEM ARCHITECTURE                     │
+└───────────────────────────────────────────────────────────────────────┘
 
-### Detection Coverage
-| Attack Vector | Detection | Blocking | Logging |
-|--------------|-----------|----------|---------|
-| Tab Switching | ✅ | ✅ | ✅ |
-| Right-Click | ✅ | ✅ | ✅ |
-| Copy/Paste | ✅ | ✅ | ✅ |
-| DevTools | ✅ | ⚠️ Warning Only | ✅ |
-| Keyboard Shortcuts | ✅ | ✅ | ✅ |
-| External Search | ⚠️ Indirect | ⚠️ Indirect | ✅ |
-| Screen Sharing | ❌ Future | ❌ Future | ❌ Future |
-| Multiple Devices | ❌ Future | ❌ Future | ❌ Future |
+                         ┌──────────────┐
+                         │     USER     │
+                         │  (Browser)   │
+                         └──────┬───────┘
+                                │
+                    Suspicious Activity Detected
+                                │
+        ┌───────────────────────┴────────────────────────┐
+        │                                                │
+        ▼                                                ▼
+┌──────────────────┐                          ┌──────────────────┐
+│   QuizPage.jsx   │                          │CodingChallenge   │
+│                  │                          │  Page.jsx        │
+├──────────────────┤                          ├──────────────────┤
+│ Event Listeners: │                          │ Event Listeners: │
+│ • visibilitychange│                         │ • visibilitychange│
+│ • contextmenu    │                          │ • copy           │
+│ • keydown        │                          │ • paste          │
+│ • blur/focus     │                          │ • blur           │
+│ • fullscreenchange│                         └────────┬─────────┘
+└────────┬─────────┘                                   │
+         │                                             │
+         └─────────────────┬───────────────────────────┘
+                           │
+                    addViolation(type)
+                           │
+                ┌──────────┴─────────┐
+                │                    │
+         Check Conditions:           │
+         ├─ Quiz/Coding Started?     │
+         ├─ At MAX_VIOLATIONS?       │
+         └─ Anti-Cheat Enabled?      │
+                │                    │
+                ▼                    │
+         Create Violation            │
+         Object:                     │
+         {                           │
+           type,                     │
+           timestamp,                │
+           id                        │
+         }                           │
+                │                    │
+                ├─ Update Local      │
+                │  State (UI)        │
+                │                    │
+                └─ Send to Backend ──┘
+                           │
+                           ▼
+        ┌──────────────────────────────────┐
+        │   FastAPI Backend                │
+        │   POST /anti-cheat/report        │
+        └──────────┬───────────────────────┘
+                   │
+                   ▼
+        ┌──────────────────────────────────┐
+        │   AntiCheatService               │
+        │   report_violation()             │
+        └──────────┬───────────────────────┘
+                   │
+        ┌──────────┴────────────────────┐
+        │                               │
+        ▼                               ▼
+┌────────────────┐            ┌──────────────────┐
+│AssessmentRepo  │            │  Get Violation   │
+│record_violation│            │  Count           │
+└───────┬────────┘            └────────┬─────────┘
+        │                              │
+        ▼                              ▼
+┌─────────────────────────┐   Check Thresholds:
+│ anti_cheat_events       │   ├─ 3 violations → 15min
+│ collection              │   ├─ 5 violations → 30min
+│                         │   └─ 7+ violations → 60min
+│ Document (Violation):   │            │
+│ {                       │            ▼
+│   id: UUID,             │   ┌─────────────────┐
+│   user_id,              │   │  Create Block   │
+│   course_id,            │   │  (if threshold  │
+│   assessment_type,      │   │   reached)      │
+│   event_type: "violation"│  └────────┬────────┘
+│   violation_type,       │            │
+│   timestamp             │            ▼
+│ }                       │   ┌─────────────────────────┐
+└─────────────────────────┘   │ anti_cheat_events       │
+                              │ collection              │
+                              │                         │
+                              │ Document (Block):       │
+                              │ {                       │
+                              │   id: composite_key,    │
+                              │   user_id,              │
+                              │   course_id,            │
+                              │   assessment_type,      │
+                              │   event_type: "block",  │
+                              │   violation_count,      │
+                              │   block_end_time,       │
+                              │   is_active: true       │
+                              │ }                       │
+                              └────────┬────────────────┘
+                                       │
+                                       ▼
+                              ┌─────────────────┐
+                              │  Return Status  │
+                              │  to Frontend    │
+                              └────────┬────────┘
+                                       │
+                                       ▼
+                              ┌─────────────────┐
+                              │  Frontend UI    │
+                              ├─────────────────┤
+                              │ if blocked:     │
+                              │ ├─ Show timer   │
+                              │ ├─ Disable submit│
+                              │ └─ Show violations│
+                              │                 │
+                              │ if not blocked: │
+                              │ ├─ Show warning │
+                              │ └─ Allow continue│
+                              └─────────────────┘
 
-### Performance Metrics
-- **Detection Latency**: < 100ms (instant user feedback)
-- **Firebase Write**: < 500ms (violations saved to cloud)
-- **Memory Overhead**: Minimal (event listeners only)
-- **False Positive Rate**: < 1% (DevTools detection occasionally triggers)
+
+═══════════════════════════════════════════════════════════════════════
+                        VIOLATION FLOW SEQUENCE
+═══════════════════════════════════════════════════════════════════════
+
+  User starts quiz/coding
+         │
+         ▼
+  ┌─────────────────┐
+  │ Anti-Cheat      │
+  │ Listeners       │
+  │ Activated       │
+  └────────┬────────┘
+           │
+    ┌──────┴────────────────────────────┐
+    │                                   │
+    ▼                                   ▼
+Violation 1:                    Violation 2:
+Tab Switch                      Copy Attempt
+    │                                   │
+    ├─ addViolation()                   ├─ addViolation()
+    ├─ Local: violations = [V1]         ├─ Local: violations = [V1, V2]
+    ├─ Backend: Save to Firestore       ├─ Backend: Save to Firestore
+    └─ UI: Show warning (1/3)           └─ UI: Show warning (2/3)
+                                               │
+                                               ▼
+                                        Violation 3:
+                                        Right-click
+                                               │
+                                        ┌──────┴─────────┐
+                                        │                │
+                                 addViolation()          │
+                                        │                │
+                                 Check: count >= 3?      │
+                                        │                │
+                                        ▼                │
+                                    ┌──YES               │
+                                    │                    │
+                                    ▼                    │
+                            blockQuizAccess()            │
+                            ├─ Set blocked = true        │
+                            ├─ blockEndTime = now + 15min│
+                            ├─ Disable submit button     │
+                            └─ Show block UI             │
+                                    │                    │
+                                    │                    │
+                        Backend: create_block()          │
+                        ├─ Save block record             │
+                        ├─ block_end_time = T + 15min    │
+                        └─ is_active = true              │
+                                    │                    │
+                                    │                    │
+                            ┌───────┴────────┐           │
+                            │                │           │
+                         Timer Loop          │           │
+                      (every 1 second)       │           │
+                            │                │           │
+                            ▼                │           │
+                    remaining = end - now    │           │
+                            │                │           │
+                    if remaining <= 0:       │           │
+                    ├─ blocked = false       │           │
+                    ├─ violations = []       │           │
+                    ├─ POST /clear           │           │
+                    └─ Allow retry           │           │
+                            │                │           │
+                            └────────────────┴───────────┘
+                                      │
+                                      ▼
+                              User can retry quiz/coding
+
+
+═══════════════════════════════════════════════════════════════════════
+                          BLOCK EXPIRATION FLOW
+═══════════════════════════════════════════════════════════════════════
+
+  Block Created (block_end_time = T + 15min)
+         │
+         ▼
+  ┌─────────────────────────────────────┐
+  │ Frontend Countdown Timer            │
+  │ useEffect([blockEndTime])           │
+  │                                     │
+  │ setInterval(() => {                 │
+  │   remaining = blockEndTime - now    │
+  │   setTimeRemaining(remaining)       │
+  │                                     │
+  │   if (remaining <= 0) {             │
+  │     ├─ Set blocked = false          │
+  │     ├─ Clear violations             │
+  │     └─ POST /anti-cheat/clear       │
+  │   }                                 │
+  │ }, 1000)                            │
+  └──────────────┬──────────────────────┘
+                 │
+                 ▼ (after 15 minutes)
+  ┌─────────────────────────────────────┐
+  │ POST /anti-cheat/clear              │
+  │ Query: user_id, course_id, type     │
+  └──────────────┬──────────────────────┘
+                 │
+                 ▼
+  ┌─────────────────────────────────────┐
+  │ Backend: clear_violations_and_block │
+  │                                     │
+  │ 1. Delete all violation events      │
+  │    (event_type = "violation")       │
+  │                                     │
+  │ 2. Delete block event               │
+  │    (composite key)                  │
+  │                                     │
+  │ 3. Return: {                        │
+  │      violations_cleared: 3,         │
+  │      block_cleared: true            │
+  │    }                                │
+  └──────────────┬──────────────────────┘
+                 │
+                 ▼
+  ┌─────────────────────────────────────┐
+  │ Frontend State Update               │
+  │ ├─ violations = []                  │
+  │ ├─ blocked = false                  │
+  │ ├─ blockEndTime = null              │
+  │ └─ Allow quiz/coding retry          │
+  └─────────────────────────────────────┘
+         │
+         ▼
+  User can start new attempt
+  (fresh violation tracking)
+```
 
 ---
 
-## 🎨 UI/UX Integration
-
-### Responsive Design
-- **Quiz Page Layout**: Full-width when sidebar collapses for distraction-free testing
-- **Violation Display**: Real-time counter with visual warnings
-- **Toast Notifications**: Professional emerald-themed alerts
-- **Blocked State**: Clear messaging when 3 violations reached
-
-### Visual Feedback
-- **First Violation**: ⚠️ Yellow toast warning
-- **Second Violation**: ⚠️ Orange toast warning
-- **Third Violation**: ❌ Red toast + quiz blocked
-- **Clean Record**: ✅ Green badge on certificate page
-
-### User Experience
-- **Clear Communication**: Each violation type explained in toast
-- **Fair Policy**: 3 strikes allows for accidental triggers
-- **Testing Mode**: Developers can test without triggering violations
-- **Transparency**: Full violation history visible to user
-
----
-
-## 📊 Effectiveness Analysis
-
-### Academic Integrity Impact
-- **Deterrent Effect**: Visible anti-cheat warnings reduce cheating attempts
-- **Enforcement**: 3-strike policy balances fairness with security
-- **NFT Protection**: Only clean records earn certificates (100% enforcement)
-- **User Trust**: Transparent system builds confidence in platform
-
-### Technical Effectiveness
-- **Coverage**: 5 primary cheating vectors blocked
-- **Accuracy**: High precision with minimal false positives
-- **Reliability**: Firebase ensures violations persist across sessions
-- **Scalability**: Event-driven architecture handles concurrent users
-
-### Limitations & Mitigations
-- **Advanced Cheating**: Multiple devices, phone camera on answers (planned: webcam proctoring)
-- **DevTools Detection**: Not foolproof (planned: AI behavior analysis)
-- **Offline Cheating**: External notes/books (partially mitigated by tab detection)
-
----
-
-## 🔐 Security Considerations
-
-### Backend Validation
-- ✅ All violations validated and stored server-side (can't bypass frontend)
-- ✅ Eligibility checks happen on backend before NFT minting
-- ✅ Firebase security rules prevent unauthorized violation deletion
-- 🔜 Admin dashboard for violation review (planned)
-
-### Privacy & Ethics
-- ✅ No webcam/audio recording (respects user privacy)
-- ✅ Violations stored securely in Firebase (GDPR compliant)
-- ✅ Clear policy communicated before quiz starts
----
-
-## 🎯 Summary
-
-Signum's Anti-Cheat System provides **robust, real-time monitoring** for quizzes and coding challenges. With **Firebase-backed persistence**, a **strict 3-strike policy**, and **NFT minting enforcement**, academic integrity is maintained throughout the learning journey.
-
-**Zero Tolerance for NFT Minting**: Only students with clean records can earn blockchain-verified certificates, ensuring **trustless verification** of genuine achievement.
-
-**Balanced Approach**: Fair 3-strike policy prevents accidental triggers while maintaining strong security.
-
-**Production-Ready**: Fully integrated with full-width responsive layout and professional UI/UX.
-
-
+*This anti-cheat system provides robust academic integrity monitoring while maintaining clear constraints and user-friendly violation management.*

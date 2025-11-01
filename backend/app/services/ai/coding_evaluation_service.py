@@ -23,8 +23,12 @@ class CodingEvaluationService:
             'test_cases': [
                 {'input': '0', 'expected_output': '1'},
                 {'input': '1', 'expected_output': '1'},
+                {'input': '2', 'expected_output': '2'},
+                {'input': '3', 'expected_output': '6'},
+                {'input': '4', 'expected_output': '24'},
                 {'input': '5', 'expected_output': '120'},
                 {'input': '10', 'expected_output': '3628800'},
+                {'input': '12', 'expected_output': '479001600'},
                 {'input': '15', 'expected_output': '1307674368000'},
                 {'input': '20', 'expected_output': '2432902008176640000'},
             ],
@@ -87,8 +91,11 @@ class CodingEvaluationService:
             test_results = self._run_test_cases(code, language, problem['test_cases'])
             
             # Calculate test pass rate
+            # 10 test cases, each worth 5 points = 50 points total
+            # Then scaled to 100 (multiply by 2)
             passed_tests = sum(1 for t in test_results if t['passed'])
-            test_score = (passed_tests / len(test_results)) * 100
+            test_score_raw = passed_tests * 5  # Each test = 5 points (out of 50)
+            test_score = test_score_raw * 2  # Scale to 100
             
             # Step 2: Calculate anti-cheat penalty
             anti_cheat_penalty = self._calculate_anti_cheat_penalty(anti_cheat_data)
@@ -278,7 +285,12 @@ class CodingEvaluationService:
         # Test results summary
         passed = sum(1 for t in test_results if t['passed'])
         total = len(test_results)
+        raw_points = passed * 5  # Each test = 5 points
+        scaled_points = raw_points * 2  # Scaled to 100
+        
         feedback_parts.append(f"Test Cases: {passed}/{total} passed")
+        feedback_parts.append(f"Raw Score: {passed} × 5 = {raw_points} points (out of 50)")
+        feedback_parts.append(f"Scaled Score: {raw_points} × 2 = {scaled_points}%")
         
         # Complexity reference (not evaluated)
         feedback_parts.append(f"\nExpected Time Complexity: {complexity_info.get('expected_time', 'Unknown')}")
@@ -290,18 +302,17 @@ class CodingEvaluationService:
             feedback_parts.append(f"\n⚠ Anti-cheat penalty: -{anti_cheat_penalty}%")
         
         # Score breakdown
-        test_percentage = (passed/total)*100
-        feedback_parts.append(f"\nScore: Test Cases ({test_percentage:.1f}%) - Penalty ({anti_cheat_penalty}%) = {final_score}%")
+        feedback_parts.append(f"\nFinal Score: {scaled_points}% - {anti_cheat_penalty}% = {final_score}%")
         
         # Encouragement
         if final_score >= 90:
-            feedback_parts.append("🌟 Excellent!")
+            feedback_parts.append("🌟 Excellent! Perfect or near-perfect solution!")
         elif final_score >= 70:
-            feedback_parts.append("👍 Good job!")
+            feedback_parts.append("👍 Good job! Strong performance!")
         elif final_score >= 50:
-            feedback_parts.append("📚 Keep practicing!")
+            feedback_parts.append("📚 Passing! Keep practicing for better scores!")
         else:
-            feedback_parts.append("💪 Review and try again!")
+            feedback_parts.append("💪 Review and try again! You can do better!")
         
         return '\n'.join(feedback_parts)
     

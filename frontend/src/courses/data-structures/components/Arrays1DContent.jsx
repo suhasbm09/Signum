@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CheckCircle2, Clock, TrendingUp, AlertCircle } from 'lucide-react';
 import CompletionTracker from '../../../components/CompletionTracker';
 import Array1DVisualization from '../visualizations/Array1DVisualization';
@@ -13,6 +13,11 @@ const Arrays1DContent = ({ onNavigate, courseId }) => {
   const [deleteLang, setDeleteLang] = useState('python');
   const [searchLang, setSearchLang] = useState('python');
   const [traversalLang, setTraversalLang] = useState('python');
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   // Language selector component
   const LanguageSelector = ({ currentLang, setLang }) => (
@@ -1026,14 +1031,23 @@ public class ArrayTraversal {
                 <h3 className="text-xl font-semibold text-emerald-300">1. Two Sum</h3>
                 <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-sm">Easy</span>
               </div>
-              <p className="text-gray-300 mb-3">
+              <p className="text-gray-300 mb-4">
                 Given an array of integers and a target sum, return indices of two numbers that add up to the target.
               </p>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2 flex-wrap mb-4">
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Google</span>
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Amazon</span>
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Microsoft</span>
               </div>
+              <a 
+                href="https://leetcode.com/problems/two-sum/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-semibold rounded-lg transition-all duration-300 hover:scale-105"
+              >
+                <span>Solve on LeetCode</span>
+                <span>→</span>
+              </a>
             </div>
 
             {/* Problem 2 */}
@@ -1042,14 +1056,23 @@ public class ArrayTraversal {
                 <h3 className="text-xl font-semibold text-emerald-300">2. Maximum Subarray Sum</h3>
                 <span className="px-3 py-1 bg-yellow-500/20 text-yellow-300 rounded-full text-sm">Medium</span>
               </div>
-              <p className="text-gray-300 mb-3">
+              <p className="text-gray-300 mb-4">
                 Find the contiguous subarray with the largest sum (Kadane's Algorithm).
               </p>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2 flex-wrap mb-4">
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Amazon</span>
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Microsoft</span>
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Apple</span>
               </div>
+              <a 
+                href="https://leetcode.com/problems/maximum-subarray/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-semibold rounded-lg transition-all duration-300 hover:scale-105"
+              >
+                <span>Solve on LeetCode</span>
+                <span>→</span>
+              </a>
             </div>
 
             {/* Problem 3 */}
@@ -1058,13 +1081,22 @@ public class ArrayTraversal {
                 <h3 className="text-xl font-semibold text-emerald-300">3. Rotate Array</h3>
                 <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-sm">Easy</span>
               </div>
-              <p className="text-gray-300 mb-3">
+              <p className="text-gray-300 mb-4">
                 Rotate an array to the right by k steps, where k is non-negative.
               </p>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2 flex-wrap mb-4">
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Google</span>
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Facebook</span>
               </div>
+              <a 
+                href="https://leetcode.com/problems/rotate-array/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-semibold rounded-lg transition-all duration-300 hover:scale-105"
+              >
+                <span>Solve on LeetCode</span>
+                <span>→</span>
+              </a>
             </div>
 
             {/* Problem 4 */}
@@ -1073,13 +1105,22 @@ public class ArrayTraversal {
                 <h3 className="text-xl font-semibold text-emerald-300">4. Find Duplicate Number</h3>
                 <span className="px-3 py-1 bg-yellow-500/20 text-yellow-300 rounded-full text-sm">Medium</span>
               </div>
-              <p className="text-gray-300 mb-3">
+              <p className="text-gray-300 mb-4">
                 Given an array containing n+1 integers where each integer is between 1 and n, find the duplicate number.
               </p>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2 flex-wrap mb-4">
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Microsoft</span>
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Amazon</span>
               </div>
+              <a 
+                href="https://leetcode.com/problems/find-the-duplicate-number/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-semibold rounded-lg transition-all duration-300 hover:scale-105"
+              >
+                <span>Solve on LeetCode</span>
+                <span>→</span>
+              </a>
             </div>
 
             {/* Problem 5 */}
@@ -1088,14 +1129,23 @@ public class ArrayTraversal {
                 <h3 className="text-xl font-semibold text-emerald-300">5. Merge Sorted Arrays</h3>
                 <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-sm">Easy</span>
               </div>
-              <p className="text-gray-300 mb-3">
+              <p className="text-gray-300 mb-4">
                 Merge two sorted arrays into one sorted array efficiently.
               </p>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2 flex-wrap mb-4">
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Google</span>
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Facebook</span>
                 <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">Amazon</span>
               </div>
+              <a 
+                href="https://leetcode.com/problems/merge-sorted-array/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-semibold rounded-lg transition-all duration-300 hover:scale-105"
+              >
+                <span>Solve on LeetCode</span>
+                <span>→</span>
+              </a>
             </div>
 
           </div>
@@ -1141,28 +1191,20 @@ public class ArrayTraversal {
         </section>
 
         {/* Next Steps */}
-        <section className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-2xl p-8 border border-emerald-500/30">
-          <h2 className="text-3xl font-bold mb-6 text-emerald-400">Next Steps</h2>
-          <p className="text-gray-300 mb-6 text-lg">
-            Now that you've mastered 1D arrays, you're ready to explore more advanced topics:
+        <div className="mt-10 p-6 bg-gradient-to-r from-emerald-500/10 to-green-500/10 border border-emerald-500/30 rounded-xl">
+          <h3 className="text-lg font-quantico-bold text-emerald-300 mb-2 flex items-center gap-2">
+            <span>🚀</span> Next Steps
+          </h3>
+          <p className="text-gray-300 mb-4">
+            Great work! You've mastered 1D arrays. Now let's explore <strong>2D Arrays</strong>!
           </p>
-          
-          {/* Continue Navigation Button */}
           <button
             onClick={() => onNavigate('course', { courseId, topic: 'arrays-2d' })}
-            className="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
+            className="px-6 py-3 bg-gradient-to-r from-emerald-500/20 to-green-500/20 border border-emerald-500/40 text-emerald-300 rounded-lg hover:bg-emerald-500/30 transition-all duration-300 hover-lift"
           >
-            <span className="text-lg">Continue to 2D Arrays →</span>
+            Continue to 2D Arrays →
           </button>
-          
-          <div className="grid md:grid-cols-3 gap-4 mt-6">
-            <div className="bg-gray-800/50 rounded-lg p-4 border border-emerald-500/20 hover:border-emerald-500/40 transition-all cursor-pointer hover-lift">
-              <div className="text-2xl mb-2">📐</div>
-              <h3 className="text-lg font-semibold text-emerald-300 mb-2">2D Arrays</h3>
-              <p className="text-gray-400 text-sm">Matrices and grid-based problems</p>
-            </div>
-          </div>
-        </section>
+        </div>
 
       </div>
 

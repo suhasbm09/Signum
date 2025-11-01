@@ -1,14 +1,19 @@
+"""
+Auth routes - User authentication, profile management
+"""
 from fastapi import APIRouter, HTTPException, Response, Request
-import firebase_admin
 from firebase_admin import auth as firebase_auth, firestore
 from app.services.firebase_admin import initialize_firebase
+from app.repositories.user_repository import UserRepository
+from app.domains.auth.models import ProfileUpdate, WalletUpdate
+from app.domains.auth.account_deletion_service import AccountDeletionService
 import secrets
-from typing import Optional
 
 router = APIRouter()
 
 initialize_firebase()
-db = firestore.client()
+user_repo = UserRepository()
+account_deletion_service = AccountDeletionService()
 sessions = {}
 
 def generate_session_token():
@@ -16,6 +21,7 @@ def generate_session_token():
 
 @router.post("/verify-firebase-token")
 async def verify_firebase_token(request: Request, response: Response):
+    """Verify Firebase ID token and create session"""
     try:
         data = await request.json()
         id_token = data.get('idToken')
@@ -25,24 +31,37 @@ async def verify_firebase_token(request: Request, response: Response):
         
         decoded_token = firebase_auth.verify_id_token(id_token)
         uid = decoded_token['uid']
-        
         user_record = firebase_auth.get_user(uid)
         
-        await save_user_to_firestore(user_record)
+        # Create or update user in database
+        user_data = {
+            'uid': user_record.uid,
+            'email': user_record.email,
+            'displayName': user_record.display_name or '',
+            'photoURL': user_record.photo_url or '',
+            'emailVerified': user_record.email_verified,
+            'accountType': 'student',
+            'coursesEnrolled': [],
+            'certificatesEarned': [],
+            'phantomWalletAddress': '',
+            'isDeleted': False,
+            'deletedAt': None,
+            'profile': {
+                'bio': '',
+                'interests': [],
+                'preferredLanguage': 'en',
+                'timezone': 'UTC'
+            }
+        }
         
-        # Get the saved user data from Firestore to use the custom display name
-        user_ref = db.collection('users').document(user_record.email)
-        user_doc = user_ref.get()
-        saved_display_name = user_record.display_name  # Default to Google name
+        user_repo.create_or_update_user(user_record.email, user_data)
         
-        courses_enrolled = []
-        if user_doc.exists:
-            firestore_data = user_doc.to_dict()
-            # Use saved display name if it exists, otherwise use Google's
-            if 'displayName' in firestore_data and firestore_data['displayName']:
-                saved_display_name = firestore_data['displayName']
-            courses_enrolled = firestore_data.get('coursesEnrolled', [])
+        # Get saved user data
+        saved_user = user_repo.get_by_email(user_record.email)
+        saved_display_name = saved_user.get('displayName', user_record.display_name)
+        courses_enrolled = saved_user.get('coursesEnrolled', [])
         
+        # Create session
         session_token = generate_session_token()
         sessions[session_token] = {
             'uid': uid,
@@ -77,58 +96,9 @@ async def verify_firebase_token(request: Request, response: Response):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Token verification failed: {str(e)}")
 
-async def save_user_to_firestore(user_record):
-    try:
-        user_data = {
-            'uid': user_record.uid,
-            'email': user_record.email,
-            'displayName': user_record.display_name or '',
-            'photoURL': user_record.photo_url or '',
-            'emailVerified': user_record.email_verified,
-            'createdAt': firestore.SERVER_TIMESTAMP,
-            'lastLoginAt': firestore.SERVER_TIMESTAMP,
-            'accountType': 'student',
-            'coursesEnrolled': [],
-            'certificatesEarned': [],
-            'phantomWalletAddress': '',  # For future Solana integration
-            'isDeleted': False,  # Soft delete flag
-            'deletedAt': None,
-            'profile': {
-                'bio': '',
-                'interests': [],
-                'preferredLanguage': 'en',
-                'timezone': 'UTC'
-            }
-        }
-        
-        user_ref = db.collection('users').document(user_record.email)
-        
-        user_doc = user_ref.get()
-        if user_doc.exists:
-            # Update existing user but preserve profile, display name, and wallet data
-            existing_data = user_doc.to_dict()
-            update_data = {
-                'lastLoginAt': firestore.SERVER_TIMESTAMP,
-                'photoURL': user_record.photo_url or ''  # Only update photo, not display name
-            }
-            # Preserve existing profile and wallet data
-            if 'phantomWalletAddress' in existing_data and existing_data['phantomWalletAddress']:
-                update_data['phantomWalletAddress'] = existing_data['phantomWalletAddress']
-            if 'profile' in existing_data:
-                update_data['profile'] = existing_data['profile']
-            # Preserve custom display name if it exists
-            if 'displayName' in existing_data and existing_data['displayName']:
-                update_data['displayName'] = existing_data['displayName']
-            
-            user_ref.update(update_data)
-        else:
-            user_ref.set(user_data)
-            
-    except Exception as e:
-        pass
-
 @router.post("/logout")
 async def logout(response: Response, request: Request):
+    """Logout user and clear session"""
     try:
         session_token = request.cookies.get("session_token")
         
@@ -144,6 +114,7 @@ async def logout(response: Response, request: Request):
 
 @router.get("/me")
 async def get_current_user(request: Request):
+    """Get current authenticated user"""
     try:
         session_token = request.cookies.get("session_token")
         
@@ -152,24 +123,20 @@ async def get_current_user(request: Request):
         
         user_data = sessions[session_token]
         
-        try:
-            user_ref = db.collection('users').document(user_data['email'])
-            user_doc = user_ref.get()
-            if user_doc.exists:
-                firestore_data = user_doc.to_dict()
-                # Check if account is deleted
-                if firestore_data.get('isDeleted', False):
-                    raise HTTPException(status_code=403, detail="Account has been deleted")
-                
-                user_data.update({
-                    'coursesEnrolled': firestore_data.get('coursesEnrolled', []),
-                    'certificatesEarned': firestore_data.get('certificatesEarned', []),
-                    'phantomWalletAddress': firestore_data.get('phantomWalletAddress', ''),
-                    'isDeleted': firestore_data.get('isDeleted', False),
-                    'profile': firestore_data.get('profile', {})
-                })
-        except Exception:
-            pass
+        # Get fresh data from database
+        saved_user = user_repo.get_by_email(user_data['email'])
+        if saved_user:
+            # Check if account is deleted
+            if saved_user.get('isDeleted', False):
+                raise HTTPException(status_code=403, detail="Account has been deleted")
+            
+            user_data.update({
+                'coursesEnrolled': saved_user.get('coursesEnrolled', []),
+                'certificatesEarned': saved_user.get('certificatesEarned', []),
+                'phantomWalletAddress': saved_user.get('phantomWalletAddress', ''),
+                'isDeleted': saved_user.get('isDeleted', False),
+                'profile': saved_user.get('profile', {})
+            })
         
         return {"user": user_data}
         
@@ -180,6 +147,7 @@ async def get_current_user(request: Request):
 
 @router.get("/courses")
 async def list_enrolled_courses(request: Request):
+    """Get enrolled courses for current user"""
     try:
         session_token = request.cookies.get("session_token")
 
@@ -187,14 +155,9 @@ async def list_enrolled_courses(request: Request):
             raise HTTPException(status_code=401, detail="Not authenticated")
 
         user_data = sessions[session_token]
-        user_ref = db.collection('users').document(user_data['email'])
-        user_doc = user_ref.get()
-
-        courses = []
-        if user_doc.exists:
-            doc_data = user_doc.to_dict()
-            courses = doc_data.get('coursesEnrolled', [])
-
+        saved_user = user_repo.get_by_email(user_data['email'])
+        
+        courses = saved_user.get('coursesEnrolled', []) if saved_user else []
         sessions[session_token]['coursesEnrolled'] = courses
 
         return {"coursesEnrolled": courses}
@@ -206,6 +169,7 @@ async def list_enrolled_courses(request: Request):
 
 @router.post("/courses/enroll")
 async def enroll_course(request: Request):
+    """Enroll user in a course"""
     try:
         session_token = request.cookies.get("session_token")
 
@@ -219,25 +183,11 @@ async def enroll_course(request: Request):
             raise HTTPException(status_code=400, detail="A valid courseId must be provided")
 
         user_data = sessions[session_token]
-        user_ref = db.collection('users').document(user_data['email'])
-        user_doc = user_ref.get()
-
-        if user_doc.exists:
-            user_ref.update({
-                'coursesEnrolled': firestore.ArrayUnion([course_id]),
-                'updatedAt': firestore.SERVER_TIMESTAMP
-            })
-        else:
-            user_ref.set({
-                'coursesEnrolled': [course_id],
-                'updatedAt': firestore.SERVER_TIMESTAMP
-            }, merge=True)
-
-        user_doc = user_ref.get()
-        updated_courses = []
-        if user_doc.exists:
-            updated_courses = user_doc.to_dict().get('coursesEnrolled', [])
-
+        user_repo.enroll_course(user_data['email'], course_id)
+        
+        # Get updated courses
+        saved_user = user_repo.get_by_email(user_data['email'])
+        updated_courses = saved_user.get('coursesEnrolled', []) if saved_user else []
         sessions[session_token]['coursesEnrolled'] = updated_courses
 
         return {
@@ -250,29 +200,9 @@ async def enroll_course(request: Request):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to enroll in course: {str(e)}")
 
-@router.put("/user/{email}")
-async def update_user_profile(email: str, request: Request):
-    try:
-        session_token = request.cookies.get("session_token")
-        
-        if not session_token or session_token not in sessions:
-            raise HTTPException(status_code=401, detail="Not authenticated")
-        
-        data = await request.json()
-        
-        user_ref = db.collection('users').document(email)
-        user_ref.update({
-            **data,
-            'updatedAt': firestore.SERVER_TIMESTAMP
-        })
-        
-        return {"success": True, "message": "Profile updated successfully"}
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to update profile: {str(e)}")
-
 @router.put("/profile")
 async def update_profile(request: Request):
+    """Update user profile"""
     try:
         session_token = request.cookies.get("session_token")
         
@@ -282,10 +212,11 @@ async def update_profile(request: Request):
         user_data = sessions[session_token]
         data = await request.json()
         
-        # Extract profile data
+        # Build profile updates
         profile_updates = {}
         if 'displayName' in data:
             profile_updates['displayName'] = data['displayName']
+            sessions[session_token]['displayName'] = data['displayName']
         if 'bio' in data:
             profile_updates['profile.bio'] = data['bio']
         if 'interests' in data:
@@ -295,16 +226,7 @@ async def update_profile(request: Request):
         if 'timezone' in data:
             profile_updates['profile.timezone'] = data['timezone']
         
-        # Add update timestamp
-        profile_updates['updatedAt'] = firestore.SERVER_TIMESTAMP
-        
-        # Update user in Firestore
-        user_ref = db.collection('users').document(user_data['email'])
-        user_ref.update(profile_updates)
-        
-        # Update session data if displayName was changed
-        if 'displayName' in data:
-            sessions[session_token]['displayName'] = data['displayName']
+        user_repo.update_profile(user_data['email'], profile_updates)
         
         return {"success": True, "message": "Profile updated successfully"}
         
@@ -313,6 +235,7 @@ async def update_profile(request: Request):
 
 @router.put("/phantom-wallet")
 async def update_phantom_wallet(request: Request):
+    """Update Phantom wallet address"""
     try:
         session_token = request.cookies.get("session_token")
         
@@ -323,11 +246,7 @@ async def update_phantom_wallet(request: Request):
         data = await request.json()
         wallet_address = data.get('walletAddress', '')
         
-        user_ref = db.collection('users').document(user_data['email'])
-        user_ref.update({
-            'phantomWalletAddress': wallet_address,
-            'updatedAt': firestore.SERVER_TIMESTAMP
-        })
+        user_repo.update_wallet(user_data['email'], wallet_address)
         
         return {"success": True, "message": "Phantom wallet updated successfully"}
         
@@ -336,6 +255,7 @@ async def update_phantom_wallet(request: Request):
 
 @router.delete("/account")
 async def delete_account(request: Request, response: Response):
+    """Complete account deletion with full data cleanup"""
     try:
         session_token = request.cookies.get("session_token")
         
@@ -343,14 +263,21 @@ async def delete_account(request: Request, response: Response):
             raise HTTPException(status_code=401, detail="Not authenticated")
         
         user_data = sessions[session_token]
+        user_id = user_data['uid']
+        email = user_data['email']
         
-        # Soft delete - mark as deleted instead of actually deleting
-        user_ref = db.collection('users').document(user_data['email'])
-        user_ref.update({
-            'isDeleted': True,
-            'deletedAt': firestore.SERVER_TIMESTAMP,
-            'updatedAt': firestore.SERVER_TIMESTAMP
-        })
+        print(f"🗑️ Starting complete account deletion for user: {email} (UID: {user_id})")
+        
+        # Perform complete data deletion
+        deletion_result = await account_deletion_service.delete_user_account(user_id, email)
+        
+        if not deletion_result.get('success'):
+            raise HTTPException(
+                status_code=500, 
+                detail=f"Account deletion failed: {deletion_result.get('error', 'Unknown error')}"
+            )
+        
+        print(f"✅ Account deletion complete: {deletion_result}")
         
         # Clear session
         if session_token in sessions:
@@ -358,7 +285,14 @@ async def delete_account(request: Request, response: Response):
         
         response.delete_cookie("session_token")
         
-        return {"success": True, "message": "Account deleted successfully"}
+        return {
+            "success": True, 
+            "message": "Account and all associated data deleted successfully",
+            "deletion_summary": deletion_result['data_deleted']
+        }
         
+    except HTTPException:
+        raise
     except Exception as e:
+        print(f"❌ Account deletion error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to delete account: {str(e)}")

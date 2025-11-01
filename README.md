@@ -1,86 +1,229 @@
-# 🎓 Signum - AI-Powered Learning Platform with Blockchain Credentials
+<div align="center">
 
-**"Unforgettable Learning. Unforgeable Credentials"**
+# Signum
 
-A next-generation e-learning platform combining **AI-powered personalized tutoring**, **anti-cheat protection**, and **blockchain-verified NFT certificates** for computer science education.
+### AI-Powered Learning Platform with Blockchain Credentials
+
+*Unforgettable Learning. Unforgeable Credentials.*
+
+[![React](https://img.shields.io/badge/React-19.1.1-61DAFB?style=for-the-badge&logo=react&logoColor=white)](https://react.dev/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-Latest-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Solana](https://img.shields.io/badge/Solana-Devnet-14F195?style=for-the-badge&logo=solana&logoColor=white)](https://solana.com/)
+[![Gemini](https://img.shields.io/badge/Gemini-2.5%20Flash-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
+[![License](https://img.shields.io/badge/License-Academic-purple?style=for-the-badge)](LICENSE)
+
+[Features](#-core-features) • [Demo](#-screenshots) • [Quick Start](#-quick-start) • [Documentation](#-documentation) • [Tech Stack](#-tech-stack)
+
+</div>
 
 ---
 
-## 🌟 Key Features
+## 🎯 Overview
 
-### 🎨 Interactive Visualizations 
-- **5 Live Visualizers** - Binary Search Trees, Stacks, Queues, 2D Arrays, 1D Arrays
-- **Step-by-Step Animations** - Watch algorithms execute in real-time
-- **Pseudocode Highlighting** - Synchronized code execution display
-- **Interactive Controls** - Manipulate data structures directly
-- **Algorithm Demonstrations** - Search, traversal, min/max operations
+**Signum** is a next-generation e-learning platform that revolutionizes computer science education by combining three cutting-edge technologies:
 
-### 🤖 AI Tutor Assistant 
-- **Context-Aware Q&A** - Powered by Google Gemini 2.5 Flash
-- **Screen Content Awareness** - Like MS Edge Copilot, knows what you're viewing
-- **Voice Input** - Speech-to-text for natural conversation
-- **RAG Implementation** - Retrieves course-specific knowledge for accurate answers
-- **Structured Responses** - Bullet points, examples, and step-by-step explanations
+- **🤖 AI-Powered Tutoring** - Context-aware assistant using Google Gemini 2.5 Flash with RAG (Retrieval-Augmented Generation)
+- **🛡️ Anti-Cheat Protection** - Real-time monitoring system ensuring academic integrity with 3-strike policy
+- **🔗 Blockchain Certificates** - Verifiable NFT credentials minted on Solana blockchain
 
-### 🛡️ Anti-Cheat System 
-- **Real-time Violation Detection** - Tab switching, copy/paste, DevTools monitoring
-- **3-Strike Policy** - Users blocked after 3 violations
-- **Firebase-Backed** - Persistent violation tracking
-- **NFT Eligibility Enforcement** - Only clean records can mint certificates
-- **5 Detection Methods** - Tab switch, right-click, keyboard shortcuts, DevTools, paste
+Built for students who demand **interactive learning experiences** and employers who need **trustless credential verification**.
 
-### 💻 Coding Challenges 
-- **AI-Powered Evaluation** - Google Gemini analyzes code correctness
-- **Real-Time Feedback** - Instant analysis with suggestions
+---
+
+## ✨ Core Features
+
+<table>
+<tr>
+<td width="50%">
+
+### 🎨 Interactive Visualizations
+**Learn by Doing**
+
+- **5 Live Data Structure Visualizers**
+  - Binary Search Trees with traversal animations
+  - Stack push/pop operations with step tracking
+  - Queue enqueue/dequeue demonstrations
+  - 2D Array matrix manipulations
+  - 1D Array search & sort algorithms
+- **Real-Time Pseudocode Sync** - Watch code execute line-by-line
+- **Interactive Controls** - Insert, delete, search with visual feedback
+- **Algorithm Demonstrations** - Min/max, traversal, search operations
+
+</td>
+<td width="50%">
+
+### 🤖 AI Learning Assistant
+**Your 24/7 Tutor**
+
+- **Context-Aware Intelligence** - Knows what's on your screen
+- **Voice Input Support** - Speak naturally, get structured answers
+- **RAG-Powered Responses** - Retrieves course-specific knowledge
+- **Multi-Modal Communication** - Text, code snippets, step-by-step explanations
+- **Conversation Memory** - Maintains context across your learning session
+- **Google Gemini 2.5 Flash** - Latest AI model for instant, accurate help
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 🛡️ Anti-Cheat System
+**Integrity First**
+
+- **5 Detection Methods**
+  - Tab/window switching monitoring
+  - Copy/paste blocking
+  - DevTools detection
+  - Right-click prevention
+  - Keyboard shortcut blocking
+- **3-Strike Policy** - Progressive violation tracking
+- **Firebase-Backed** - Persistent violation logs
+- **NFT Eligibility** - Clean record required for certification
+- **Fullscreen Enforcement** - Auto-submission on exit
+
+</td>
+<td width="50%">
+
+### 🔗 Blockchain Certificates
+**Verifiable Forever**
+
+- **Solana Blockchain** - Fast, low-cost, decentralized
+- **Metaplex Standard** - Compatible with all NFT marketplaces
+- **Phantom Wallet** - Seamless Web3 integration
+- **Dynamic Certificate Images** - Personalized with your data
+- **IPFS Metadata** - Decentralized storage via Pinata
+- **Social Sharing** - LinkedIn & X (Twitter) ready
+- **Trustless Verification** - Anyone can verify on Solana Explorer
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 💻 Coding Challenges
+**Test Real Skills**
+
+- **AI-Powered Evaluation** - Gemini analyzes code quality
+- **Test Case Validation** - Automated correctness checking
+- **Real-Time Feedback** - Instant suggestions for improvement
+- **Monaco Editor** - VS Code experience in browser
 - **Anti-Cheat Protected** - Same monitoring as quizzes
-- **Test Case Validation** - Automated solution verification
-- **50% of Final Exam** - Combines with quiz score for certification
+- **50% Weight** - Combines with quiz for final score
 
-### 🔗 Blockchain NFT Certificates 
-- **Solana Devnet** - Decentralized certificate minting
-- **Metaplex Standard** - Compatible with all major NFT marketplaces
-- **Phantom Wallet Integration** - Seamless blockchain authentication
-- **Trustless Verification** - Full wallet address displayed for Solana Explorer verification
-- **Social Sharing** - LinkedIn and X (Twitter) integration
-- **Pinata IPFS** - Decentralized metadata storage (production-ready)
+</td>
+<td width="50%">
 
 ### 📊 Progress Tracking
-- **Firebase Realtime Database** - Cloud-based progress persistence
-- **Multi-Metric System** - Quiz score, coding completion, violations
-- **Visual Progress Bars** - Real-time completion tracking
-- **Time-Based Module Completion** - Ensures genuine engagement (20-90s minimum)
-- **Course Completion Logic** - Quiz ≥85%, Completion ≥90%, Zero Violations
+**Know Your Growth**
 
-### 🎨 Responsive Full-Width Layout
-- **Adaptive Content Display** - Expands to full screen when sidebar is collapsed
-- **Optimized Reading Experience** - Maximum space for visualizations and code
-- **Smooth Transitions** - Animated sidebar toggle with content reflow
-- **Mobile Responsive** - Works seamlessly across all screen sizes
+- **Firebase Realtime Sync** - Never lose your progress
+- **Multi-Metric Dashboard** - Quiz, coding, completion, violations
+- **Visual Progress Bars** - See completion at a glance
+- **Time-Based Validation** - 20-90s minimum per module
+- **Course Completion Logic**
+  - Quiz Score ≥ 85%
+  - Course Completion ≥ 90%
+  - Zero Anti-Cheat Violations
+
+</td>
+</tr>
+</table>
 
 ---
 
-## � Quick Start
+## 📸 Screenshots
+
+> **Note:** Add screenshots in the following order for best visual impact
+
+### 1. Hero / Landing Page
+*Show the modern dark theme with emerald accents - first impression matters!*
+
+![Landing Page](screenshots/01-landing-page.png)
+
+### 2. Course Dashboard
+*Display the course cards with progress tracking and "Revisit Course" buttons*
+
+![Dashboard](screenshots/02-dashboard.png)
+
+### 3. Interactive Visualizer (Binary Search Tree)
+*Capture BST visualizer mid-operation with pseudocode highlighting*
+
+![BST Visualizer](screenshots/03-bst-visualizer.png)
+
+### 4. AI Assistant in Action
+*Show the floating AI chat with a sample conversation about data structures*
+
+![AI Assistant](screenshots/04-ai-assistant.png)
+
+### 5. Coding Challenge Interface
+*Monaco editor with a coding problem and test results*
+
+![Coding Challenge](screenshots/05-coding-challenge.png)
+
+### 6. Quiz Page (Anti-Cheat Active)
+*Fullscreen quiz interface with violation monitoring indicators*
+
+![Secure Quiz](screenshots/06-quiz-page.png)
+
+### 7. NFT Certificate
+*Beautiful certificate with Phantom wallet integration and social share buttons*
+
+![NFT Certificate](screenshots/07-nft-certificate.png)
+
+### 8. Profile Page
+*User progress overview with all metrics displayed*
+
+![Profile](screenshots/08-profile-page.png)
+
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
-- **Node.js 18+** and npm
-- **Python 3.10+**
-- **Firebase Account** ([Create here](https://console.firebase.google.com/))
-- **Google Gemini API Key** ([Get here](https://makersuite.google.com/app/apikey))
-- **Phantom Wallet** ([Install here](https://phantom.app/)) - For NFT minting
 
-### 1. Clone Repository
+<table>
+<tr>
+<td width="50%">
+
+**Development Environment**
 ```bash
-git clone git@github.com:suhasbm09/Signum.git
+Node.js >= 18.0.0
+Python >= 3.10.0
+npm >= 9.0.0
+pip >= 21.0.0
+```
+
+</td>
+<td width="50%">
+
+**Required Accounts**
+- [Firebase Console](https://console.firebase.google.com/) - Authentication & Database
+- [Google AI Studio](https://makersuite.google.com/app/apikey) - Gemini API Key
+- [Phantom Wallet](https://phantom.app/) - Blockchain Integration
+- [Pinata](https://pinata.cloud/) *(Optional)* - IPFS Storage
+
+</td>
+</tr>
+</table>
+
+### Installation
+
+**1️⃣ Clone the Repository**
+
+```bash
+git clone https://github.com/suhasbm09/Signum.git
 cd Signum
 ```
 
-### 2. Frontend Setup
+**2️⃣ Frontend Setup**
+
 ```bash
 cd frontend
 npm install
 ```
 
-**Create `.env` file** in `frontend/` directory:
+Create `.env` file in `frontend/` directory:
+
 ```env
 VITE_FIREBASE_API_KEY=your_firebase_api_key
 VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
@@ -91,26 +234,29 @@ VITE_FIREBASE_APP_ID=your_app_id
 VITE_BACKEND_URL=http://localhost:8000
 ```
 
-### 3. Backend Setup
+**3️⃣ Backend Setup**
+
 ```bash
 cd backend
 pip install -r requirements.txt
 ```
 
-**Create `.env` file** in `backend/` directory:
+Create `.env` file in `backend/` directory:
+
 ```env
 GEMINI_API_KEY=your_gemini_api_key
 GEMINI_MODEL=gemini-2.5-flash
-PINATA_API_KEY=your_pinata_api_key (optional for NFT images)
-PINATA_SECRET_KEY=your_pinata_secret (optional)
+PINATA_API_KEY=your_pinata_api_key          # Optional
+PINATA_SECRET_KEY=your_pinata_secret        # Optional
 ```
 
-**Add Firebase Service Account Key:**
-1. Go to Firebase Console → Project Settings → Service Accounts
+**Download Firebase Service Account Key:**
+1. Firebase Console → Project Settings → Service Accounts
 2. Click "Generate New Private Key"
 3. Save as `serviceAccountKey.json` in `backend/` directory
 
-### 4. Solana Program Deployment (Optional - For NFT Minting)
+**4️⃣ Solana Program Deployment** *(Optional - Required for NFT Minting)*
+
 ```bash
 cd solana/program
 npm install
@@ -118,18 +264,20 @@ anchor build
 anchor deploy --provider.cluster devnet
 ```
 
-**Copy Program ID** from deployment output and update:
+Copy the deployed **Program ID** and update:
 - `frontend/src/courses/data-structures/components/CertificationsContent.jsx`
 - `backend/app/services/blockchain_service.py`
 
-### 5. Run the Application
+**5️⃣ Run the Application**
+
+Open **two terminals**:
 
 **Terminal 1 - Backend:**
 ```bash
 cd backend
 uvicorn app.main:app --reload
 ```
-✅ Backend runs on: `http://localhost:8000`  
+✅ Backend: `http://localhost:8000`  
 📖 API Docs: `http://localhost:8000/docs`
 
 **Terminal 2 - Frontend:**
@@ -137,276 +285,455 @@ uvicorn app.main:app --reload
 cd frontend
 npm run dev
 ```
-✅ Frontend runs on: `http://localhost:5173`
+✅ Frontend: `http://localhost:5173`
 
 ---
 
-## 📁 Project Structure
+## 🏗️ Architecture
+
+```mermaid
+graph TB
+    subgraph "Frontend - React 19"
+        A[User Interface] --> B[AIContext]
+        A --> C[ProgressContext]
+        A --> D[Course Visualizers]
+        B --> E[AI Chat Component]
+        C --> F[Progress Service]
+        D --> G[Interactive Modules]
+    end
+    
+    subgraph "Backend - FastAPI"
+        H[API Gateway] --> I[AI Service]
+        H --> J[Progress Service]
+        H --> K[Auth Service]
+        I --> L[Gemini 2.5 Flash]
+        I --> M[Course Content Store RAG]
+        J --> N[Firebase Admin]
+    end
+    
+    subgraph "Blockchain - Solana"
+        O[Phantom Wallet] --> P[Anchor Program]
+        P --> Q[Metaplex NFT]
+        Q --> R[IPFS Metadata]
+    end
+    
+    A -->|HTTP/REST| H
+    A -->|Web3| O
+    K -->|Auth| N
+    J -->|Data Sync| N
+    
+    style A fill:#10b981
+    style H fill:#0ea5e9
+    style O fill:#14f195
+    style L fill:#4285f4
+```
+
+### System Flow
+
+1. **User Authentication** → Firebase Auth with Google OAuth
+2. **Content Delivery** → React components with real-time Firebase sync
+3. **AI Assistance** → Gemini API with RAG-enhanced responses
+4. **Assessment** → Anti-cheat monitored quizzes + AI-evaluated coding
+5. **Certification** → Solana blockchain NFT minting via Phantom wallet
+
+---
+
+## 🛠️ Tech Stack
+
+<div align="center">
+
+### Frontend
+
+[![React](https://img.shields.io/badge/React-19.1.1-61DAFB?style=flat-square&logo=react&logoColor=white)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-7.1.2-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Tailwind](https://img.shields.io/badge/Tailwind-4.1.11-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Monaco](https://img.shields.io/badge/Monaco_Editor-4.7.0-007ACC?style=flat-square&logo=visual-studio-code&logoColor=white)](https://microsoft.github.io/monaco-editor/)
+
+### Backend
+
+[![FastAPI](https://img.shields.io/badge/FastAPI-Latest-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org/)
+[![Gemini](https://img.shields.io/badge/Gemini-2.5_Flash-4285F4?style=flat-square&logo=google&logoColor=white)](https://ai.google.dev/)
+[![Firebase](https://img.shields.io/badge/Firebase-Admin_SDK-FFCA28?style=flat-square&logo=firebase&logoColor=black)](https://firebase.google.com/)
+
+### Blockchain
+
+[![Solana](https://img.shields.io/badge/Solana-Devnet-14F195?style=flat-square&logo=solana&logoColor=white)](https://solana.com/)
+[![Anchor](https://img.shields.io/badge/Anchor-0.32.1-8A63D2?style=flat-square)](https://www.anchor-lang.com/)
+[![Metaplex](https://img.shields.io/badge/Metaplex-Token_Standard-E74694?style=flat-square)](https://www.metaplex.com/)
+[![Phantom](https://img.shields.io/badge/Phantom-Wallet-6C5DD3?style=flat-square)](https://phantom.app/)
+
+</div>
+
+### Key Dependencies
+
+**Frontend:**
+- **React 19.1.1** - Latest React with concurrent features
+- **React Router 7.9.4** - Client-side routing
+- **Tailwind CSS 4.1.11** - Utility-first styling
+- **Monaco Editor 4.7.0** - VS Code-powered code editing
+- **@solana/web3.js 1.98.4** - Solana blockchain interaction
+- **@coral-xyz/anchor 0.32.1** - Anchor framework client
+- **Lucide React 0.547.0** - Modern icon library
+- **Firebase 12.2.1** - Authentication & Realtime Database
+
+**Backend:**
+- **FastAPI** - High-performance async API framework
+- **Google Generative AI** - Gemini 2.5 Flash integration
+- **LangChain** - RAG framework for AI responses
+- **Firebase Admin SDK** - Server-side Firebase operations
+- **ChromaDB** - Vector database for content retrieval
+- **Pillow** - Dynamic certificate image generation
+- **Requests** - HTTP client for external APIs
+
+---
+
+## 📂 Project Structure
 
 ```
 Signum/
-├── frontend/                      # React 19 + Vite + Tailwind CSS
+├── 📱 frontend/                      # React 19 + Vite Application
 │   ├── src/
-│   │   ├── components/           # UI Components
-│   │   │   ├── AI/              # AI Chat components
-│   │   │   ├── Header.jsx       # Navigation
-│   │   │   ├── Toast.jsx        # Notifications
+│   │   ├── components/              # Reusable UI Components
+│   │   │   ├── AI/                 # AI Chat System
+│   │   │   │   ├── AIChat.jsx     # Chat interface with markdown
+│   │   │   │   ├── AIAssistant.jsx # Floating widget
+│   │   │   │   └── AIHelper.jsx   # Course-specific helper
+│   │   │   ├── Header.jsx         # Navigation bar
+│   │   │   ├── Toast.jsx          # Notification system
+│   │   │   ├── ProgressBar.jsx    # Visual progress indicators
 │   │   │   └── ...
-│   │   ├── contexts/            # State Management
-│   │   │   ├── AIContext.jsx   # AI chat state
-│   │   │   └── ProgressContext.jsx  # User progress
-│   │   ├── pages/               # Page Components
-│   │   │   ├── Dashboard.jsx   # Course dashboard
-│   │   │   ├── QuizPage.jsx    # Anti-cheat quizzes
-│   │   │   ├── CodingChallengePage.jsx
-│   │   │   └── Profile.jsx
-│   │   ├── courses/             # Course Content
+│   │   ├── contexts/               # Global State Management
+│   │   │   ├── AIContext.jsx      # AI chat state & history
+│   │   │   └── ProgressContext.jsx # User progress tracking
+│   │   ├── pages/                  # Route Components
+│   │   │   ├── Dashboard.jsx      # Course selection
+│   │   │   ├── CourseContent.jsx  # Learning modules
+│   │   │   ├── QuizPage.jsx       # Anti-cheat quizzes
+│   │   │   ├── CodingChallengePage.jsx # Coding assessments
+│   │   │   ├── Profile.jsx        # User metrics
+│   │   │   └── About.jsx          # Platform info
+│   │   ├── courses/                # Course-Specific Content
 │   │   │   └── data-structures/
-│   │   │       ├── content.js   # Lessons
-│   │   │       ├── components/  # Course-specific UI
-│   │   │       └── visualizations/
-│   │   ├── services/            # API Communication
-│   │   │   ├── progressService.js
-│   │   │   └── ai/aiService.js
-│   │   ├── firebase/            # Firebase Config
+│   │   │       ├── content.js     # Lesson modules
+│   │   │       ├── outline.js     # Course structure
+│   │   │       ├── components/    # Custom UI
+│   │   │       │   ├── CertificationsContent.jsx # NFT minting
+│   │   │       │   └── ...
+│   │   │       └── visualizations/ # Interactive Demos
+│   │   │           ├── BinarySearchTreeVisualizer.jsx
+│   │   │           ├── StackVisualizer.jsx
+│   │   │           ├── QueueVisualizer.jsx
+│   │   │           ├── Array2DVisualizer.jsx
+│   │   │           └── Array1DVisualizer.jsx
+│   │   ├── services/               # API Communication Layer
+│   │   │   ├── progressService.js # Firebase sync
+│   │   │   └── ai/
+│   │   │       └── aiService.js   # Backend AI endpoints
+│   │   ├── firebase/
+│   │   │   └── config.js          # Firebase initialization
 │   │   └── config/
-│   │       └── features.js      # Feature flags
-│   └── .env                     # Environment variables
+│   │       └── features.js        # Feature flags
+│   └── .env                        # Environment variables
 │
-├── backend/                      # FastAPI + Python
+├── ⚙️ backend/                       # FastAPI + Python Server
 │   ├── app/
-│   │   ├── routes/              # API Endpoints
-│   │   │   ├── ai.py           # AI chat endpoints
-│   │   │   ├── auth.py         # Google OAuth
-│   │   │   ├── quiz.py         # Quiz submission
-│   │   │   ├── coding_challenge.py
-│   │   │   ├── blockchain.py   # NFT minting
-│   │   │   └── simple_progress.py  # Progress tracking
-│   │   ├── services/            # Business Logic
+│   │   ├── main.py                # Application entry point
+│   │   ├── routes/                # API Endpoints
+│   │   │   ├── ai.py             # AI chat & evaluation
+│   │   │   ├── auth.py           # Google OAuth
+│   │   │   ├── quiz.py           # Quiz submission
+│   │   │   ├── coding_challenge.py # Code evaluation
+│   │   │   ├── blockchain.py     # NFT minting
+│   │   │   └── simple_progress.py # Progress tracking
+│   │   ├── services/              # Business Logic
 │   │   │   ├── ai/
-│   │   │   │   ├── ai_service.py  # Gemini integration
-│   │   │   │   ├── coding_evaluation_service.py
-│   │   │   │   └── course_content_store.py  # RAG
-│   │   │   ├── blockchain_service.py  # Solana integration
-│   │   │   ├── metadata_service.py    # NFT metadata
-│   │   │   ├── firebase_admin.py      # Firebase
-│   │   │   └── simple_progress_service.py
-│   │   └── models/              # Data Models
-│   ├── .env                     # Environment variables
-│   ├── serviceAccountKey.json   # Firebase Admin SDK
-│   └── requirements.txt
+│   │   │   │   ├── ai_service.py # Gemini integration
+│   │   │   │   ├── coding_evaluation_service.py # Code analysis
+│   │   │   │   ├── anti_cheat_service.py # Violation detection
+│   │   │   │   └── course_content_store.py # RAG system
+│   │   │   ├── firebase_admin.py  # Firebase operations
+│   │   │   ├── certificate_template.py # Certificate generation
+│   │   │   ├── metadata_service.py # NFT metadata
+│   │   │   ├── quiz_service.py    # Quiz logic
+│   │   │   └── simple_progress_service.py # Progress management
+│   │   └── models/                # Data Models (if any)
+│   ├── .env                       # Environment variables
+│   ├── serviceAccountKey.json     # Firebase Admin SDK
+│   └── requirements.txt           # Python dependencies
 │
-├── solana/program/               # Blockchain Smart Contract
+├── ⛓️ solana/program/                # Blockchain Smart Contract
 │   ├── programs/program/
-│   │   └── src/lib.rs          # Anchor Rust program
-│   ├── target/idl/             # Program IDL
-│   ├── Anchor.toml             # Anchor config
-│   └── tests/program.ts        # Integration tests
+│   │   └── src/
+│   │       └── lib.rs            # Anchor Rust program
+│   ├── target/
+│   │   ├── idl/                  # Interface Definition
+│   │   │   └── program.json
+│   │   └── deploy/               # Compiled programs
+│   ├── tests/
+│   │   └── program.ts            # Integration tests
+│   ├── Anchor.toml               # Anchor configuration
+│   └── package.json              # Node dependencies
 │
-├── DOCS/                        # 📚 Comprehensive Documentation
-│   ├── AI_IMPLEMENTATION.md    # Full AI system docs
-│   ├── BLOCKCHAIN_IMPLEMENTATION.md  # NFT minting flow
-│   ├── ANTI_CHEAT_SYSTEM.md   # Security measures
-│   ├── INTERACTIVE_LEARNING.md  # Future visualizations
-│   └── README.md               # This file
+├── 📚 Documentation/                # Comprehensive Docs
+│   ├── AI_IMPLEMENTATION.md      # AI system architecture
+│   ├── BLOCKCHAIN_CERTIFICATE_SYSTEM.md # NFT minting flow
+│   ├── ANTI_CHEAT_SYSTEM.md     # Security measures
+│   ├── INTERACTIVE_LEARNING.md  # Visualization guides
+│   ├── DATABASE_SCHEMA.md       # Firebase structure
+│   ├── BACKEND.md               # API documentation
+│   └── FRONTEND.md              # Component guide
 │
-└── .gitignore                  # Sensitive files excluded
+└── README.md                     # This file
 ```
 
 ---
 
-## �️ Tech Stack
+## 🎓 Course Completion Requirements
 
-### Frontend
-- **React 19** - Modern UI framework with latest features
-- **Vite** - Lightning-fast build tool and dev server
-- **Tailwind CSS** - Utility-first styling framework
-- **Monaco Editor** - VS Code-powered code editing
-- **Firebase Authentication** - Google OAuth integration
-- **Anchor (Solana)** - Blockchain wallet integration
-- **Phantom Wallet SDK** - NFT wallet connection
+To earn a blockchain-verified NFT certificate, students must achieve:
 
-### Backend
-- **FastAPI** - High-performance Python API
-- **Google Gemini 2.5 Flash** - Advanced AI model
-- **Firebase Admin SDK** - Database & auth
-- **Solana Web3.js** - Blockchain RPC
-- **Metaplex** - NFT standard compliance
-- **Pinata** - IPFS metadata storage
+<div align="center">
 
-### Blockchain
-- **Solana Devnet** - Fast, low-cost blockchain
-- **Anchor Framework** - Rust smart contract framework
-- **Metaplex Token Metadata** - NFT standard
-- **Phantom Wallet** - User wallet integration
+| Requirement | Minimum | Weight | Validation |
+|-------------|---------|--------|------------|
+| **Quiz Score** | 85% | 50% | Backend + Firebase |
+| **Coding Challenge** | 85% | 50% | AI Evaluation |
+| **Course Completion** | 90% | - | Progress Tracking |
+| **Anti-Cheat Violations** | 0 | - | Real-time Monitoring |
 
----
-
-## 🎯 Course Completion Requirements
-
-To earn an NFT certificate, students must meet **all three criteria**:
-
-| Requirement | Minimum | Enforcement |
-|------------|---------|-------------|
-| **Quiz Score** | ≥85% | Backend validation |
-| **Course Completion** | ≥90% | Firebase progress check |
-| **Anti-Cheat Violations** | 0 | Firestore violation log |
+</div>
 
 **Final Score Calculation:**
-```
+```python
 final_score = (quiz_score * 0.5) + (coding_score * 0.5)
+certificate_eligible = (final_score >= 85) and (completion >= 90) and (violations == 0)
 ```
 
 ---
 
-## 🔐 Security & Privacy
+## 🔒 Security & Privacy
 
-### Sensitive Files (Never Commit!)
-- ✅ `.env` files (Frontend & Backend)
-- ✅ `serviceAccountKey.json` (Firebase Admin SDK)
-- ✅ Wallet private keys
-- ✅ API keys
+### Environment Variables Protection
 
-All sensitive files are protected by `.gitignore`.
+All sensitive credentials are stored in `.env` files (gitignored):
 
-### Anti-Cheat Protection
-- Tab/window switching detection
-- Copy/paste blocking
-- Right-click prevention
-- Keyboard shortcut blocking (Ctrl+C, Ctrl+V, F12, etc.)
-- DevTools detection
-- 3-strike blocking policy
+```bash
+✅ NEVER commit these files:
+  - frontend/.env
+  - backend/.env
+  - backend/serviceAccountKey.json
+  - Wallet private keys
+  - API keys
+```
+
+### Anti-Cheat Security Layers
+
+1. **Client-Side Detection** - Tab switching, copy/paste, DevTools
+2. **Server-Side Validation** - Firebase violation logs
+3. **Blockchain Enforcement** - Only clean records can mint NFTs
+4. **3-Strike Policy** - Progressive penalties leading to account block
 
 ### Blockchain Security
-- Client-side wallet signing (private keys never leave browser)
-- Phantom Wallet encryption
-- Solana Devnet for testing (production uses Mainnet in future)
-- Metaplex verified metadata standard
+
+- **Client-Side Signing** - Private keys never leave browser
+- **Phantom Wallet Encryption** - Secure key management
+- **Devnet Testing** - Safe environment for development
+- **Metaplex Compliance** - Industry-standard NFT format
 
 ---
 
-## 📊 Current Implementation Status
+## 📊 Implementation Status
+
+<div align="center">
 
 | Feature | Status | Documentation |
-|---------|--------|---------------|
-| AI Tutor | ✅ LIVE | [AI_IMPLEMENTATION.md](AI_IMPLEMENTATION.md) |
-| Anti-Cheat System | ✅ LIVE | [ANTI_CHEAT_SYSTEM.md](ANTI_CHEAT_SYSTEM.md) |
-| Coding Challenges | ✅ LIVE | [AI_IMPLEMENTATION.md](AI_IMPLEMENTATION.md) |
-| NFT Certificates | ✅ LIVE | [BLOCKCHAIN_IMPLEMENTATION.md](BLOCKCHAIN_IMPLEMENTATION.md) |
-| Interactive Visualizations | ✅ LIVE | [INTERACTIVE_LEARNING.md](INTERACTIVE_LEARNING.md) |
-| Progress Tracking | ✅ LIVE | Built-in |
-| Social Sharing | ✅ LIVE | LinkedIn & X |
-| Full-Width Layout | ✅ LIVE | Responsive Design |
+|---------|:------:|---------------|
+| **AI Tutor** | ✅ | [AI_IMPLEMENTATION.md](AI_IMPLEMENTATION.md) |
+| **Anti-Cheat System** | ✅ | [ANTI_CHEAT_SYSTEM.md](ANTI_CHEAT_SYSTEM.md) |
+| **Coding Challenges** | ✅ | [AI_IMPLEMENTATION.md](AI_IMPLEMENTATION.md) |
+| **NFT Certificates** | ✅ | [BLOCKCHAIN_CERTIFICATE_SYSTEM.md](BLOCKCHAIN_CERTIFICATE_SYSTEM.md) |
+| **Interactive Visualizers** | ✅ | [INTERACTIVE_LEARNING.md](INTERACTIVE_LEARNING.md) |
+| **Progress Tracking** | ✅ | [DATABASE_SCHEMA.md](DATABASE_SCHEMA.md) |
+| **Social Sharing** | ✅ | Built-in (LinkedIn & X) |
+| **Data Structures Course** | ✅ | 100+ Quizzes, 5+ Challenges |
+| **Solana Blockchain Course** | 🚧 | Planned Q1 2026 |
+
+</div>
 
 ---
 
 ## 📚 Documentation
 
-Comprehensive documentation available in project root:
+Comprehensive documentation available in root directory:
 
-1. **[AI_IMPLEMENTATION.md](AI_IMPLEMENTATION.md)** - Complete AI system architecture, RAG implementation, voice input, coding evaluation
-2. **[BLOCKCHAIN_IMPLEMENTATION.md](BLOCKCHAIN_IMPLEMENTATION.md)** - NFT minting flow, Solana integration, Metaplex metadata, wallet management
-3. **[ANTI_CHEAT_SYSTEM.md](ANTI_CHEAT_SYSTEM.md)** - Detection methods, violation management, Firebase integration, NFT eligibility
-4. **[INTERACTIVE_LEARNING.md](INTERACTIVE_LEARNING.md)** - Live visualizations: BST, Stack, Queue, 2D Arrays, 1D Arrays
-5. **[README.md](README.md)** - This file (project overview & quick start)
-
----
-
-## � Development Team
-
-**Final Year B.Tech CSE Students**
-- **Suhas B M** - Developer
-- **Suhas B H** - Developer
-- **Nischith S** - Developer
-- **Rohan P** - Developer
+1. **[AI_IMPLEMENTATION.md](AI_IMPLEMENTATION.md)** - Complete AI system: Gemini integration, RAG, voice input, coding evaluation
+2. **[BLOCKCHAIN_CERTIFICATE_SYSTEM.md](BLOCKCHAIN_CERTIFICATE_SYSTEM.md)** - NFT minting flow, Solana integration, Metaplex metadata
+3. **[ANTI_CHEAT_SYSTEM.md](ANTI_CHEAT_SYSTEM.md)** - Detection methods, violation management, NFT eligibility
+4. **[INTERACTIVE_LEARNING.md](INTERACTIVE_LEARNING.md)** - BST, Stack, Queue, 2D/1D Array visualizers
+5. **[DATABASE_SCHEMA.md](DATABASE_SCHEMA.md)** - Firebase Realtime Database structure
+6. **[BACKEND.md](BACKEND.md)** - FastAPI routes, services, deployment
+7. **[FRONTEND.md](FRONTEND.md)** - React components, state management, routing
 
 ---
 
-## 🎓 Courses Available
+## 🚧 Roadmap
 
-### Data Structures Mastery ✅
-**Status**: Fully Implemented  
-**Topics**: Arrays (1D/2D), Stacks, Queues, Linked Lists, Trees (BST), Graphs, Hashing, Heaps  
-**Interactive Visualizations**: 5 live visualizers with step-by-step algorithm demonstrations  
-**Assessments**: 100+ Quiz Questions, 5+ Coding Challenges  
-**NFT Certificate**: Available on Solana Devnet
-
-### Solana Blockchain Development 🔜
-**Status**: Planned  
-**Topics**: Smart Contracts, Anchor Framework, Token Programs, NFTs  
-**Assessments**: Hands-on blockchain coding challenges
-
----
-
-## 🚧 Future Roadmap
-
-### Q1 2026
-- [ ] Additional interactive visualizers (Graphs, Heaps, Hash Tables)
-- [ ] Advanced sorting algorithm animations (QuickSort, MergeSort)
-- [ ] Additional courses (Algorithms, System Design, Operating Systems)
-
-### Q2 2026
-- [ ] Mobile app (React Native)
-- [ ] Peer code reviews and discussion forums
-- [ ] Instructor dashboard with analytics
+### Upcoming Features
+- [ ] **AI-Enabled Anti-Cheat System** - Advanced behavioral analysis and pattern detection
+- [ ] **Mobile Responsive Design** - Optimized UI/UX for tablets and smartphones
+- [ ] **Enhanced AI Evaluation** - Improved code quality assessment and personalized feedback
 
 ---
 
 ## 🐛 Troubleshooting
 
-### Backend fails to start
+<details>
+<summary><b>Backend fails to start</b></summary>
+
 ```bash
-# Check Python version
-python --version  # Must be 3.10+
+# Verify Python version
+python3 --version  # Must be 3.10+
 
-# Install dependencies
-pip install -r backend/requirements.txt
+# Reinstall dependencies
+cd backend
+pip install -r requirements.txt
 
-# Verify .env file exists
-ls backend/.env
+# Check .env file exists
+ls -la .env
+
+# Verify Firebase service account key
+ls -la serviceAccountKey.json
 ```
+</details>
 
-### Frontend build errors
+<details>
+<summary><b>Frontend build errors</b></summary>
+
 ```bash
-# Clear node_modules and reinstall
+# Clear cache and reinstall
 cd frontend
 rm -rf node_modules package-lock.json
 npm install
+
+# Check Node version
+node --version  # Must be 18+
+
+# Verify .env exists
+ls -la .env
 ```
+</details>
 
-### Phantom Wallet not connecting
-1. Ensure Phantom extension is installed: https://phantom.app/
-2. Check browser console for errors
-3. Switch wallet network to "Devnet" in Phantom settings
-4. Refresh page and try connecting again
+<details>
+<summary><b>Phantom Wallet connection issues</b></summary>
 
-### NFT minting fails
-1. Verify Solana program is deployed: `anchor deploy`
-2. Check program ID matches in `CertificationsContent.jsx`
-3. Ensure wallet has SOL for gas fees (get devnet SOL from faucet)
-4. Confirm quiz score ≥85%, completion ≥90%, violations = 0
+1. Install Phantom extension: https://phantom.app/
+2. Switch network to **Devnet** in Phantom settings
+3. Clear browser cache and refresh
+4. Check browser console for specific errors
+5. Ensure popup blockers are disabled
+</details>
+
+<details>
+<summary><b>NFT minting fails</b></summary>
+
+```bash
+# Verify Solana program deployment
+cd solana/program
+anchor deploy --provider.cluster devnet
+
+# Check wallet has devnet SOL
+# Get from: https://faucet.solana.com/
+
+# Verify eligibility requirements:
+# - Quiz score ≥ 85%
+# - Course completion ≥ 90%
+# - Zero anti-cheat violations
+
+# Check program ID matches in:
+# - frontend/src/courses/data-structures/components/CertificationsContent.jsx
+# - backend/app/services/blockchain_service.py
+```
+</details>
+
+<details>
+<summary><b>AI Assistant not responding</b></summary>
+
+```bash
+# Check Gemini API key
+cd backend
+cat .env | grep GEMINI_API_KEY
+
+# Verify backend is running
+curl http://localhost:8000/ai/status
+
+# Check browser console for errors
+# Check backend logs for API errors
+```
+</details>
+
+---
+
+## 👥 Development Team
+
+<div align="center">
+
+**Final Year B.Tech CSE Students**
+
+| Name | USN | GitHub |
+|------|------|--------|
+| **Suhas B M** | 4NI22CS221 | [@suhasbm09](https://github.com/suhasbm09) |
+| **Suhas B H** | 4NI22CS220 | [@SUHAS37BH](https://github.com/SUHAS37BH) |
+| **Nischith S** | 4NI22CS259 | [@NISCHITH-SV](https://github.com/NISCHITH-SV) |
+| **Rohan P** | 4NI22CS257 | [@rohanpn46](https://github.com/rohanpn46) |
+
+</div>
 
 ---
 
 ## 📝 License
 
-© 2025 Signum Learning Platform  
-All Rights Reserved
+**Academic Project** - Final Year B.Tech Computer Science & Engineering
 
-**Academic Project** - Final Year B.Tech CSE  
-For educational purposes only.
+© 2025 Signum Learning Platform. All Rights Reserved.
+
+This project is developed for **educational purposes** as part of our final year college project. Not licensed for commercial use.
+
+---
+
+## 🤝 Contributing
+
+While this is primarily an academic project, we welcome:
+
+- **Bug Reports** - Open an issue with detailed reproduction steps
+- **Feature Suggestions** - Discuss in GitHub Discussions
+- **Documentation Improvements** - Submit PRs for typo fixes or clarity
+
+**Note:** Major feature contributions require team approval.
 
 ---
 
 ## 📞 Contact & Support
 
-For questions, issues, or contributions:
-- **GitHub Issues**: [Create an issue](https://github.com/suhasbm09/issues)
-- **Email**: suhasbm2004@gmail.com
-- **Documentation**: See comprehensive .md files in project root
+<div align="center">
+
+**Questions? Issues? Feedback?**
+
+[![GitHub Issues](https://img.shields.io/badge/GitHub-Issues-181717?style=for-the-badge&logo=github)](https://github.com/suhasbm09/Signum/issues)
+[![Email](https://img.shields.io/badge/Email-suhasbm2004@gmail.com-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:suhasbm2004@gmail.com)
+
+</div>
+
+For detailed technical questions, refer to our comprehensive documentation in the root directory.
 
 ---
 
-**Built with ❤️ by the Signum Team**  
-_Empowering learners with AI, protecting integrity with anti-cheat, and verifying achievement with blockchain._
+<div align="center">
 
+**Built with ❤️ by the Signum Team**
+
+*Empowering learners with AI • Protecting integrity with anti-cheat • Verifying achievement with blockchain*
+
+[![Star this repo](https://img.shields.io/github/stars/suhasbm09/Signum?style=social)](https://github.com/suhasbm09/Signum)
+
+</div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Array2DVisualization from '../visualizations/Array2DVisualization';
 import CompletionTracker from '../../../components/CompletionTracker';
 
@@ -10,6 +10,11 @@ const Arrays2DContent = ({ onNavigate, courseId }) => {
   const [accessLang, setAccessLang] = useState('python');
   const [traversalLang, setTraversalLang] = useState('python');
   const [transposeLang, setTransposeLang] = useState('python');
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   // Language selector component
   const LanguageSelector = ({ currentLang, setLang }) => (
@@ -910,69 +915,114 @@ for (int i = 0; i < matrix.length; i++) {
           <span>💪</span> Practice Problems
         </h2>
         <div className="space-y-3">
-          <div className="bg-gradient-to-br from-gray-800/30 to-gray-900/30 border border-white/10 rounded-xl p-5 hover:border-emerald-500/40 transition-all hover-lift cursor-pointer">
-            <div className="flex justify-between items-start">
+          <div className="bg-gradient-to-br from-gray-800/30 to-gray-900/30 border border-white/10 rounded-xl p-5 hover:border-emerald-500/40 transition-all hover-lift">
+            <div className="flex justify-between items-start mb-3">
               <div>
                 <h3 className="text-white font-quantico-bold text-lg mb-1">1. Spiral Matrix Traversal</h3>
                 <p className="text-gray-400 text-sm mb-3">Print matrix elements in clockwise spiral order</p>
-                <div className="flex items-center gap-3 text-xs">
+                <div className="flex items-center gap-3 text-xs mb-3">
                   <span className="px-2 py-1 bg-yellow-500/20 text-yellow-300 rounded font-quantico-bold">Medium</span>
                   <span className="text-gray-500">• Companies: Google, Amazon, Microsoft</span>
                 </div>
               </div>
             </div>
+            <a 
+              href="https://leetcode.com/problems/spiral-matrix/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-semibold rounded-lg transition-all duration-300 hover:scale-105"
+            >
+              <span>Solve on LeetCode</span>
+              <span>→</span>
+            </a>
           </div>
 
-          <div className="bg-gradient-to-br from-gray-800/30 to-gray-900/30 border border-white/10 rounded-xl p-5 hover:border-emerald-500/40 transition-all hover-lift cursor-pointer">
-            <div className="flex justify-between items-start">
+          <div className="bg-gradient-to-br from-gray-800/30 to-gray-900/30 border border-white/10 rounded-xl p-5 hover:border-emerald-500/40 transition-all hover-lift">
+            <div className="flex justify-between items-start mb-3">
               <div>
                 <h3 className="text-white font-quantico-bold text-lg mb-1">2. Rotate Matrix 90°</h3>
                 <p className="text-gray-400 text-sm mb-3">Rotate square matrix clockwise by 90 degrees in-place</p>
-                <div className="flex items-center gap-3 text-xs">
+                <div className="flex items-center gap-3 text-xs mb-3">
                   <span className="px-2 py-1 bg-yellow-500/20 text-yellow-300 rounded font-quantico-bold">Medium</span>
                   <span className="text-gray-500">• Companies: Facebook, Apple</span>
                 </div>
               </div>
             </div>
+            <a 
+              href="https://leetcode.com/problems/rotate-image/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-semibold rounded-lg transition-all duration-300 hover:scale-105"
+            >
+              <span>Solve on LeetCode</span>
+              <span>→</span>
+            </a>
           </div>
 
-          <div className="bg-gradient-to-br from-gray-800/30 to-gray-900/30 border border-white/10 rounded-xl p-5 hover:border-emerald-500/40 transition-all hover-lift cursor-pointer">
-            <div className="flex justify-between items-start">
+          <div className="bg-gradient-to-br from-gray-800/30 to-gray-900/30 border border-white/10 rounded-xl p-5 hover:border-emerald-500/40 transition-all hover-lift">
+            <div className="flex justify-between items-start mb-3">
               <div>
                 <h3 className="text-white font-quantico-bold text-lg mb-1">3. Search in 2D Matrix</h3>
                 <p className="text-gray-400 text-sm mb-3">Find target in row-wise and column-wise sorted matrix</p>
-                <div className="flex items-center gap-3 text-xs">
+                <div className="flex items-center gap-3 text-xs mb-3">
                   <span className="px-2 py-1 bg-yellow-500/20 text-yellow-300 rounded font-quantico-bold">Medium</span>
                   <span className="text-gray-500">• Companies: LinkedIn, Uber</span>
                 </div>
               </div>
             </div>
+            <a 
+              href="https://leetcode.com/problems/search-a-2d-matrix-ii/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-semibold rounded-lg transition-all duration-300 hover:scale-105"
+            >
+              <span>Solve on LeetCode</span>
+              <span>→</span>
+            </a>
           </div>
 
-          <div className="bg-gradient-to-br from-gray-800/30 to-gray-900/30 border border-white/10 rounded-xl p-5 hover:border-emerald-500/40 transition-all hover-lift cursor-pointer">
-            <div className="flex justify-between items-start">
+          <div className="bg-gradient-to-br from-gray-800/30 to-gray-900/30 border border-white/10 rounded-xl p-5 hover:border-emerald-500/40 transition-all hover-lift">
+            <div className="flex justify-between items-start mb-3">
               <div>
                 <h3 className="text-white font-quantico-bold text-lg mb-1">4. Set Matrix Zeroes</h3>
                 <p className="text-gray-400 text-sm mb-3">If element is 0, set entire row and column to 0</p>
-                <div className="flex items-center gap-3 text-xs">
+                <div className="flex items-center gap-3 text-xs mb-3">
                   <span className="px-2 py-1 bg-yellow-500/20 text-yellow-300 rounded font-quantico-bold">Medium</span>
                   <span className="text-gray-500">• Companies: Amazon, Bloomberg</span>
                 </div>
               </div>
             </div>
+            <a 
+              href="https://leetcode.com/problems/set-matrix-zeroes/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-semibold rounded-lg transition-all duration-300 hover:scale-105"
+            >
+              <span>Solve on LeetCode</span>
+              <span>→</span>
+            </a>
           </div>
 
-          <div className="bg-gradient-to-br from-gray-800/30 to-gray-900/30 border border-white/10 rounded-xl p-5 hover:border-emerald-500/40 transition-all hover-lift cursor-pointer">
-            <div className="flex justify-between items-start">
+          <div className="bg-gradient-to-br from-gray-800/30 to-gray-900/30 border border-white/10 rounded-xl p-5 hover:border-emerald-500/40 transition-all hover-lift">
+            <div className="flex justify-between items-start mb-3">
               <div>
                 <h3 className="text-white font-quantico-bold text-lg mb-1">5. Diagonal Traversal</h3>
                 <p className="text-gray-400 text-sm mb-3">Traverse matrix diagonally from top-right to bottom-left</p>
-                <div className="flex items-center gap-3 text-xs">
+                <div className="flex items-center gap-3 text-xs mb-3">
                   <span className="px-2 py-1 bg-green-500/20 text-green-300 rounded font-quantico-bold">Easy</span>
                   <span className="text-gray-500">• Fundamental concept</span>
                 </div>
               </div>
             </div>
+            <a 
+              href="https://leetcode.com/problems/diagonal-traverse/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-semibold rounded-lg transition-all duration-300 hover:scale-105"
+            >
+              <span>Solve on LeetCode</span>
+              <span>→</span>
+            </a>
           </div>
         </div>
       </section>

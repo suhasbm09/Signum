@@ -74,7 +74,7 @@ function Login({ onLogin }) {
               <img
                 src={signumLogo}
                 alt="Signum logo"
-                className="h-16 w-16 object-contain lg:h-20 lg:w-20"
+                className="h-24 w-24 object-contain lg:h-32 lg:w-32 drop-shadow-[0_0_25px_rgba(16,185,129,0.6)]"
               />
             </div>
 

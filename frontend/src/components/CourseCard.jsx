@@ -125,7 +125,7 @@ function CourseCard({
               onClick={handleStart}
               className={`px-5 py-2.5 rounded-xl text-sm font-quantico-bold w-full sm:w-auto transition-all duration-300 ${
                 completed
-                  ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 hover:from-blue-500/30 hover:to-purple-500/30 text-blue-200 border border-blue-400/30'
+                  ? 'bg-gradient-to-r from-emerald-500/20 to-green-500/20 hover:from-emerald-500/30 hover:to-green-500/30 text-emerald-200 border border-emerald-400/30'
                   : 'btn-primary text-gray-100'
               }`}
             >

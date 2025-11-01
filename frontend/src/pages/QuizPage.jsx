@@ -23,56 +23,60 @@ function QuizPage({ user, onLogout, onNavigate, courseId }) {
   // Constants
   const MAX_VIOLATIONS = 3;
   const COOLDOWN_MINUTES = 30;
-  // Removed localStorage keys - now using Firebase
   const userId = user?.uid || 'user_123';
+  
+  // Session ID for current quiz attempt
+  const [sessionId, setSessionId] = useState(null);
 
-  // Load violations from Firebase on component mount
+  // Load violations and block status ONLY - don't start tracking yet
   useEffect(() => {
-    const loadViolationsFromFirebase = async () => {
+    const loadInitialState = async () => {
       try {
-        const firebaseViolations = await progressService.getViolations(userId, courseId);
-        setViolations(firebaseViolations);
-      } catch (error) {
-        console.error('Error loading violations from Firebase:', error);
-      }
-    };
-    
-    loadViolationsFromFirebase();
-  }, [userId, courseId]);
-
-  // Check if user is currently blocked - Load from Firebase
-  useEffect(() => {
-    const checkQuizBlockStatus = async () => {
-      try {
+        // Check if user is blocked
         const blockStatus = await progressService.getQuizBlockStatus(userId, courseId);
         
         if (blockStatus.is_blocked) {
           setQuizBlocked(true);
           const endTime = new Date(blockStatus.block_end_time).getTime();
           setBlockEndTime(endTime);
-          setTimeRemaining(blockStatus.time_remaining_ms / 1000); // Convert to seconds
+          setTimeRemaining(blockStatus.time_remaining_ms / 1000);
+        } else {
+          // If not blocked, auto-clear old violations when cooldown expires
+          setQuizBlocked(false);
+          setBlockEndTime(null);
+          setTimeRemaining(null);
+          setViolations([]); // Reset violations when accessing quiz page fresh
         }
       } catch (error) {
-        console.error('Error checking quiz block status:', error);
+        console.error('Error loading initial state:', error);
       }
     };
     
-    checkQuizBlockStatus();
+    loadInitialState();
   }, [userId, courseId]);
 
   // Countdown timer for blocked state
   useEffect(() => {
     let interval;
     if (quizBlocked && blockEndTime) {
-      interval = setInterval(() => {
+      interval = setInterval(async () => {
         const now = new Date().getTime();
-        const remaining = Math.max(0, Math.floor((blockEndTime - now) / 1000)); // Convert to seconds
+        const remaining = Math.max(0, Math.floor((blockEndTime - now) / 1000));
         
         if (remaining <= 0) {
-          // Block expired
+          // Block expired - auto-clear violations and unblock
           setQuizBlocked(false);
           setBlockEndTime(null);
           setTimeRemaining(null);
+          setViolations([]);
+          
+          // Clear from backend too
+          try {
+            await progressService.clearQuizViolations(userId, courseId);
+            console.log('✅ Cooldown expired - violations cleared');
+          } catch (error) {
+            console.error('Error clearing violations:', error);
+          }
         } else {
           setTimeRemaining(remaining);
         }
@@ -80,7 +84,7 @@ function QuizPage({ user, onLogout, onNavigate, courseId }) {
     }
     
     return () => clearInterval(interval);
-  }, [quizBlocked, blockEndTime]);
+  }, [quizBlocked, blockEndTime, userId, courseId]);
 
   // Remove old checkQuizBlockStatus function (now in useEffect above)
   
@@ -99,8 +103,10 @@ function QuizPage({ user, onLogout, onNavigate, courseId }) {
       setBlockEndTime(blockEndTimeMs);
       setTimeRemaining(COOLDOWN_MINUTES * 60);
       
-      // End current quiz
-      endQuiz();
+      // End current quiz and disable anti-cheat
+      setQuizStarted(false);
+      setAntiCheatEnabled(false);
+      await exitFullscreen();
       
       console.log('✅ Quiz access blocked in Firebase');
     } catch (error) {
@@ -218,43 +224,53 @@ function QuizPage({ user, onLogout, onNavigate, courseId }) {
   };
 
   const addViolation = async (type) => {
+    // CRITICAL: Only add violations when quiz is actually started AND anti-cheat is enabled
+    if (!quizStarted || !antiCheatEnabled) {
+      console.log('⚠️ Violation ignored - quiz not active:', type);
+      return;
+    }
+    
+    // Check if already at max violations - don't add more
+    if (violations.length >= MAX_VIOLATIONS) {
+      console.log('⚠️ Already at max violations');
+      return;
+    }
+    
     const violation = {
       type,
       timestamp: new Date().toISOString(),
       id: Date.now()
     };
     
-    const newViolations = [...violations, violation];
-    setViolations(newViolations);
+    // Add to local state first
+    const updatedViolations = [...violations, violation];
+    setViolations(updatedViolations);
     
-    // Save violation to Firebase instead of localStorage
+    // Save violation to backend
     try {
       await progressService.saveViolation(
         userId,
         courseId,
+        'quiz', // assessment_type
         type,
         violation.timestamp
       );
-      console.log('✅ Violation saved to Firebase');
+      console.log('✅ Violation saved to backend');
     } catch (error) {
-      console.error('❌ Failed to save violation to Firebase:', error);
+      console.error('❌ Failed to save violation to backend:', error);
     }
     
-    // Check if violation limit is reached
-    if (newViolations.length >= MAX_VIOLATIONS) {
+    // Check if we hit the limit
+    if (updatedViolations.length >= MAX_VIOLATIONS) {
       setWarningMessage(`QUIZ BLOCKED: Maximum violations (${MAX_VIOLATIONS}) exceeded. Access blocked for ${COOLDOWN_MINUTES} minutes.`);
       setShowWarning(true);
       await blockQuizAccess();
-      
-      // Auto-navigate back after showing the message
       setTimeout(() => {
         onNavigate('dashboard');
       }, 5000);
     } else {
-      setWarningMessage(`Security Alert: ${type} (${newViolations.length}/${MAX_VIOLATIONS})`);
+      setWarningMessage(`Security Alert: ${type} (${updatedViolations.length}/${MAX_VIOLATIONS})`);
       setShowWarning(true);
-      
-      // Auto-hide warning after 3 seconds
       setTimeout(() => {
         setShowWarning(false);
       }, 3000);
@@ -329,11 +345,26 @@ function QuizPage({ user, onLogout, onNavigate, courseId }) {
   }, [antiCheatEnabled, quizStarted]);
 
   const startSecureQuiz = async () => {
-    // Don't reset violations - they should persist across quiz attempts
+    // Check if blocked before starting
+    if (quizBlocked) {
+      console.log('❌ Cannot start quiz - user is blocked');
+      return;
+    }
+    
+    // Clear any old violations from previous session
+    setViolations([]);
+    
+    // Generate new session ID
+    const newSessionId = `quiz_${userId}_${courseId}_${Date.now()}`;
+    setSessionId(newSessionId);
+    
     // Only enable anti-cheat if the feature flag is enabled and not in testing mode
     const shouldEnableAntiCheat = antiCheatFeatureEnabled && !testingMode;
     setAntiCheatEnabled(shouldEnableAntiCheat);
     setQuizStarted(true);
+    
+    console.log('🔒 Quiz session started:', newSessionId);
+    console.log('🔒 Anti-cheat enabled:', shouldEnableAntiCheat);
     
     // Only enter fullscreen if anti-cheat is enabled
     if (shouldEnableAntiCheat) {
@@ -342,9 +373,16 @@ function QuizPage({ user, onLogout, onNavigate, courseId }) {
   };
 
   const endQuiz = async () => {
+    console.log('🛑 Ending quiz session:', sessionId);
+    
+    // Disable anti-cheat and exit quiz mode
     setAntiCheatEnabled(false);
     setQuizStarted(false);
-    // Don't auto-reset violations - they should persist for security
+    setSessionId(null);
+    
+    // Don't clear violations here - they should persist for blocking logic
+    // Violations will auto-clear when cooldown expires
+    
     await exitFullscreen();
   };
 
@@ -405,14 +443,14 @@ function QuizPage({ user, onLogout, onNavigate, courseId }) {
           <div className="space-y-4">
             <button
               onClick={startSecureQuiz}
-              className="w-full bg-gradient-to-r from-yellow-500/20 to-orange-500/20 hover:from-yellow-500/30 hover:to-orange-500/30 border border-yellow-500/40 hover:border-yellow-400/60 text-yellow-200 font-quantico-bold py-4 px-8 rounded-xl transition-all duration-300"
+              className="w-full bg-gradient-to-r from-emerald-600/80 to-green-600/80 hover:from-emerald-500/90 hover:to-green-500/90 border border-emerald-500/50 hover:border-emerald-400/70 text-white font-quantico-bold py-4 px-8 rounded-xl transition-all duration-300 shadow-lg shadow-emerald-500/20"
             >
               Start Secure Quiz
             </button>
             
             <button
               onClick={() => onNavigate('course', { courseId })}
-              className="w-full bg-gradient-to-r from-gray-600/20 to-gray-700/20 hover:from-gray-600/30 hover:to-gray-700/30 border border-gray-500/40 hover:border-gray-400/60 text-gray-200 font-quantico-bold py-3 px-6 rounded-xl transition-all duration-300"
+              className="w-full bg-gradient-to-r from-gray-700/50 to-gray-800/50 hover:from-gray-600/60 hover:to-gray-700/60 border border-gray-600/40 hover:border-gray-500/60 text-gray-200 font-quantico-bold py-3 px-6 rounded-xl transition-all duration-300"
             >
               Back to Course
             </button>
@@ -477,8 +515,8 @@ function QuizPage({ user, onLogout, onNavigate, courseId }) {
                   </span>
                 </div>
                 {testingMode && (
-                  <div className="bg-cyan-500/20 border border-cyan-500/40 rounded px-2 py-1">
-                    <span className="text-cyan-300 text-xs font-quantico-bold">
+                  <div className="bg-green-500/20 border border-green-500/40 rounded px-2 py-1">
+                    <span className="text-green-300 text-xs font-quantico-bold">
                       Anti-cheat disabled for testing
                     </span>
                   </div>
@@ -492,15 +530,17 @@ function QuizPage({ user, onLogout, onNavigate, courseId }) {
                 <div className="text-emerald-300 text-xs">
                   Student: <span className="text-gray-100 font-quantico-bold">{user?.displayName || 'Anonymous'}</span>
                 </div>
-                <button
-                  onClick={resetViolations}
-                  className="bg-gradient-to-r from-emerald-500/20 to-green-500/20 hover:from-emerald-500/30 hover:to-green-500/30 border border-emerald-500/40 hover:border-emerald-400/60 text-emerald-200 font-quantico-bold py-1 px-2 rounded text-xs transition-all duration-300"
-                >
-                  Reset
-                </button>
+                {testingMode && (
+                  <button
+                    onClick={resetViolations}
+                    className="bg-gradient-to-r from-emerald-600/50 to-green-600/50 hover:from-emerald-500/60 hover:to-green-500/60 border border-emerald-500/50 hover:border-emerald-400/70 text-emerald-200 font-quantico-bold py-1 px-2 rounded text-xs transition-all duration-300"
+                  >
+                    Reset
+                  </button>
+                )}
                 <button
                   onClick={endQuiz}
-                  className="bg-gradient-to-r from-gray-600/20 to-gray-700/20 hover:from-gray-600/30 hover:to-gray-700/30 border border-gray-500/40 hover:border-gray-400/60 text-gray-200 font-quantico-bold py-1 px-3 rounded-lg text-xs transition-all duration-300"
+                  className="bg-gradient-to-r from-gray-700/50 to-gray-800/50 hover:from-gray-600/60 hover:to-gray-700/60 border border-gray-600/40 hover:border-gray-500/60 text-gray-200 font-quantico-bold py-1 px-3 rounded-lg text-xs transition-all duration-300"
                 >
                   End Quiz
                 </button>

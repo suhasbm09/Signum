@@ -1,53 +1,36 @@
-# 🏆 Signum Blockchain Certificate System - Complete Documentation
+# Blockchain Certificate System Documentation
 
-## 📋 Table of Contents
-1. [Overview](#overview)
-2. [Architecture](#architecture)
-3. [Smart Contract Implementation](#smart-contract-implementation)
-4. [Certificate Template System](#certificate-template-system)
-5. [NFT Metadata Generation](#nft-metadata-generation)
-6. [Backend API Endpoints](#backend-api-endpoints)
-7. [Frontend Implementation](#frontend-implementation)
-8. [Security & Validation](#security--validation)
-9. [Deployment Guide](#deployment-guide)
+## Overview
 
----
+Signum mints **NFT certificates on Solana blockchain** when users complete courses with required scores. The system combines smart contract validation, dynamic certificate image generation, and decentralized metadata storage.
 
-## 🎯 Overview
+**Blockchain:** Solana Devnet (Anchor framework)  
+**Smart Contract:** On-chain eligibility validation + NFT minting  
+**Certificate Images:** Pillow/PIL template-based generation  
+**Metadata Storage:** IPFS (Pinata) or data URIs  
+**Wallet Integration:** Phantom wallet for transaction signing  
 
-Signum's blockchain certificate system mints NFT certificates on Solana Devnet when users complete courses with required scores. The system uses:
-- **Solana Smart Contract** (Anchor framework) for on-chain certification
-- **Metaplex Token Metadata** for NFT standards
-- **Certificate Templates** (Pillow/PIL) for personalized certificate images
-- **IPFS (Pinata)** for decentralized metadata storage
-- **Phantom Wallet** integration for user authentication
+**Key Features:**
+- Multi-user support on same wallet (userId-based PDA)
+- Eligibility validation (quiz ≥85%, completion ≥90%)
+- Dynamic certificate images with user data
+- Metaplex-compliant NFT metadata
+- Certificate revocation support
 
-### Key Features
-- ✅ On-chain certificate minting via Solana smart contract
-- ✅ Dynamic certificate image generation with user data
-- ✅ NFT metadata with course scores and completion data
-- ✅ Phantom wallet integration for Solana transactions
-- ✅ Multi-user support on same wallet (userId-based PDA)
-- ✅ Eligibility validation (quiz ≥85%, completion ≥90%)
-- ✅ Certificate revocation support
-- ✅ Testing mode for development
 
 ---
 
-## 🏗️ Architecture
+## System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                        FRONTEND (React)                         │
 ├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
 │  File: CertificationsContent.jsx                                │
 │  ├── Phantom Wallet Connection                                  │
-│  ├── Eligibility Checking                                       │
+│  ├── Eligibility Checking (quiz ≥85%, completion ≥90%)         │
 │  ├── Solana Transaction Execution                               │
-│  ├── Certificate Display                                        │
-│  └── State Management (minting, NFT status)                     │
-│                                                                  │
+│  └── Certificate Display                                        │
 └───────────────────────────────┬─────────────────────────────────┘
                                 │
                         HTTP POST Request
@@ -56,18 +39,16 @@ Signum's blockchain certificate system mints NFT certificates on Solana Devnet w
 ┌───────────────────────────────┴─────────────────────────────────┐
 │                     BACKEND (FastAPI)                           │
 ├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
 │  Endpoint: POST /blockchain/mint                                │
-│  ├── Verifies eligibility (quiz, completion)                   │
-│  ├── Calls MetadataService.generate_metadata()                 │
-│  ├── Calls CertificateTemplate.generate_certificate()          │
+│  ├── Verifies eligibility (quiz, completion, anti-cheat)       │
+│  ├── CertificateTemplate.generate_certificate()                │
+│  ├── MetadataService.generate_metadata()                       │
 │  └── Returns metadata URI + certificate image                  │
 │                                                                  │
 │  Files:                                                         │
 │  ├── app/routes/blockchain.py                                  │
 │  ├── app/services/metadata_service.py                          │
 │  └── app/services/certificate_template.py                      │
-│                                                                  │
 └───────────────────────────────┬─────────────────────────────────┘
                                 │
                     Certificate Image + Metadata
@@ -75,39 +56,39 @@ Signum's blockchain certificate system mints NFT certificates on Solana Devnet w
 ┌───────────────────────────────┴─────────────────────────────────┐
 │                 SOLANA BLOCKCHAIN                               │
 ├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
 │  Smart Contract: solana/program/programs/program/src/lib.rs     │
-│  ├── Program ID: 2EWf5TXq3jW8iQ1yuQorrgmaBc4Wjd8PMwDEBCWod5tp   │
-│  ├── Instruction: mint_certificate()                            │
+│  Program ID: 2EWf5TXq3jW8iQ1yuQorrgmaBc4Wjd8PMwDEBCWod5tp       │
+│                                                                  │
+│  Instruction: mint_certificate()                                │
 │  ├── Validates eligibility (score ≥85, completion ≥90)         │
+│  ├── Calculates final score: (quiz × 0.7) + (completion × 0.3) │
 │  ├── Mints NFT with metadata URI                               │
 │  └── Stores certificate data on-chain                          │
 │                                                                  │
 │  PDA Derivation:                                                │
 │  seeds = ["certificate", wallet, courseId, userId]             │
 │  (userId ensures unique certificate per user per wallet)        │
-│                                                                  │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+
 ---
 
-## 📦 Smart Contract Implementation
+## Smart Contract Implementation
 
-### File: `solana/program/programs/program/src/lib.rs`
+### Program Details
 
-#### Program ID
-```rust
-declare_id!("2EWf5TXq3jW8iQ1yuQorrgmaBc4Wjd8PMwDEBCWod5tp");
-```
+**File:** `solana/program/programs/program/src/lib.rs`  
+**Program ID:** `2EWf5TXq3jW8iQ1yuQorrgmaBc4Wjd8PMwDEBCWod5tp`  
+**Framework:** Anchor (Solana smart contract framework)
 
-#### Instruction: mint_certificate()
+### Instruction: mint_certificate()
 
 ```rust
 pub fn mint_certificate(
     ctx: Context<MintCertificate>,
     course_id: String,
-    user_id: String,              // ← Added for multi-user support
+    user_id: String,              // Multi-user support
     quiz_score: u8,
     completion_percentage: u8,
     name: String,
@@ -122,17 +103,17 @@ pub fn mint_certificate(
     let final_score = ((quiz_score as u16 * 70 + completion_percentage as u16 * 30) / 100) as u8;
 
     // Store certificate data
-    certificate.user_id = user_id;  // ← Stored on-chain
+    certificate.user_id = user_id;
     certificate.quiz_score = quiz_score;
     certificate.completion_percentage = completion_percentage;
     certificate.final_score = final_score;
-    // ... rest of minting logic
+    // ... NFT minting logic
 }
 ```
 
-#### PDA (Program Derived Address) Derivation
+### PDA (Program Derived Address)
 
-**IMPORTANT**: The PDA now includes `userId` to support multiple users on the same wallet:
+**Multi-User Support:** The PDA includes `userId` to allow multiple users on the same wallet.
 
 ```rust
 #[derive(Accounts)]
@@ -146,19 +127,21 @@ pub struct MintCertificate<'info> {
             b"certificate",
             recipient.key().as_ref(),      // Wallet address
             course_id.as_bytes(),          // Course ID
-            user_id.as_bytes()             // User ID ← Added for uniqueness
+            user_id.as_bytes()             // User ID (enables multi-user)
         ],
         bump
     )]
     pub certificate: Account<'info, Certificate>,
+    // ... other accounts
+}
 ```
 
 **Why userId in PDA?**
-- Without userId: One wallet = One certificate per course (conflict if different users)
-- With userId: Multiple users can use same wallet, each gets unique certificate
-- Example: `wallet1 + data-structures + user123` vs `wallet1 + data-structures + user456`
+- **Without userId:** One wallet = One certificate per course (conflict if shared wallet)
+- **With userId:** Multiple users can share wallet, each gets unique certificate
+- **Example:** `wallet1 + data-structures + user123` vs `wallet1 + data-structures + user456`
 
-#### Certificate Account Structure
+### Certificate Account Structure
 
 ```rust
 #[account]
@@ -175,23 +158,7 @@ pub struct Certificate {
 }
 ```
 
-#### Other Instructions
-
-```rust
-// Verify certificate (check not revoked)
-pub fn verify_certificate(ctx: Context<VerifyCertificate>) -> Result<()> {
-    let certificate = &ctx.accounts.certificate;
-    require!(!certificate.is_revoked, ErrorCode::CertificateRevoked);
-    Ok(())
-}
-
-// Close certificate (testing only - returns rent)
-pub fn close_certificate(ctx: Context<CloseCertificate>) -> Result<()> {
-    Ok(())
-}
-```
-
-#### Error Codes
+### Error Codes
 
 ```rust
 #[error_code]
@@ -205,169 +172,125 @@ pub enum ErrorCode {
 }
 ```
 
+
 ---
 
-## 🖼️ Certificate Template System
+## Certificate Template System
 
-### File: `backend/app/services/certificate_template.py`
+### Overview
 
-Generates personalized certificate images using Pillow (PIL) and course-specific PNG templates.
+**File:** `backend/app/services/certificate_template.py`  
+**Library:** Pillow (PIL) for image manipulation  
+**Template:** PNG files with dynamic text overlay  
 
-#### Template Structure
+### Template Structure
 
 ```
 backend/app/templates/certificates/
 ├── data-structures/
 │   └── certificate_template.png  (976 x 693px)
+└── [other-courses]/
+    └── certificate_template.png
 ```
 
-#### CertificateTemplate Class
+### Dynamic Fields Overlaid
 
+**Certificate Generator:**
 ```python
 class CertificateTemplate:
-    def __init__(self):
-        self.width = 1200
-        self.height = 850
-        # Load DejaVu fonts
-        self.name_font = ImageFont.truetype(..., 32)
-        self.score_font = ImageFont.truetype(..., 27)
-        self.wallet_font = ImageFont.truetype(..., 16)
-        self.text_font = ImageFont.truetype(..., 20)
-
     def generate_certificate(
-        self,
         course_id: str,
         wallet_address: str,
         final_score: int,
         timestamp: str,
         user_name: str
-    ) -> bytes:
-        # Returns PNG bytes
+    ) -> bytes:  # Returns PNG bytes
 ```
 
-#### Dynamic Fields Overlaid
+**Overlay Positions:**
 
-1. **User Name** (Position: 47% down, centered)
-   - Font: 32px bold
-   - Color: Black (#000000)
-   - Position: Below "This is to certify that"
+| Field | Position | Font | Color |
+|-------|----------|------|-------|
+| **User Name** | 47% down, centered | 32px bold | Black |
+| **Wallet Address** | 54% down, centered | 16px regular | Gray (#555555) |
+| **Final Score** | 68.5% down, 51% right | 27px bold | Black |
+| **Timestamp** | 82% down, centered | 20px regular | Black |
 
-2. **Wallet Address** (Position: 54% down, centered)
-   - Font: 16px regular
-   - Color: Gray (#555555)
-   - Full address displayed for blockchain verification
-
-3. **Final Score** (Position: 68.5% down, 51% right)
-   - Font: 27px bold
-   - Color: Black (#000000)
-   - Format: "85%" appended to "with overall score"
-
-4. **Timestamp** (Position: 82% down, centered)
-   - Font: 20px regular
-   - Color: Black (#000000)
-   - Format: "January 15, 2025" (IST timezone)
-   - Location: In "Certified on [date]" section
-
-#### Certificate Image Output
-
-- **Format**: PNG
-- **Return**: Bytes (for base64 encoding or IPFS upload)
-- **Size**: 976 x 693px (from template)
-- **Use Case**: Embedded in NFT metadata as image URI
+**Timestamp Format:** "January 15, 2025" (IST timezone)  
+**Output:** PNG bytes (for base64 encoding or IPFS upload)
 
 ---
 
-## 📝 NFT Metadata Generation
+## NFT Metadata Generation
 
-### File: `backend/app/services/metadata_service.py`
+### MetadataService
 
-Generates Metaplex-compliant NFT metadata JSON with embedded certificate image.
-
-#### MetadataService Class
+**File:** `backend/app/services/metadata_service.py`  
+**Purpose:** Generate Metaplex-compliant NFT metadata with embedded certificate image
 
 ```python
 class MetadataService:
-    def __init__(self):
-        self.template_generator = CertificateTemplate()
-        self.use_ipfs = bool(os.getenv('PINATA_JWT'))
-        
-    def generate_metadata(...) -> Dict[str, Any]:
-        # Returns: {metadata, metadata_uri, image_uri}
+    def generate_metadata(
+        course_id, user_id, quiz_score, 
+        completion_percentage, final_score,
+        wallet_address, user_name
+    ) -> Dict[str, Any]:
 ```
 
-#### Generate Metadata Flow
+### Metadata Flow
 
-```python
-def generate_metadata(
-    self,
-    course_id: str,
-    user_id: str,
-    quiz_score: int,
-    completion_percentage: int,
-    final_score: int,
-    wallet_address: str,
-    user_name: str
-) -> Dict[str, Any]:
-    # 1. Generate certificate image
-    certificate_image = self.template_generator.generate_certificate(...)
-    
-    # 2. Upload image to IPFS (or use data URI)
-    if self.use_ipfs:
-        image_uri = self._upload_image_sync(...)
-    else:
-        image_uri = f"data:image/png;base64,{base64_image}"
-    
-    # 3. Create metadata JSON
-    metadata = {
-        "name": f"{course_name} NFT",
-        "symbol": "SGN",
-        "description": "Certificate of completion for...",
-        "image": image_uri,  # Certificate image
-        "attributes": [
-            {"trait_type": "Course", "value": course_id},
-            {"trait_type": "Quiz Score", "value": quiz_score},
-            {"trait_type": "Completion", "value": completion_percentage},
-            {"trait_type": "Final Score", "value": final_score},
-        ],
-        "properties": {
-            "category": "certificate",
-            "files": [{"uri": image_uri, "type": "image/png"}]
-        }
-    }
-    
-    # 4. Upload metadata to IPFS (optional)
-    metadata_uri = self._upload_metadata_sync(metadata)
-    
-    return {
-        "metadata": metadata,
-        "metadata_uri": metadata_uri,  # Used in Solana mint
-        "image_uri": image_uri,        # For display
-        "certificate_image": base64_image
-    }
+```
+1. Generate certificate image (CertificateTemplate)
+   ↓
+2. Upload image to IPFS (if configured) or use data URI
+   ↓
+3. Create metadata JSON (Metaplex standard)
+   ↓
+4. Upload metadata to IPFS (optional)
+   ↓
+5. Return: {metadata, metadata_uri, image_uri, certificate_image}
 ```
 
-#### IPFS Integration (Pinata)
+### Metadata Structure
 
-**Configuration** (`.env`):
-```env
-PINATA_API_KEY=your_key
-PINATA_SECRET_API_KEY=your_secret
-PINATA_JWT=your_jwt  # Preferred
+```json
+{
+  "name": "Data Structures Master NFT",
+  "symbol": "SGN",
+  "description": "Certificate of completion for Data Structures course on Signum",
+  "image": "ipfs://Qm..." or "data:image/png;base64,...",
+  "attributes": [
+    {"trait_type": "Course", "value": "data-structures"},
+    {"trait_type": "Quiz Score", "value": 90},
+    {"trait_type": "Completion", "value": 95},
+    {"trait_type": "Final Score", "value": 91}
+  ],
+  "properties": {
+    "category": "certificate",
+    "files": [{"uri": "ipfs://Qm...", "type": "image/png"}]
+  }
+}
 ```
 
-**Fallback**: If Pinata not configured, uses data URIs (base64 encoded images)
+### IPFS Integration (Pinata)
+
+**Configuration (.env):**
+```bash
+PINATA_JWT=your_jwt_token
+```
+
+**Fallback:** If Pinata not configured, uses data URIs (base64 encoded images)
+
 
 ---
 
-## 🌐 Backend API Endpoints
+## Backend API
 
-### File: `backend/app/routes/blockchain.py`
+### POST /blockchain/mint
 
-#### POST /blockchain/mint
+**Purpose:** Generate certificate metadata and image for Solana minting
 
-**Purpose**: Generate certificate metadata and image for Solana minting
-
-**Request**:
+**Request:**
 ```json
 {
   "user_id": "firebase_uid_123",
@@ -377,7 +300,12 @@ PINATA_JWT=your_jwt  # Preferred
 }
 ```
 
-**Response**:
+**Validation:**
+- Quiz score ≥ 85%
+- Course completion ≥ 90%
+- No anti-cheat violations
+
+**Response:**
 ```json
 {
   "success": true,
@@ -389,7 +317,6 @@ PINATA_JWT=your_jwt  # Preferred
     "metadata": {
       "name": "Data Structures Master NFT",
       "symbol": "SGN",
-      "description": "...",
       "image": "ipfs://Qm...",
       "attributes": [...]
     },
@@ -399,223 +326,570 @@ PINATA_JWT=your_jwt  # Preferred
 }
 ```
 
-**Validation**:
-- Checks quiz score ≥ 85%
-- Checks course completion ≥ 90%
-- Verifies anti-cheat eligibility
-- Returns error if requirements not met
+---
+
+## Frontend Implementation
+
+### Mint Flow
+
+**File:** `frontend/src/courses/data-structures/components/CertificationsContent.jsx`
+
+```javascript
+const handleMintNFT = async () => {
+  // 1. Request metadata from backend
+  const response = await fetch('/blockchain/mint', {
+    method: 'POST',
+    body: JSON.stringify({ 
+      user_id, 
+      course_id, 
+      wallet_address, 
+      user_name 
+    })
+  });
+  
+  // 2. Generate certificate PDA with userId
+  const [certificatePda] = PublicKey.findProgramAddressSync(
+    [
+      Buffer.from('certificate'),
+      wallet.publicKey.toBuffer(),
+      Buffer.from(courseId),
+      Buffer.from(userId)  // Multi-user support
+    ],
+    program.programId
+  );
+  
+  // 3. Call Solana smart contract
+  const tx = await program.methods
+    .mintCertificate(
+      courseId, 
+      userId, 
+      quizScore, 
+      completion, 
+      name, 
+      symbol, 
+      uri
+    )
+    .accounts({ 
+      certificate: certificatePda,
+      mint,
+      // ... other accounts
+    })
+    .rpc();
+  
+  // 4. Save to Firebase
+  await saveNFTStatusToFirebase(imageUrl, tx, mintAddress);
+};
+```
+
+### Features
+
+**Wallet Integration:**
+- Phantom wallet connection
+- Address storage in Firebase profile
+
+**Eligibility Display:**
+- Quiz score and completion percentage
+- Final exam status
+- Validation before minting
+
+**Error Handling:**
+- Duplicate transaction detection
+- Insufficient score errors
+- Wallet connection errors
+- Insufficient SOL balance
+
 
 ---
 
-## 💻 Frontend Implementation
-
-### File: `frontend/src/courses/data-structures/components/CertificationsContent.jsx`
-
-#### Key Features
-
-1. **Wallet Integration**
-   - Phantom wallet connection
-   - Wallet state management (connected/disconnected)
-   - Address storage in Firebase
-
-2. **Eligibility Checking**
-   - Displays quiz score and completion percentage
-   - Shows final exam status
-   - Validates before allowing mint
-
-3. **Mint NFT Flow**
-   ```javascript
-   const handleMintNFT = async () => {
-     // 1. Request metadata from backend
-     const metadataResponse = await fetch('http://localhost:8000/blockchain/mint', {
-       method: 'POST',
-       body: JSON.stringify({ user_id, course_id, wallet_address, user_name })
-     });
-     
-     // 2. Generate certificate PDA with userId
-     const [certificatePda] = PublicKey.findProgramAddressSync(
-       [
-         Buffer.from('certificate'),
-         provider.wallet.publicKey.toBuffer(),
-         Buffer.from(courseId),
-         Buffer.from(userId)  // ← Multi-user support
-       ],
-       program.programId
-     );
-     
-     // 3. Call Solana program
-     const tx = await program.methods
-       .mintCertificate(courseId, userId, quizScore, completion, name, symbol, uri)
-       .accounts({ certificate: certificatePda, mint, ... })
-       .rpc();
-     
-     // 4. Save to Firebase
-     await saveNFTStatusToFirebase(imageUrl, tx, mintAddress);
-   };
-   ```
-
-4. **PDA Derivation (Frontend)**
-   - Seeds: `["certificate", wallet, courseId, userId]`
-   - Matches smart contract PDA derivation
-   - Ensures uniqueness per user
-
-5. **Error Handling**
-   - Duplicate transaction detection ("already been processed")
-   - Quiz score too low
-   - Completion too low
-   - Wallet errors
-   - Insufficient SOL
-
-6. **State Management**
-   - `nftMinted`: Boolean flag for existing certificate
-   - `minting`: Loading state during transaction
-   - `nftImageUrl`: Certificate image for display
-   - `walletConnected`: Phantom wallet state
-
-#### Firebase Integration
-
-**Stores**:
-- NFT status (minted/not minted)
-- Certificate image URL
-- Transaction signature
-- Mint address
-- Timestamp
-
-**Backend Endpoints**:
-- `GET /progress/nft-certificate/:userId/:courseId` - Load NFT status
-- `POST /progress/nft-certificate` - Save NFT status
-- `DELETE /progress/nft-certificate/:userId/:courseId` - Delete NFT status
-
----
-
-## 🔒 Security & Validation
+## Security & Validation
 
 ### Eligibility Requirements
 
-1. **Quiz Score**: ≥ 85%
-2. **Course Completion**: ≥ 90%
-3. **Anti-Cheat**: No violations detected
-4. **Final Exam**: Passed (if applicable)
+**Quiz Score:** ≥ 85%  
+**Course Completion:** ≥ 90%  
+**Anti-Cheat:** No violations detected  
+**Final Exam:** Passed (if applicable)
 
-### Validation Layers
+### Dual Validation Layers
 
-1. **Backend Validation** (`blockchain.py`)
-   - Verifies scores against database
-   - Checks anti-cheat status
-   - Returns error if ineligible
+**1. Backend Validation** (`blockchain.py`)
+- Verifies scores against Firestore database
+- Checks anti-cheat violation status
+- Returns error response if ineligible
 
-2. **Smart Contract Validation** (`lib.rs`)
-   - Re-validates scores on-chain
-   - Enforces >= 85 and >= 90 requirements
-   - Reverts transaction if validation fails
+**2. Smart Contract Validation** (`lib.rs`)
+- Re-validates scores on-chain
+- Enforces ≥ 85 quiz, ≥ 90 completion requirements
+- Reverts transaction if validation fails
 
 ### Security Features
 
-- ✅ No private keys stored on backend
-- ✅ Client-side signing (Phantom wallet)
-- ✅ On-chain data immutability
-- ✅ Certificate revocation support
-- ✅ Testing mode (can close certificates)
-- ✅ Multi-user support (userId-based uniqueness)
+- No private keys stored on backend
+- Client-side transaction signing (Phantom wallet)
+- On-chain data immutability
+- Multi-user support via userId-based PDA
+- Certificate revocation capability
 
 ---
 
-## 🚀 Deployment Guide
+## System Constraints
 
-### 1. Smart Contract Deployment
+**Certificate Uniqueness:**
+- One certificate per user per course per wallet
+- userId in PDA prevents wallet conflicts
+- Multiple users can share same wallet safely
 
-```bash
-cd solana/program
-anchor build
-anchor deploy
-# Copy new IDL to frontend
-cp target/idl/signum_certificate.json ../frontend/src/signum_certificate_idl.json
-```
+**Eligibility Calculation:**
+- Final score = (quiz × 0.7) + (completion × 0.3)
+- Both thresholds must be met independently
+- Anti-cheat violations block certificate minting
 
-### 2. Backend Setup
+**IPFS/Metadata:**
+- Pinata JWT required for IPFS uploads
+- Falls back to data URIs if IPFS not configured
+- Certificate images generated server-side only
 
-```bash
-cd backend
-pip install -r requirements.txt
+**Blockchain:**
+- Solana Devnet only (testing environment)
+- Requires SOL balance for transaction fees
+- Transaction signing requires Phantom wallet
+- PDAs are deterministic (same inputs = same address)
 
-# Configure .env
-echo "GEMINI_API_KEY=your_key" >> .env
-echo "PINATA_JWT=your_jwt" >> .env
-
-# Run backend
-uvicorn app.main:app --reload
-```
-
-### 3. Frontend Setup
-
-```bash
-cd frontend
-npm install
-
-# Update IDL file after smart contract deployment
-# File: src/signum_certificate_idl.json
-
-# Run frontend
-npm run dev
-```
-
-### 4. Testing
-
-1. Connect Phantom wallet (Devnet)
-2. Complete course (quiz + all modules)
-3. Navigate to Certifications page
-4. Click "Mint NFT Certificate"
-5. Approve transaction in Phantom
-6. View certificate in wallet
+**Testing Features:**
+- Certificate closure (returns rent to wallet)
+- Available only in development mode
+- Not available on production/mainnet
 
 ---
 
-## 📊 Data Flow Summary
+## Visual Diagrams
+
+### Diagram 1: Certificate Minting Flow
 
 ```
-1. User completes course → Scores saved to Firebase
-2. User visits Certifications page → Frontend checks eligibility
-3. User clicks "Mint NFT" → Frontend requests metadata from backend
-4. Backend generates certificate image → Overlays user data on template
-5. Backend creates metadata JSON → Embeds certificate image
-6. Backend returns metadata_uri → Frontend receives data
-7. Frontend calls Solana smart contract → Mint transaction sent
-8. Solana program validates → Checks scores, mints NFT
-9. Certificate NFT minted → User receives in Phantom wallet
-10. Certificate displayed → Image shown on frontend
+┌─────────────────────────────────────────────────────────────────────┐
+│              CERTIFICATE MINTING WORKFLOW                           │
+└─────────────────────────────────────────────────────────────────────┘
+
+                    ┌──────────────────┐
+                    │  User completes  │
+                    │  course (quiz +  │
+                    │  all modules)    │
+                    └────────┬─────────┘
+                             │
+                             ▼
+                  ┌──────────────────────┐
+                  │  Navigate to         │
+                  │  Certifications page │
+                  └──────────┬───────────┘
+                             │
+                             ▼
+               ┌─────────────────────────────┐
+               │  Check Eligibility          │
+               │  ├─ Quiz ≥ 85%?             │
+               │  ├─ Completion ≥ 90%?       │
+               │  └─ Anti-cheat OK?          │
+               └──────────┬──────────────────┘
+                          │
+             ┌────────────┴─────────────┐
+             │                          │
+          ❌ NO                      ✅ YES
+             │                          │
+             ▼                          ▼
+    ┌─────────────────┐      ┌──────────────────┐
+    │ Show ineligible │      │ Enable "Mint NFT"│
+    │ message         │      │ button           │
+    └─────────────────┘      └────────┬─────────┘
+                                      │
+                                      │ User clicks "Mint NFT"
+                                      ▼
+                         ┌────────────────────────┐
+                         │ Connect Phantom wallet │
+                         └───────────┬────────────┘
+                                     │
+                                     ▼
+                    ┌────────────────────────────────┐
+                    │ Frontend: handleMintNFT()      │
+                    └───────────┬────────────────────┘
+                                │
+      ┌─────────────────────────┴──────────────────────────┐
+      │                                                     │
+      ▼                                                     ▼
+┌──────────────────────┐                      ┌────────────────────────┐
+│ STEP 1:              │                      │ STEP 2:                │
+│ Request Metadata     │                      │ Generate PDA           │
+├──────────────────────┤                      ├────────────────────────┤
+│ POST /blockchain/mint│                      │ PublicKey.find         │
+│                      │                      │ ProgramAddressSync()   │
+│ Body:                │                      │                        │
+│ {                    │                      │ Seeds:                 │
+│   user_id,           │                      │ ["certificate",        │
+│   course_id,         │                      │  wallet,               │
+│   wallet_address,    │                      │  courseId,             │
+│   user_name          │                      │  userId]               │
+│ }                    │                      │                        │
+└──────────┬───────────┘                      └────────┬───────────────┘
+           │                                           │
+           ▼                                           │
+┌──────────────────────────────────────┐              │
+│ Backend Processing                   │              │
+├──────────────────────────────────────┤              │
+│ 1. Verify eligibility (quiz, etc)    │              │
+│                                      │              │
+│ 2. CertificateTemplate               │              │
+│    .generate_certificate()           │              │
+│    ├─ Load PNG template              │              │
+│    ├─ Overlay: user name             │              │
+│    ├─ Overlay: wallet address        │              │
+│    ├─ Overlay: final score           │              │
+│    └─ Overlay: timestamp             │              │
+│    → Returns PNG bytes               │              │
+│                                      │              │
+│ 3. MetadataService                   │              │
+│    .generate_metadata()              │              │
+│    ├─ Upload image to IPFS/Pinata    │              │
+│    │   (or data URI fallback)        │              │
+│    ├─ Create metadata JSON           │              │
+│    │   {                              │              │
+│    │     name, symbol, description,   │              │
+│    │     image: "ipfs://...",         │              │
+│    │     attributes: [quiz, completion]│             │
+│    │   }                              │              │
+│    └─ Upload metadata to IPFS        │              │
+│    → Returns metadata_uri            │              │
+│                                      │              │
+│ 4. Return response:                  │              │
+│    {                                 │              │
+│      eligible: true,                 │              │
+│      quiz_score, completion,         │              │
+│      final_score,                    │              │
+│      metadata: {...},                │              │
+│      metadata_uri: "ipfs://...",     │              │
+│      certificate_image_url           │              │
+│    }                                 │              │
+└──────────┬───────────────────────────┘              │
+           │                                           │
+           │                                           │
+           └───────────────┬───────────────────────────┘
+                           │
+                           ▼
+               ┌───────────────────────────┐
+               │ STEP 3:                   │
+               │ Call Solana Smart Contract│
+               └───────────┬───────────────┘
+                           │
+                           ▼
+        ┌──────────────────────────────────────────┐
+        │ program.methods.mintCertificate(         │
+        │   courseId,                              │
+        │   userId,  // Multi-user support         │
+        │   quizScore,                             │
+        │   completionPercentage,                  │
+        │   name,                                  │
+        │   symbol,                                │
+        │   metadataUri                            │
+        │ )                                        │
+        │ .accounts({                              │
+        │   certificate: certificatePda,           │
+        │   mint,                                  │
+        │   recipient,                             │
+        │   ...                                    │
+        │ })                                       │
+        │ .rpc()                                   │
+        └──────────────┬───────────────────────────┘
+                       │
+                       ▼
+        ┌──────────────────────────────────────────┐
+        │ Solana Smart Contract Execution          │
+        ├──────────────────────────────────────────┤
+        │ lib.rs: mint_certificate()               │
+        │                                          │
+        │ 1. Validate eligibility on-chain:        │
+        │    require!(quiz_score >= 85)            │
+        │    require!(completion >= 90)            │
+        │                                          │
+        │ 2. Calculate final score:                │
+        │    (quiz × 70 + completion × 30) / 100   │
+        │                                          │
+        │ 3. Create certificate account (PDA):     │
+        │    {                                     │
+        │      owner: wallet,                      │
+        │      course_id,                          │
+        │      user_id,                            │
+        │      quiz_score,                         │
+        │      completion_percentage,              │
+        │      final_score,                        │
+        │      mint_address,                       │
+        │      minted_at: timestamp,               │
+        │      is_revoked: false                   │
+        │    }                                     │
+        │                                          │
+        │ 4. Mint NFT with metadata URI            │
+        │    (Metaplex Token Metadata)             │
+        │                                          │
+        │ 5. Return transaction signature          │
+        └──────────────┬───────────────────────────┘
+                       │
+                       ▼
+        ┌──────────────────────────────────────────┐
+        │ STEP 4:                                  │
+        │ Save to Firebase                         │
+        ├──────────────────────────────────────────┤
+        │ POST /progress/nft-certificate           │
+        │                                          │
+        │ {                                        │
+        │   user_id,                               │
+        │   course_id,                             │
+        │   nft_minted: true,                      │
+        │   certificate_image_url,                 │
+        │   transaction_signature,                 │
+        │   mint_address,                          │
+        │   timestamp                              │
+        │ }                                        │
+        └──────────────┬───────────────────────────┘
+                       │
+                       ▼
+               ┌───────────────────┐
+               │ SUCCESS!          │
+               │                   │
+               │ ✅ NFT minted      │
+               │ ✅ Stored on-chain │
+               │ ✅ Saved to Firebase│
+               │ ✅ Display certificate│
+               └───────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════
+                           DATA FLOW EXAMPLE
+═══════════════════════════════════════════════════════════════════════
+
+User: John Doe
+Course: Data Structures
+Quiz Score: 90%
+Completion: 95%
+
+         │
+         ▼
+Frontend checks eligibility → ✅ Pass
+         │
+         ▼
+POST /blockchain/mint
+  {
+    user_id: "user123",
+    course_id: "data-structures",
+    wallet_address: "5Yq7...",
+    user_name: "John Doe"
+  }
+         │
+         ▼
+Backend generates:
+  ├─ Certificate Image (PNG)
+  │  ├─ Name: "John Doe"
+  │  ├─ Wallet: "5Yq7..."
+  │  ├─ Score: "91%"
+  │  └─ Date: "November 1, 2025"
+  │
+  ├─ Upload to IPFS → ipfs://QmABC123...
+  │
+  └─ Metadata JSON
+     {
+       "name": "Data Structures Master NFT",
+       "symbol": "SGN",
+       "image": "ipfs://QmABC123...",
+       "attributes": [
+         {"trait_type": "Quiz Score", "value": 90},
+         {"trait_type": "Completion", "value": 95},
+         {"trait_type": "Final Score", "value": 91}
+       ]
+     }
+     Upload to IPFS → ipfs://QmXYZ789...
+         │
+         ▼
+Frontend receives metadata_uri: "ipfs://QmXYZ789..."
+         │
+         ▼
+Generate PDA:
+  seeds = [
+    "certificate",
+    "5Yq7...",           // wallet
+    "data-structures",   // courseId
+    "user123"            // userId
+  ]
+  → PDA: "Cert8kL9..."
+         │
+         ▼
+Call smart contract:
+  program.methods.mintCertificate(
+    "data-structures",
+    "user123",
+    90,
+    95,
+    "Data Structures Master NFT",
+    "SGN",
+    "ipfs://QmXYZ789..."
+  )
+         │
+         ▼
+Solana processes transaction:
+  ├─ Validate: 90 ≥ 85 ✅
+  ├─ Validate: 95 ≥ 90 ✅
+  ├─ Calculate: (90×70 + 95×30)/100 = 91
+  ├─ Create certificate account at PDA
+  └─ Mint NFT with metadata URI
+         │
+         ▼
+Transaction signature: "3Kz9..."
+         │
+         ▼
+Save to Firebase:
+  nft_certificates/user123_data-structures
+  {
+    nft_minted: true,
+    certificate_image_url: "ipfs://QmABC123...",
+    transaction_signature: "3Kz9...",
+    mint_address: "NFTMint4X...",
+    timestamp: "2025-11-01T12:00:00Z"
+  }
+         │
+         ▼
+Display certificate to user ✅
 ```
 
 ---
 
-## 🏷️ File Map
+### Diagram 2: Multi-User PDA Architecture
 
-### Smart Contract
-- `solana/program/programs/program/src/lib.rs` - Anchor program
-- `solana/program/Anchor.toml` - Anchor configuration
-- `frontend/src/signum_certificate_idl.json` - IDL for frontend
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│            MULTI-USER PDA (Program Derived Address)                 │
+└─────────────────────────────────────────────────────────────────────┘
 
-### Backend
-- `backend/app/routes/blockchain.py` - Mint endpoint
-- `backend/app/services/metadata_service.py` - Metadata generation
-- `backend/app/services/certificate_template.py` - Image generation
-- `backend/app/templates/certificates/` - PNG templates
+Problem: What if multiple users share the same Phantom wallet?
 
-### Frontend
-- `frontend/src/courses/data-structures/components/CertificationsContent.jsx` - Mint UI
-- `frontend/src/contexts/ProgressContext.jsx` - Progress state
-- `frontend/src/services/progressService.js` - Firebase communication
+┌──────────────────────────────────────────────────────────────────┐
+│ WITHOUT userId in PDA (Old Approach)                             │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  User A                   User B                                 │
+│  ├─ user_id: "alice"      ├─ user_id: "bob"                     │
+│  └─ wallet: "Wallet1..."  └─ wallet: "Wallet1..." (same!)       │
+│                                                                  │
+│  Both try to mint for "data-structures" course                  │
+│                                                                  │
+│  PDA seeds:                                                      │
+│  ├─ "certificate"                                                │
+│  ├─ "Wallet1..."                                                 │
+│  └─ "data-structures"                                            │
+│                                                                  │
+│  Generated PDA: "CertXYZ..."                                     │
+│                                                                  │
+│  ❌ CONFLICT: Same PDA for both users!                           │
+│  ❌ Second mint transaction fails: "Account already exists"      │
+│                                                                  │
+└──────────────────────────────────────────────────────────────────┘
 
----
 
-## 🎉 Summary
+┌──────────────────────────────────────────────────────────────────┐
+│ WITH userId in PDA (Current Approach)                            │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  User A                                                          │
+│  ├─ user_id: "alice"                                             │
+│  ├─ wallet: "Wallet1..."                                         │
+│  └─ course: "data-structures"                                    │
+│                                                                  │
+│  PDA seeds:                                                      │
+│  ├─ "certificate"                                                │
+│  ├─ "Wallet1..."                                                 │
+│  ├─ "data-structures"                                            │
+│  └─ "alice"  ← Unique identifier                                 │
+│                                                                  │
+│  Generated PDA: "CertABC..."                                     │
+│                                                                  │
+│  ✅ Certificate minted successfully                              │
+│                                                                  │
+│  ───────────────────────────────────────────────────────────     │
+│                                                                  │
+│  User B                                                          │
+│  ├─ user_id: "bob"                                               │
+│  ├─ wallet: "Wallet1..." (same wallet!)                          │
+│  └─ course: "data-structures"                                    │
+│                                                                  │
+│  PDA seeds:                                                      │
+│  ├─ "certificate"                                                │
+│  ├─ "Wallet1..."                                                 │
+│  ├─ "data-structures"                                            │
+│  └─ "bob"  ← Different userId                                    │
+│                                                                  │
+│  Generated PDA: "CertDEF..."  (different from User A!)           │
+│                                                                  │
+│  ✅ Certificate minted successfully                              │
+│                                                                  │
+│  ───────────────────────────────────────────────────────────     │
+│                                                                  │
+│  Result:                                                         │
+│  ✅ Both users have unique certificates                          │
+│  ✅ Same wallet, different PDAs                                  │
+│  ✅ No conflicts                                                 │
+│                                                                  │
+└──────────────────────────────────────────────────────────────────┘
 
-Signum's blockchain certificate system provides:
-- ✅ On-chain NFT certification via Solana smart contract
-- ✅ Dynamic certificate images with user data
-- ✅ Metaplex-compliant NFT metadata
-- ✅ IPFS integration for decentralized storage
-- ✅ Multi-user support on same wallet
-- ✅ Eligibility validation (quiz ≥85%, completion ≥90%)
-- ✅ Full testing and deployment workflow
 
-**Ready for production. Ready for students. Ready for the blockchain.**
+═══════════════════════════════════════════════════════════════════════
+                        PDA GENERATION LOGIC
+═══════════════════════════════════════════════════════════════════════
+
+Frontend (JavaScript):
+┌──────────────────────────────────────────────────────────────────┐
+│ const [certificatePda, bump] = PublicKey.findProgramAddressSync( │
+│   [                                                              │
+│     Buffer.from('certificate'),                                  │
+│     wallet.publicKey.toBuffer(),                                 │
+│     Buffer.from(courseId),                                       │
+│     Buffer.from(userId)  // ← Added for uniqueness               │
+│   ],                                                             │
+│   programId                                                      │
+│ );                                                               │
+└──────────────────────────────────────────────────────────────────┘
+
+Smart Contract (Rust):
+┌──────────────────────────────────────────────────────────────────┐
+│ #[account(                                                       │
+│   init,                                                          │
+│   seeds = [                                                      │
+│     b"certificate",                                              │
+│     recipient.key().as_ref(),                                    │
+│     course_id.as_bytes(),                                        │
+│     user_id.as_bytes()  // ← Added for uniqueness                │
+│   ],                                                             │
+│   bump                                                           │
+│ )]                                                               │
+│ pub certificate: Account<'info, Certificate>                     │
+└──────────────────────────────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════
+                         REAL-WORLD EXAMPLE
+═══════════════════════════════════════════════════════════════════════
+
+Scenario: Family sharing one Phantom wallet
+
+Family Wallet: "5Yq7mKGPXJb..."
+
+├─ Dad (user_id: "dad123")
+│  Completes: Data Structures
+│  PDA: ["certificate", "5Yq7...", "data-structures", "dad123"]
+│  Certificate: ✅ Minted at CertABC...
+│
+├─ Mom (user_id: "mom456")
+│  Completes: Data Structures (same course!)
+│  PDA: ["certificate", "5Yq7...", "data-structures", "mom456"]
+│  Certificate: ✅ Minted at CertDEF... (different PDA!)
+│
+└─ Kid (user_id: "kid789")
+   Completes: Data Structures (same course!)
+   PDA: ["certificate", "5Yq7...", "data-structures", "kid789"]
+   Certificate: ✅ Minted at CertGHI... (different PDA!)
+
+All three certificates exist on-chain simultaneously! ✅
+```

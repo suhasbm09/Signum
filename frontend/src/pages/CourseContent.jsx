@@ -324,6 +324,27 @@ function CourseContent({ user, onLogout, onNavigate, courseId, topic }) {
                     </div>
                   )}
 
+                  {activeTopic === 'linked-lists' && (
+                    <div className="max-w-2xl">
+                      <h2 className="text-3xl font-quantico-bold text-gray-100 mb-4">Linked Lists</h2>
+                      <p className="text-gray-400 text-lg mb-8">Master dynamic data structures with pointers</p>
+                      <div className="space-y-4">
+                        <button
+                          onClick={() => onNavigate('course', { courseId, topic: 'linked-list-singly' })}
+                          className="w-full bg-gradient-to-r from-emerald-500/20 to-green-500/20 hover:from-emerald-500/30 hover:to-green-500/30 border border-emerald-500/40 hover:border-emerald-400/60 text-emerald-200 font-quantico-bold py-4 px-6 rounded-xl transition-all duration-300"
+                        >
+                          🔗 Learn Singly Linked List
+                        </button>
+                        <button
+                          onClick={() => onNavigate('course', { courseId, topic: 'linked-list-doubly' })}
+                          className="w-full bg-gradient-to-r from-emerald-500/20 to-green-500/20 hover:from-emerald-500/30 hover:to-green-500/30 border border-emerald-500/40 hover:border-emerald-400/60 text-emerald-200 font-quantico-bold py-4 px-6 rounded-xl transition-all duration-300"
+                        >
+                          ⇄ Learn Doubly Linked List
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   {activeTopic === 'stacks-queues' && (
                     <div className="max-w-2xl">
                       <h2 className="text-3xl font-quantico-bold text-gray-100 mb-4">Stacks & Queues</h2>
@@ -375,13 +396,19 @@ function CourseContent({ user, onLogout, onNavigate, courseId, topic }) {
                           onClick={() => onNavigate('quiz', { courseId })}
                           className="w-full bg-gradient-to-r from-yellow-500/20 to-orange-500/20 hover:from-yellow-500/30 hover:to-orange-500/30 border border-yellow-500/40 hover:border-yellow-400/60 text-yellow-200 font-quantico-bold py-4 px-6 rounded-xl transition-all duration-300"
                         >
-                          🔒 Attempt Quiz / Exam
+                          � Quiz (50%)
+                        </button>
+                        <button
+                          onClick={() => onNavigate('coding-challenge', { courseId })}
+                          className="w-full bg-gradient-to-r from-yellow-500/20 to-orange-500/20 hover:from-yellow-500/30 hover:to-orange-500/30 border border-yellow-500/40 hover:border-yellow-400/60 text-yellow-200 font-quantico-bold py-4 px-6 rounded-xl transition-all duration-300"
+                        >
+                          💻 Coding Challenge (50%)
                         </button>
                       </div>
                     </div>
                   )}
 
-                  {(!activeTopic || !['arrays', 'stacks-queues', 'trees', 'final-exam'].includes(activeTopic)) && (
+                  {(!activeTopic || !['arrays', 'linked-lists', 'stacks-queues', 'trees', 'final-exam'].includes(activeTopic)) && (
                     <div>
                       <h2 className="text-3xl font-quantico-bold text-gray-100 mb-4">Select a topic to begin</h2>
                       <p className="text-gray-400 text-lg max-w-xl">Choose a section from the course outline to start learning.</p>
