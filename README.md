@@ -133,25 +133,23 @@ Built for students who demand **interactive learning experiences** and employers
 
 ## 📸 Screenshots
 
-> **Note:** Add screenshots in the following order for best visual impact
 
 ### 1. Hero / Landing Page
-*Show the modern dark theme with emerald accents - first impression matters!*
 
 ![Landing Page](screenshots/01-landing-page.png)
 
 ### 2. Course Dashboard
-*Display the course cards with progress tracking and "Revisit Course" buttons*
+*Course cards with progress tracking and "Revisit Course" buttons*
 
 ![Dashboard](screenshots/02-dashboard.png)
 
 ### 3. Interactive Visualizer (Binary Search Tree)
-*Capture BST visualizer mid-operation with pseudocode highlighting*
+*BST visualizer mid-operation with pseudocode highlighting*
 
 ![BST Visualizer](screenshots/03-bst-visualizer.png)
 
 ### 4. AI Assistant in Action
-*Show the floating AI chat with a sample conversation about data structures*
+*Floating AI chat with a sample conversation about data structures*
 
 ![AI Assistant](screenshots/04-ai-assistant.png)
 

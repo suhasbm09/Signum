@@ -114,8 +114,8 @@ class ProgressRepository(BaseRepository):
         # Overall: 70% learning + 30% final exam
         overall_completion = (learning_progress * 0.7) + (final_exam_score * 0.3)
         
-        # Eligible if 100% overall
-        eligible = overall_completion == 100 and quiz_passed and coding_completed
+        # Eligible if 90% or higher overall
+        eligible = overall_completion >= 90 and quiz_passed and coding_completed
         
         return {
             'eligible': eligible,

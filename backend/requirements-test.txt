@@ -1,0 +1,23 @@
+# Testing Dependencies for Signum Backend
+
+# Core Testing Framework
+pytest
+pytest-cov
+pytest-asyncio
+pytest-mock
+
+# Coverage Reporting
+coverage
+
+# HTTP Testing
+httpx
+requests-mock
+
+# Mocking
+pytest-env
+freezegun
+
+# Code Quality
+pytest-xdist  # Parallel test execution
+pytest-timeout  # Test timeout support
+pytest-xprocess  # Required by anchorpy
