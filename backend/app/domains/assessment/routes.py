@@ -54,6 +54,28 @@ async def submit_quiz(course_id: str, quiz_id: str, submission: QuizSubmission):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.post("/{course_id}/quiz/submit")
+async def submit_quiz_simple(course_id: str, submission: QuizSubmission):
+    """Submit quiz score directly (for frontend-based quizzes)"""
+    try:
+        from app.repositories.progress_repository import ProgressRepository
+        progress_repo = ProgressRepository()
+        
+        # Update quiz progress in course_progress collection
+        result = progress_repo.update_quiz_progress(
+            user_id=submission.user_id,
+            course_id=course_id,
+            score=submission.score,
+            passed=submission.passed
+        )
+        
+        return {"success": True, "data": result}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.get("/{course_id}/quiz/attempts")
 async def get_quiz_attempts(course_id: str, user_id: str, quiz_id: str = None):
     """Get quiz attempts for a user"""

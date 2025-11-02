@@ -92,8 +92,26 @@ class ProgressService {
    */
   async saveQuizResult(userId, courseId, score, answersData) {
     try {
-      // For now, quiz uses hardcoded questions in frontend
-      // Just update progress with quiz score
+      // STEP 1: Update quiz score in backend (critical for progress tracking)
+      const quizUpdateResponse = await fetch(`${API_BASE_URL}/assessment/${courseId}/quiz/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userId,
+          course_id: courseId,
+          score: score,
+          passed: score >= 85,
+          answers: answersData || []
+        })
+      });
+
+      if (!quizUpdateResponse.ok) {
+        console.error('Failed to update quiz score in backend');
+      } else {
+        console.log('✅ Quiz score updated in backend:', score);
+      }
+
+      // STEP 2: Get current progress and update modules
       const progress = await this.getCourseProgress(userId, courseId);
       const modules = progress.modules_completed || [];
       
@@ -102,7 +120,7 @@ class ProgressService {
         modules.push('quiz');
       }
       
-      // Sync progress with quiz score
+      // STEP 3: Sync progress (this updates modules but not quiz score)
       await this.syncCourseProgress(
         userId,
         courseId,
@@ -110,6 +128,7 @@ class ProgressService {
         progress.completion_percentage || 0
       );
       
+      console.log('✅ Quiz result saved successfully. Score:', score);
       return { success: true, score };
     } catch (error) {
       console.error('Error saving quiz result:', error);

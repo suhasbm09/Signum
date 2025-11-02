@@ -5,8 +5,10 @@ from typing import List, Dict, Any, Optional
 # Quiz models
 class QuizSubmission(BaseModel):
     user_id: str
-    answers: List[str]  # ['a', 'b', 'c', ...]
-    time_taken: int
+    answers: Optional[List[str]] = []  # ['a', 'b', 'c', ...] - optional for direct score submission
+    time_taken: Optional[int] = 0
+    score: Optional[float] = None  # For frontend-calculated quizzes
+    passed: Optional[bool] = False  # For frontend-calculated quizzes
 
 # Coding models
 class RunCodeRequest(BaseModel):

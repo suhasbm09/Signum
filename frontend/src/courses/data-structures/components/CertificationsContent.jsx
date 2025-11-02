@@ -569,8 +569,8 @@ const CertificationsContent = ({ user }) => {
   const codingCompleted = isModuleCompleted(courseId, 'coding-challenge');
   const finalExamComplete = isFinalExamComplete(courseId);
   
-  // Eligibility: 100% overall (learning + final exam complete)
-  const isEligible = courseCompletion === 100 && finalExamComplete;
+  // Eligibility: 90% or higher overall + final exam complete
+  const isEligible = courseCompletion >= 90 && finalExamComplete;
   
   return (
     <div className="w-full mx-auto space-y-8">
@@ -668,7 +668,7 @@ const CertificationsContent = ({ user }) => {
             <div className="text-xs mt-1">
               {isEligible 
                 ? 'All requirements met - ready to mint your certificate!' 
-                : 'Complete all modules + quiz (85%+) + coding challenge'
+                : 'Complete all modules (100%) + quiz (85%+) + coding challenge'
               }
             </div>
           </div>
