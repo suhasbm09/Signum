@@ -78,23 +78,23 @@ class TestAssessmentAPI:
     @pytest.mark.api
     def test_submit_quiz(self):
         """Test POST /assessment/{course_id}/quiz/{quiz_id}/submit"""
-        with patch('app.domains.assessment.quiz_service.QuizService.submit_quiz') as mock_submit:
-            mock_submit.return_value = {"score": 90, "passed": True}
-            
-            response = client.post(
-                "/assessment/data-structures/quiz/module1-quiz/submit",
-                json={
-                    "user_id": "test_user",
-                    "answers": ["A", "B", "C"],
-                    "time_taken": 120
-                }
-            )
-            
-            assert response.status_code == 200
-            data = response.json()
-            assert data['success'] is True
-            assert data['data']['passed'] is True
-            print("✅ Submit Quiz: PASS")
+        response = client.post(
+            "/assessment/data-structures/quiz/module1-quiz/submit",
+            json={
+                "user_id": "test_user",
+                "score": 90,
+                "passed": True,
+                "answers": [
+                    {"questionId": "q1", "userAnswer": "A", "correctAnswer": "A", "isCorrect": True}
+                ]
+            }
+        )
+        
+        assert response.status_code == 200
+        data = response.json()
+        assert data['success'] is True
+        assert data['data']['passed'] is True
+        print("✅ Submit Quiz: PASS")
     
     
     @pytest.mark.api
