@@ -178,10 +178,16 @@ function CourseContent({ user, onLogout, onNavigate, courseId, topic }) {
 
               <nav className="space-y-4">
                 {outline.map((section) => {
+                  // Check if Final Exam is complete: BOTH quiz passed AND coding challenge complete
+                  const isFinalExamComplete = section.id === 'final-exam' && 
+                    getQuizScore && 
+                    getQuizScore(courseId)?.score >= 85 && 
+                    isModuleCompleted(courseId, 'coding-challenge');
+                  
                   const isCompleted =
                     isModuleCompleted(courseId, section.id) ||
                     areAllChildrenCompleted(section) ||
-                    (section.id === 'final-exam' && getQuizScore && getQuizScore(courseId)?.score >= 85);
+                    isFinalExamComplete;
                   const isCertification = section.id === 'certifications';
 
                   return (

@@ -19,7 +19,8 @@ class AssessmentRepository(BaseRepository):
                          problem_id: str = None,
                          language: str = None,
                          metadata: Dict = None) -> Dict[str, Any]:
-        """Create a quiz or coding submission"""
+        """Create a quiz or coding submission - SIMPLE VERSION"""
+        
         submission_id = str(uuid.uuid4())
         data = {
             'id': submission_id,

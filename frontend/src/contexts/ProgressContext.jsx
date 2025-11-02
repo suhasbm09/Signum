@@ -245,29 +245,25 @@ export const ProgressProvider = ({ children }) => {
     return learningComplete && finalExamComplete;
   };
 
-  // Save quiz score - Firebase only
-  const saveQuizScore = useCallback(async (courseId, score) => {
+  // Save quiz score
+  const saveQuizScore = useCallback(async (courseId, score, answersData = []) => {
     if (!isUserReady) {
-      console.warn('⚠️ User not ready yet, skipping quiz score save');
+      console.warn('User not ready');
       return;
     }
     
     try {
-      console.log('💾 Saving quiz score:', { courseId, score, userId });
+      // Save to backend
+      await progressService.saveQuizResult(userId, courseId, score, answersData);
       
-      // Save to backend via progressService
-      await progressService.saveQuizResult(userId, courseId, score, []);
-      
-      // Reload progress from Firebase to get updated data
+      // Reload progress
       const updatedProgress = await loadProgressFromFirebase(courseId);
       
-      // Update local cache with fresh data
       setCourseProgress(prev => ({
         ...prev,
         [courseId]: updatedProgress
       }));
       
-      console.log('✅ Quiz score saved and progress reloaded:', updatedProgress);
     } catch (error) {
       console.error('Failed to save quiz score:', error);
       throw error;

@@ -44,16 +44,29 @@ const CertificationsContent = ({ user }) => {
   
   useEffect(() => {
     const initializeComponent = async () => {
+      setLoading(true);
+      
+      // Step 1: Check wallet connection
       await checkWalletConnection();
+      
+      // Step 2: Load wallet from Firebase (user profile)
       await loadWalletFromFirebase();
-      await loadNFTStatusFromFirebase(); // Load NFT status after wallet
-      await checkExistingCertificate();
+      
+      // Step 3: CRITICAL - Load NFT status from backend FIRST
+      await loadNFTStatusFromFirebase();
+      
+      // Step 4: Check existing certificate on blockchain (only if wallet connected)
+      // This will run after NFT status is loaded
+      if (walletConnected) {
+        await checkExistingCertificate();
+      }
+      
       setLoading(false);
     };
     
     initializeComponent();
     // Note: Don't mark certifications module as complete for progress tracking
-  }, []);
+  }, [walletConnected]); // Re-run when wallet connection changes
   
   const checkExistingCertificate = async () => {
     if (typeof window !== 'undefined' && window.solana && walletConnected) {
@@ -76,11 +89,16 @@ const CertificationsContent = ({ user }) => {
         
         const certificateAccount = await provider.connection.getAccountInfo(certificatePda);
         if (certificateAccount) {
-          console.log('✅ Certificate already exists at:', certificatePda.toString());
-          setNftMinted(true);
+          console.log('✅ Certificate exists on blockchain at:', certificatePda.toString());
+          
+          // Certificate exists on blockchain, now load the image URL from Firebase
+          // This ensures the certificate displays properly in both testing and production mode
+          await loadNFTStatusFromFirebase();
+          
+          console.log('✅ Certificate data loaded from Firebase');
         }
       } catch (error) {
-        console.log('No existing certificate found');
+        console.log('ℹ️ No existing certificate found on blockchain');
       }
     }
   };
@@ -118,12 +136,22 @@ const CertificationsContent = ({ user }) => {
         new PublicKey(idl.address)
       );
       
-      // Check if account exists
+      // Check if account exists on blockchain
       const certificateAccount = await provider.connection.getAccountInfo(certificatePda);
+      
       if (!certificateAccount) {
-        showToast('ℹ️ No certificate account to close', 'info');
-        setMinting(false);
+        console.log('ℹ️ No certificate account found on blockchain');
+        
+        // Clear from Firebase anyway
+        await clearNFTStatusFromFirebase();
+        
+        showToast('✅ Certificate cleared from database. Ready to mint!', 'success');
         setNftMinted(false);
+        setNftImageUrl('');
+        
+        // Reload NFT status to confirm deletion
+        await loadNFTStatusFromFirebase();
+        setMinting(false);
         return;
       }
       
@@ -138,32 +166,41 @@ const CertificationsContent = ({ user }) => {
         })
         .rpc();
       
-      console.log('✅ Certificate closed. Transaction:', tx);
+      console.log('✅ Certificate closed on blockchain. Transaction:', tx);
       
       // Clear NFT status from Firebase
       await clearNFTStatusFromFirebase();
       
-      showToast('✅ Certificate deleted! You can now mint again.', 'success');
+      showToast('✅ Certificate deleted from blockchain and database! You can mint again.', 'success');
       setNftMinted(false);
       setNftImageUrl('');
       
       // Reload NFT status to confirm deletion
-      setTimeout(() => {
-        loadNFTStatusFromFirebase();
-      }, 500);
+      await loadNFTStatusFromFirebase();
       
     } catch (error) {
-      console.error('Error closing certificate:', error);
+      console.error('❌ Error closing certificate:', error);
       
-      // Handle specific errors
-      if (error.message?.includes('already been processed')) {
-        showToast('ℹ️ Certificate already deleted. You can mint a new one now!', 'info');
-        setNftMinted(false);
-      } else if (error.message?.includes('AccountNotFound') || error.message?.includes('could not find account')) {
-        showToast('ℹ️ No certificate found to delete. Ready to mint!', 'info');
-        setNftMinted(false);
+      // Handle specific errors gracefully
+      if (error.message?.includes('already been processed') || 
+          error.message?.includes('AccountNotFound') || 
+          error.message?.includes('could not find account')) {
+        
+        console.log('ℹ️ Certificate already deleted or not found. Clearing from database...');
+        
+        // Clear from Firebase anyway
+        try {
+          await clearNFTStatusFromFirebase();
+          showToast('✅ Certificate cleared from database. Ready to mint!', 'success');
+          setNftMinted(false);
+          setNftImageUrl('');
+          await loadNFTStatusFromFirebase();
+        } catch (dbError) {
+          console.error('Error clearing from database:', dbError);
+          showToast('⚠️ Cleared from blockchain but database error. Try refreshing.', 'warning');
+        }
       } else {
-        showToast('❌ Failed to close certificate account', 'error');
+        showToast(`❌ Failed to close certificate: ${error.message}`, 'error');
       }
     } finally {
       setMinting(false);
@@ -197,30 +234,51 @@ const CertificationsContent = ({ user }) => {
   
   const loadNFTStatusFromFirebase = async () => {
     try {
+      console.log('🔍 Loading NFT certificate status for:', userId, courseId);
+      
       const response = await fetch(`http://localhost:8000/certification/${courseId}/status?user_id=${userId}`);
+      
       if (response.ok) {
         const data = await response.json();
         console.log('📡 NFT certificate data from backend:', data);
         
-        if (data.minted) {
-          setNftMinted(true);
+        // Check if the certificate is minted
+        if (data.minted || data.certificate_image_url) {
           const imageUrl = data.certificate_image_url || '';
+          
+          console.log('✅ NFT certificate found! Setting state...');
+          console.log('   Image URL:', imageUrl);
+          console.log('   Minted:', data.minted);
+          
+          // CRITICAL: Set both state variables
+          setNftMinted(true);
           setNftImageUrl(imageUrl);
-          console.log('✅ NFT certificate status loaded. Image URL:', imageUrl);
+          
+          console.log('✅ NFT state updated: nftMinted=true, nftImageUrl=', imageUrl);
         } else {
           console.log('ℹ️ No NFT certificate minted yet');
+          setNftMinted(false);
+          setNftImageUrl('');
         }
       } else {
-        console.log('ℹ️ No NFT certificate found in database');
+        console.log('ℹ️ No NFT certificate found in database (404 or error)');
+        setNftMinted(false);
+        setNftImageUrl('');
       }
     } catch (error) {
       console.error('❌ Error loading NFT certificate:', error);
+      // Don't change state on error - keep existing state
     }
   };
 
   const saveNFTStatusToFirebase = async (imageUrl, transactionSignature, mintAddress) => {
     try {
-      console.log('💾 Saving NFT certificate to backend with image URL:', imageUrl);
+      console.log('💾 Saving NFT certificate to backend...');
+      console.log('   User ID:', userId);
+      console.log('   Course ID:', courseId);
+      console.log('   Image URL:', imageUrl);
+      console.log('   Transaction:', transactionSignature);
+      console.log('   Mint Address:', mintAddress);
       
       const response = await fetch(`http://localhost:8000/certification/${courseId}/save`, {
         method: 'POST',
@@ -237,10 +295,16 @@ const CertificationsContent = ({ user }) => {
       
       if (response.ok) {
         const result = await response.json();
-        console.log('✅ NFT certificate status saved:', result);
+        console.log('✅ NFT certificate status saved to backend:', result);
+        
+        // CRITICAL: Immediately update frontend state after saving
+        setNftMinted(true);
+        setNftImageUrl(imageUrl);
+        
+        console.log('✅ Frontend state updated: nftMinted=true, imageUrl=', imageUrl);
       } else {
         const errorText = await response.text();
-        console.error('❌ Failed to save NFT status:', errorText);
+        console.error('❌ Failed to save NFT status. Response:', errorText);
       }
     } catch (error) {
       console.error('❌ Error saving NFT status:', error);
@@ -258,6 +322,24 @@ const CertificationsContent = ({ user }) => {
       }
     } catch (error) {
       console.error('❌ Error clearing NFT status:', error);
+    }
+  };
+
+  const copyShareLink = async () => {
+    const shareUrl = 'https://signum-learn.vercel.app/courses/data-structures';
+    
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      showToast('✅ Certificate link copied to clipboard!', 'success');
+    } catch (error) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = shareUrl;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      showToast('✅ Certificate link copied to clipboard!', 'success');
     }
   };
   
@@ -486,19 +568,19 @@ const CertificationsContent = ({ user }) => {
       
       // Use image_uri from backend response (preferred) or fallback to metadata.image
       const certificateImageUrl = image_uri || metadata.image;
-      console.log('💾 Saving certificate with image URL:', certificateImageUrl);
+      console.log('💾 Certificate image URL to save:', certificateImageUrl);
       
-      // Set NFT data in state
-      setNftImageUrl(certificateImageUrl);
-      setNftMinted(true);
-      
-      // Save NFT status to Firebase for persistence
+      // CRITICAL: Save to Firebase FIRST, then update state
       await saveNFTStatusToFirebase(certificateImageUrl, tx, mint.publicKey.toString());
       
+      // The saveNFTStatusToFirebase function now updates the state automatically
+      // So we don't need to set it here again
+      
+      // Wait a moment to ensure backend has saved
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       // Reload NFT status from Firebase to confirm it was saved correctly
-      setTimeout(() => {
-        loadNFTStatusFromFirebase();
-      }, 1000);
+      await loadNFTStatusFromFirebase();
       
       showToast('🎉 NFT Certificate minted successfully! Check your Phantom wallet.', 'success');
       
@@ -847,13 +929,13 @@ const CertificationsContent = ({ user }) => {
                         <div className="text-xs text-gray-400 text-center mb-2">
                           Share Your Achievement
                         </div>
-                        <div className="flex gap-3 justify-center">
+                        <div className="flex gap-2 justify-center">
                           {/* LinkedIn Share */}
                           <a
-                            href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
+                            href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://signum-learn.vercel.app/courses/data-structures')}&title=${encodeURIComponent('Data Structures Mastery Certificate')}&summary=${encodeURIComponent('I just earned my blockchain-verified NFT certificate on Signum with a score of ' + (getQuizScore('data-structures')?.score || 100) + '%!')}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-400 hover:text-blue-300 px-4 py-2 rounded-lg text-sm transition-all"
+                            className="flex items-center gap-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-400 hover:text-blue-300 px-3 py-2 rounded-lg text-sm transition-all"
                             title="Share on LinkedIn"
                           >
                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -864,10 +946,10 @@ const CertificationsContent = ({ user }) => {
 
                           {/* X (Twitter) Share */}
                           <a
-                            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`🎓 Just earned my Data Structures NFT Certificate on Signum! Verified on Solana blockchain with a score of ${quizScore?.score || 100}%`)}&url=${encodeURIComponent(window.location.href)}`}
+                            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent('🎉 I just earned my Data Structures Mastery NFT Certificate on Signum!\n\n🎓 Score: ' + (getQuizScore('data-structures')?.score || 100) + '%\n⛓️ Verified on Solana Blockchain\n\nLearn and earn blockchain certificates! 🚀')}&url=${encodeURIComponent('https://signum-learn.vercel.app')}&hashtags=Signum,Web3,Blockchain,NFT,Education`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-2 bg-gray-800/50 hover:bg-gray-700/50 border border-gray-600/40 text-gray-300 hover:text-white px-4 py-2 rounded-lg text-sm transition-all"
+                            className="flex items-center gap-2 bg-gray-800/50 hover:bg-gray-700/50 border border-gray-600/40 text-gray-300 hover:text-white px-3 py-2 rounded-lg text-sm transition-all"
                             title="Share on X (Twitter)"
                           >
                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -875,6 +957,18 @@ const CertificationsContent = ({ user }) => {
                             </svg>
                             X
                           </a>
+
+                          {/* Copy Link */}
+                          <button
+                            onClick={copyShareLink}
+                            className="flex items-center gap-2 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-400 hover:text-emerald-300 px-3 py-2 rounded-lg text-sm transition-all"
+                            title="Copy certificate link"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                            Copy
+                          </button>
                         </div>
                       </div>
                     </div>

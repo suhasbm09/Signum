@@ -34,46 +34,47 @@ async def get_quiz_questions(course_id: str, quiz_id: str):
 
 @router.post("/{course_id}/quiz/{quiz_id}/submit")
 async def submit_quiz(course_id: str, quiz_id: str, submission: QuizSubmission):
-    """Submit quiz answers"""
+    """Submit quiz - saves score and answers together"""
     try:
-        result = quiz_service.submit_quiz(
-            user_id=submission.user_id,
-            course_id=course_id,
-            quiz_id=quiz_id,
-            answers=submission.answers,
-            time_taken=submission.time_taken
-        )
-        
-        if "error" in result:
-            raise HTTPException(status_code=400, detail=result["error"])
-        
-        return {"success": True, "data": result}
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@router.post("/{course_id}/quiz/submit")
-async def submit_quiz_simple(course_id: str, submission: QuizSubmission):
-    """Submit quiz score directly (for frontend-based quizzes)"""
-    try:
+        from app.repositories.assessment_repository import AssessmentRepository
         from app.repositories.progress_repository import ProgressRepository
+        
+        assessment_repo = AssessmentRepository()
         progress_repo = ProgressRepository()
         
-        # Update quiz progress in course_progress collection
-        result = progress_repo.update_quiz_progress(
+        # Validate
+        if submission.score is None:
+            raise HTTPException(status_code=400, detail="Score is required")
+        
+        # Save to assessment_submissions (with both score and answers)
+        assessment_repo.create_submission(
+            user_id=submission.user_id,
+            course_id=course_id,
+            assessment_type='quiz',
+            score=submission.score,
+            answers=submission.answers if submission.answers else []
+        )
+        
+        # Update course_progress
+        progress_repo.update_quiz_progress(
             user_id=submission.user_id,
             course_id=course_id,
             score=submission.score,
             passed=submission.passed
         )
         
-        return {"success": True, "data": result}
+        return {
+            "success": True,
+            "data": {
+                "score": submission.score,
+                "passed": submission.passed
+            }
+        }
         
     except HTTPException:
         raise
     except Exception as e:
+        print(f"Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/{course_id}/quiz/attempts")

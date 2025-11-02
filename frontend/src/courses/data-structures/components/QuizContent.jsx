@@ -573,51 +573,29 @@ function QuizContent({ onNavigate, onQuizComplete }) {
     setQuizCompleted(true);
     setShowResults(true);
     
-    // Save quiz score to progress context
-    await saveQuizScore('data-structures', scoreResult.score);
+    // Format answers
+    const answersData = selectedQuestions.map(question => ({
+      questionId: question.id,
+      question: question.question,
+      topic: question.topic,
+      difficulty: question.difficulty,
+      userAnswer: userAnswers[question.id],
+      correctAnswer: question.correct,
+      isCorrect: userAnswers[question.id] === question.correct,
+      options: question.options
+    }));
     
-    // Mark quiz module as completed for progress tracking
-    await markModuleComplete('data-structures', 'quiz');
-    
-    // Save complete quiz results to Firebase (with answers)
     try {
-      // Get user ID dynamically
-      const getUserId = () => {
-        if (typeof window !== 'undefined' && window.currentUser) {
-          return window.currentUser.uid || window.currentUser.email || 'user_123';
-        }
-        return 'user_123';
-      };
+      // Save quiz with answers
+      await saveQuizScore('data-structures', scoreResult.score, answersData);
       
-      const userId = getUserId();
-      const courseId = 'data-structures';
+      // Mark module complete
+      await markModuleComplete('data-structures', 'quiz');
       
-      // Format answers for Firebase
-      const answersData = selectedQuestions.map(question => ({
-        questionId: question.id,
-        question: question.question,
-        topic: question.topic,
-        difficulty: question.difficulty,
-        userAnswer: userAnswers[question.id],
-        correctAnswer: question.correct,
-        isCorrect: userAnswers[question.id] === question.correct,
-        options: question.options
-      }));
-      
-      await progressService.saveQuizResult(
-        userId,
-        courseId,
-        scoreResult.score,
-        answersData
-      );
-      
-      console.log('✅ Quiz results saved successfully');
     } catch (error) {
-      console.error('❌ Failed to save quiz results to Firebase:', error);
-      // Show error to user but don't block completion
+      console.error('Failed to save quiz:', error);
     }
     
-    // Notify parent component if callback provided
     if (onQuizComplete) {
       onQuizComplete(scoreResult.score);
     }
