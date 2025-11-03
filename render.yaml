@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: signum-backend
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
+      - key: PINATA_API_KEY
+        sync: false
+      - key: PINATA_SECRET_API_KEY
+        sync: false
+      - key: PINATA_JWT
+        sync: false
