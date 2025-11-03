@@ -3,7 +3,7 @@ Assessment repository (quiz + coding submissions + anti-cheat)
 """
 from typing import Dict, Any, List, Optional
 from app.repositories.base import BaseRepository
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import uuid
 
 class AssessmentRepository(BaseRepository):
@@ -28,7 +28,7 @@ class AssessmentRepository(BaseRepository):
             'course_id': course_id,
             'type': assessment_type,  # 'quiz' or 'coding'
             'score': score,
-            'submitted_at': datetime.now()
+            'submitted_at': datetime.now(timezone.utc)
         }
         
         if assessment_type == 'quiz':
@@ -77,6 +77,7 @@ class AssessmentRepository(BaseRepository):
                         timestamp: str = None) -> Dict[str, Any]:
         """Record an anti-cheat violation"""
         event_id = str(uuid.uuid4())
+        now = datetime.now(timezone.utc)
         data = {
             'id': event_id,
             'user_id': user_id,
@@ -84,8 +85,8 @@ class AssessmentRepository(BaseRepository):
             'assessment_type': assessment_type,
             'event_type': 'violation',
             'violation_type': violation_type,
-            'timestamp': timestamp or datetime.now().isoformat(),
-            'created_at': datetime.now()
+            'timestamp': timestamp or now.isoformat(),
+            'created_at': now
         }
         self.anti_cheat_collection.document(event_id).set(data)
         return data
@@ -107,7 +108,9 @@ class AssessmentRepository(BaseRepository):
                     violation_count: int) -> Dict[str, Any]:
         """Create a block event"""
         block_id = f"{user_id}_{course_id}_{assessment_type}_block"
-        block_end_time = datetime.now() + timedelta(minutes=block_duration_minutes)
+        # Use UTC timezone-aware datetime
+        now = datetime.now(timezone.utc)
+        block_end_time = now + timedelta(minutes=block_duration_minutes)
         
         data = {
             'id': block_id,
@@ -117,7 +120,7 @@ class AssessmentRepository(BaseRepository):
             'event_type': 'block',
             'violation_count': violation_count,
             'block_end_time': block_end_time,
-            'blocked_at': datetime.now(),
+            'blocked_at': now,
             'is_active': True
         }
         
@@ -144,8 +147,17 @@ class AssessmentRepository(BaseRepository):
         block_data = block_doc.to_dict()
         block_end_time = block_data.get('block_end_time')
         
-        if block_end_time and block_end_time > datetime.now():
-            time_remaining = (block_end_time - datetime.now()).total_seconds() * 1000
+        # Get current time with UTC timezone
+        now = datetime.now(timezone.utc)
+        
+        # Ensure block_end_time is timezone-aware
+        if block_end_time:
+            # If block_end_time is naive (no timezone), make it UTC
+            if block_end_time.tzinfo is None:
+                block_end_time = block_end_time.replace(tzinfo=timezone.utc)
+        
+        if block_end_time and block_end_time > now:
+            time_remaining = (block_end_time - now).total_seconds() * 1000
             return {
                 'is_blocked': True,
                 'block_end_time': block_end_time.isoformat(),
@@ -183,5 +195,5 @@ class AssessmentRepository(BaseRepository):
         return {
             'violations_cleared': deleted_count,
             'block_cleared': True,
-            'timestamp': datetime.now().isoformat()
+            'timestamp': datetime.now(timezone.utc).isoformat()
         }

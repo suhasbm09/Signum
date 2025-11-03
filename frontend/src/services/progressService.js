@@ -227,26 +227,38 @@ class ProgressService {
    */
   async getBlockStatus(userId, courseId, assessmentType) {
     try {
-      const response = await fetch(
-        buildUrl(`${API_ENDPOINTS.ASSESSMENT.ANTI_CHEAT_STATUS(courseId)}`, {
-          user_id: userId,
-          assessment_type: assessmentType
-        }),
-        { method: 'GET' }
-      );
+      console.log('📡 Fetching block status:', { userId, courseId, assessmentType });
+      
+      const url = buildUrl(`${API_ENDPOINTS.ASSESSMENT.ANTI_CHEAT_STATUS(courseId)}`, {
+        user_id: userId,
+        assessment_type: assessmentType
+      });
+      
+      console.log('📡 Request URL:', url);
+      
+      const response = await fetch(url, { method: 'GET' });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch block status');
+        const errorText = await response.text();
+        console.error('❌ Block status API error:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorText
+        });
+        throw new Error(`Failed to fetch block status: ${response.status} ${response.statusText}`);
       }
 
       const data = await response.json();
+      console.log('✅ Block status received:', data);
+      
       return data.data || {
         is_blocked: false,
         block_end_time: null,
         time_remaining_ms: 0
       };
     } catch (error) {
-      console.error('Error fetching block status:', error);
+      console.error('❌ Error fetching block status:', error);
+      // Return safe default instead of throwing
       return {
         is_blocked: false,
         block_end_time: null,

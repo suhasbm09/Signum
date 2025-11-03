@@ -572,6 +572,43 @@ void insertAfter(Node* prevNode, int data) {
               </div>
             )}
 
+            {insertionLang === 'cpp' && (
+              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+                <pre className="text-emerald-300 font-mono text-sm">
+{`// Insert at head - O(1)
+void insertAtHead(int data) {
+    Node* newNode = new Node(data);
+    newNode->next = head;
+    head = newNode;
+}
+
+// Insert at tail - O(n)
+void insertAtTail(int data) {
+    Node* newNode = new Node(data);
+    if (head == nullptr) {
+        head = newNode;
+        return;
+    }
+    
+    Node* current = head;
+    while (current->next != nullptr) {
+        current = current->next;
+    }
+    current->next = newNode;
+}
+
+// Insert after specific node - O(1)
+void insertAfter(Node* prevNode, int data) {
+    if (prevNode == nullptr) return;
+    
+    Node* newNode = new Node(data);
+    newNode->next = prevNode->next;
+    prevNode->next = newNode;
+}`}
+                </pre>
+              </div>
+            )}
+
             {insertionLang === 'python' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
                 <pre className="text-emerald-300 font-mono text-sm">

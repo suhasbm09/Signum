@@ -20,7 +20,7 @@ const FEATURE_FLAGS = {
   
   // Blockchain Features
   BLOCKCHAIN_ENABLED: true, // NFT Certificates
-  BLOCKCHAIN_TESTING_MODE: false, // Allow re-minting certificates for testing
+  BLOCKCHAIN_TESTING_MODE: true, // Allow re-minting certificates for testing
   
   // Future Features (for easy toggle)
   VOICE_INPUT_ENABLED: true, // Voice-to-text in AI chat

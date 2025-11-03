@@ -21,7 +21,7 @@ const CodingChallengePage = ({ courseId, user, onNavigate }) => {
   const [warnings, setWarnings] = useState([]);
   
   const MAX_VIOLATIONS = 3;
-  const COOLDOWN_MINUTES = 30;
+  const COOLDOWN_MINUTES = 15; // First block is 15 minutes per documentation
   const userId = user?.uid || user?.email || 'user_123';
   
   const [sessionId, setSessionId] = useState(null);
@@ -31,7 +31,15 @@ const CodingChallengePage = ({ courseId, user, onNavigate }) => {
   // Load initial state - check if blocked, clear violations if not
   useEffect(() => {
     const loadInitialState = async () => {
+      // Safety check: don't load if courseId is missing
+      if (!courseId || !userId) {
+        console.warn('⚠️ Cannot load initial state: missing courseId or userId', { courseId, userId });
+        return;
+      }
+
       try {
+        console.log('📊 Loading initial coding challenge state for:', { userId, courseId });
+        
         const blockResponse = await fetch(
           `http://localhost:8000/assessment/${courseId}/anti-cheat/status?user_id=${userId}&assessment_type=coding`
         );
@@ -42,14 +50,16 @@ const CodingChallengePage = ({ courseId, user, onNavigate }) => {
             const endTime = new Date(blockData.data.block_end_time).getTime();
             setBlockEndTime(endTime);
             setTimeRemaining(blockData.data.time_remaining_ms / 1000);
+            console.log('🚫 User is blocked from coding challenges until:', new Date(endTime));
           } else {
             // Not blocked - reset violations
             setChallengeBlocked(false);
             setViolations([]);
+            console.log('✅ User is not blocked - coding challenge accessible');
           }
         }
       } catch (error) {
-        console.error('Error loading initial state:', error);
+        console.error('❌ Error loading initial state:', error);
       }
     };
 
@@ -228,14 +238,26 @@ const CodingChallengePage = ({ courseId, user, onNavigate }) => {
         })
       });
       
-      console.log('✅ Violation saved to Firebase');
+      console.log('✅ Violation saved to Firebase:', type, `(${updatedViolations.length}/${MAX_VIOLATIONS})`);
     } catch (error) {
       console.error('Error saving violation:', error);
     }
 
     // Check if we hit the limit
     if (updatedViolations.length >= MAX_VIOLATIONS) {
+      // Block immediately
       await blockChallengeAccess();
+      
+      // Show final warning
+      addWarning(`🚫 BLOCKED: ${MAX_VIOLATIONS} violations exceeded. Cooldown: ${COOLDOWN_MINUTES} minutes`);
+      
+      // Exit fullscreen and end challenge
+      await exitFullscreen();
+      
+      // Wait 2 seconds to show message, then end challenge
+      setTimeout(() => {
+        endChallenge();
+      }, 2000);
     } else {
       addWarning(`⚠️ Violation detected: ${type} (${updatedViolations.length}/${MAX_VIOLATIONS})`);
     }
@@ -252,68 +274,149 @@ const CodingChallengePage = ({ courseId, user, onNavigate }) => {
   useEffect(() => {
     if (!challengeStarted) return;
 
+    console.log('🔒 Attaching coding challenge anti-cheat listeners');
+
+    // Visibility change (tab switch)
     const handleVisibilityChange = () => {
-      if (document.hidden && challengeStarted) {
-        addViolation('Tab Switch Detected');
+      if (document.hidden) {
+        console.log('👁️ Visibility changed - tab hidden');
+        addViolation('Tab/Window Switch Detected');
       }
     };
 
+    // Copy via event
     const handleCopy = (e) => {
       e.preventDefault();
+      console.log('📋 Copy attempt blocked');
       addViolation('Copy Attempt Blocked');
+      return false;
     };
 
+    // Paste via event
     const handlePaste = (e) => {
       e.preventDefault();
+      console.log('📋 Paste attempt blocked');
       addViolation('Paste Attempt Blocked');
+      return false;
     };
 
+    // Cut via event
+    const handleCut = (e) => {
+      e.preventDefault();
+      console.log('✂️ Cut attempt blocked');
+      addViolation('Cut Attempt Blocked');
+      return false;
+    };
+
+    // Right-click/context menu
     const handleContextMenu = (e) => {
       e.preventDefault();
+      console.log('🖱️ Right-click blocked');
       addViolation('Right-Click Blocked');
+      return false;
     };
 
+    // Fullscreen exit - immediately end challenge
     const handleFullscreenChange = () => {
       if (!document.fullscreenElement && challengeStarted) {
+        console.log('📺 Exited fullscreen - ending challenge');
         addViolation('Exited Fullscreen Mode');
-        addWarning('⚠️ You exited fullscreen! Challenge will end.');
+        addWarning('⚠️ You exited fullscreen! Challenge will end in 2 seconds.');
         setTimeout(() => {
           endChallenge();
         }, 2000);
       }
     };
 
+    // Keyboard shortcuts and F-keys
     const handleKeyDown = (e) => {
-      // Block common developer shortcuts
-      const forbiddenKeys = ['F12', 'I', 'J', 'C', 'U'];
-      const isForbidden = 
-        (e.ctrlKey && e.shiftKey && forbiddenKeys.includes(e.key.toUpperCase())) ||
-        (e.key === 'F12') ||
-        (e.ctrlKey && e.key === 'u');
-
-      if (isForbidden) {
+      console.log('⌨️ Key pressed:', e.key, { ctrl: e.ctrlKey, alt: e.altKey, shift: e.shiftKey });
+      
+      // Block F-keys
+      if (e.key === 'F5') {
         e.preventDefault();
-        addViolation(`Forbidden Keyboard Shortcut: ${e.key}`);
+        console.log('🚫 F5 blocked');
+        addViolation('Attempted to refresh page (F5)');
         return false;
+      }
+
+      if (e.key === 'F11') {
+        e.preventDefault();
+        console.log('🚫 F11 blocked');
+        addViolation('Attempted to toggle fullscreen (F11)');
+        return false;
+      }
+
+      if (e.key === 'F12') {
+        e.preventDefault();
+        console.log('🚫 F12 blocked');
+        addViolation('Attempted to open developer tools (F12)');
+        return false;
+      }
+
+      // Block Ctrl combinations
+      if (e.ctrlKey && !e.shiftKey && !e.altKey) {
+        const ctrlForbidden = ['s', 'p', 'u', 'h', 'j', 'k', 'l', 'n', 't', 'w', 'r'];
+        if (ctrlForbidden.includes(e.key.toLowerCase())) {
+          e.preventDefault();
+          const actionNames = {
+            's': 'Save', 'p': 'Print', 'u': 'View Source', 'h': 'History',
+            'j': 'Downloads', 'k': 'Search', 'l': 'Address Bar',
+            'n': 'New Window', 't': 'New Tab', 'w': 'Close Tab', 'r': 'Refresh'
+          };
+          console.log('🚫 Forbidden Ctrl combo detected:', e.key);
+          addViolation(`Blocked ${actionNames[e.key.toLowerCase()]}: Ctrl+${e.key.toUpperCase()}`);
+          return false;
+        }
+      }
+
+      // Block Ctrl+Shift combinations (Developer tools)
+      if (e.ctrlKey && e.shiftKey && !e.altKey) {
+        const devToolsKeys = ['i', 'j', 'c', 'k'];
+        if (devToolsKeys.includes(e.key.toLowerCase())) {
+          e.preventDefault();
+          console.log('🚫 Forbidden Ctrl+Shift combo detected:', e.key);
+          addViolation(`Developer Tools Blocked: Ctrl+Shift+${e.key.toUpperCase()}`);
+          return false;
+        }
       }
     };
 
+    // Window blur (catches Alt+Tab and window switching)
+    const handleBlur = () => {
+      console.log('🔍 Window lost focus (blur event)');
+      addViolation('Window Lost Focus (possible Alt+Tab)');
+    };
+
+    // Window focus (for tracking)
+    const handleFocus = () => {
+      console.log('🔍 Window regained focus');
+    };
+
+    // Attach all listeners
     document.addEventListener('visibilitychange', handleVisibilityChange);
     document.addEventListener('copy', handleCopy);
     document.addEventListener('paste', handlePaste);
+    document.addEventListener('cut', handleCut);
     document.addEventListener('contextmenu', handleContextMenu);
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('blur', handleBlur);
+    window.addEventListener('focus', handleFocus);
 
     return () => {
+      console.log('🔓 Removing coding challenge anti-cheat listeners');
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       document.removeEventListener('copy', handleCopy);
       document.removeEventListener('paste', handlePaste);
+      document.removeEventListener('cut', handleCut);
       document.removeEventListener('contextmenu', handleContextMenu);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('blur', handleBlur);
+      window.removeEventListener('focus', handleFocus);
     };
-  }, [challengeStarted, userId, courseId]);
+  }, [challengeStarted, userId, courseId, violations.length]);
 
   const enterFullscreen = async () => {
     try {
@@ -342,23 +445,68 @@ const CodingChallengePage = ({ courseId, user, onNavigate }) => {
 
   // Called from MODULE PAGE - enters fullscreen and shows fullscreen start page
   const startChallenge = async () => {
-    // Check if blocked before starting
-    if (challengeBlocked) {
-      showToast('You are blocked from taking challenges', 'error');
+    // Safety check: don't start if courseId is missing
+    if (!courseId || !userId) {
+      console.error('❌ Cannot start coding challenge: missing courseId or userId', { courseId, userId });
+      showToast('❌ Error: Course information missing', 'error');
       return;
+    }
+
+    // IMPORTANT: Enter fullscreen FIRST (while we still have user gesture)
+    // This must happen before any async operations
+    try {
+      if (containerRef.current?.requestFullscreen) {
+        await containerRef.current.requestFullscreen();
+        console.log('✅ Entered fullscreen mode');
+      } else {
+        console.warn('⚠️ Fullscreen API not supported');
+      }
+    } catch (error) {
+      console.error('❌ Failed to enter fullscreen:', error);
+      showToast('Unable to enter fullscreen mode. Please try again.', 'error');
+      return; // Don't proceed if fullscreen fails
+    }
+
+    // Show loading toast
+    showToast('🔒 Preparing coding challenge... Please wait', 'info');
+    
+    // CRITICAL: Re-check block status from backend before allowing start
+    try {
+      console.log('🔍 Checking block status before starting challenge...', { userId, courseId });
+      const blockResponse = await fetch(
+        `http://localhost:8000/assessment/${courseId}/anti-cheat/status?user_id=${userId}&assessment_type=coding`
+      );
+      if (blockResponse.ok) {
+        const blockData = await blockResponse.json();
+        if (blockData.data.is_blocked) {
+          console.log('❌ Cannot start challenge - user is blocked (verified from backend)');
+          setChallengeBlocked(true);
+          const endTime = new Date(blockData.data.block_end_time).getTime();
+          setBlockEndTime(endTime);
+          setTimeRemaining(blockData.data.time_remaining_ms / 1000);
+          showToast('❌ You are blocked from taking challenges', 'error');
+          // Exit fullscreen since we're blocking
+          await exitFullscreen();
+          return;
+        }
+        console.log('✅ Block status check passed - user can take challenge');
+      }
+    } catch (error) {
+      console.error('❌ Error checking block status:', error);
+      showToast('⚠️ Warning: Could not verify block status', 'warning');
     }
     
     // Clear any old violations from previous session
     setViolations([]);
     
-    console.log('🔒 Entering fullscreen start page...');
+    console.log('🔒 Showing fullscreen start page...');
     
-    // Enter fullscreen FIRST
-    await enterFullscreen();
-    
-    // Then show the fullscreen start page (NOT the editor yet)
+    // Show the fullscreen start page (NOT the editor yet)
     setShowFullscreenStartPage(true);
     setShowResults(false);
+    
+    // Show success toast
+    showToast('✅ Fullscreen mode activated', 'success');
   };
 
   // Called from FULLSCREEN START PAGE - actually starts the challenge
@@ -376,10 +524,25 @@ const CodingChallengePage = ({ courseId, user, onNavigate }) => {
 
   // Called when user clicks "Try Again" - same flow as startChallenge
   const startTryAgain = async () => {
-    // Check if blocked before starting
-    if (challengeBlocked) {
-      showToast('You are blocked from taking challenges', 'error');
-      return;
+    // CRITICAL: Re-check block status from backend before allowing retry
+    try {
+      const blockResponse = await fetch(
+        `http://localhost:8000/assessment/${courseId}/anti-cheat/status?user_id=${userId}&assessment_type=coding`
+      );
+      if (blockResponse.ok) {
+        const blockData = await blockResponse.json();
+        if (blockData.data.is_blocked) {
+          console.log('❌ Cannot retry challenge - user is blocked (verified from backend)');
+          setChallengeBlocked(true);
+          const endTime = new Date(blockData.data.block_end_time).getTime();
+          setBlockEndTime(endTime);
+          setTimeRemaining(blockData.data.time_remaining_ms / 1000);
+          showToast('You are blocked from taking challenges', 'error');
+          return;
+        }
+      }
+    } catch (error) {
+      console.error('Error checking block status:', error);
     }
     
     // Clear violations for new attempt
@@ -596,6 +759,39 @@ const CodingChallengePage = ({ courseId, user, onNavigate }) => {
   if (!challengeStarted && !showResults && !showFullscreenStartPage) {
     return (
       <div ref={containerRef} className="min-h-screen bg-dark-bg flex items-center justify-center p-4">
+        {/* Show block overlay if blocked */}
+        {challengeBlocked && (
+          <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center">
+            <div className="bg-gradient-to-br from-red-900 to-red-700 border border-red-500 rounded-2xl p-8 max-w-md mx-4 text-center">
+              <div className="text-6xl mb-4">🚫</div>
+              <h2 className="text-2xl font-quantico-bold text-gray-100 mb-4">
+                Challenge Access Blocked
+              </h2>
+              <p className="text-red-200 mb-6">
+                Maximum security violations ({MAX_VIOLATIONS}) exceeded. 
+                Please wait before attempting again.
+              </p>
+              <div className="bg-black/50 rounded-xl p-4 mb-6">
+                <div className="text-3xl font-quantico-bold text-red-300 mb-2">
+                  {formatTimeRemaining(timeRemaining)}
+                </div>
+                <div className="text-sm text-red-400">Time Remaining</div>
+              </div>
+              <div className="space-y-2 mb-6">
+                <p className="text-red-200 text-sm">
+                  You will be able to retry the challenge after the cooldown period.
+                </p>
+              </div>
+              <button
+                onClick={() => onNavigate('course', { courseId })}
+                className="w-full bg-red-600 hover:bg-red-700 text-gray-100 px-6 py-3 rounded-xl font-quantico-bold transition-colors"
+              >
+                Return to Course
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="max-w-2xl w-full">
           <div className="bg-gradient-to-br from-gray-900 to-black border border-emerald-500/30 rounded-2xl p-8 shadow-2xl">
             <div className="text-center mb-8">
@@ -660,18 +856,26 @@ const CodingChallengePage = ({ courseId, user, onNavigate }) => {
                   <button
                     onClick={startTryAgain}
                     disabled={challengeBlocked}
-                    className="flex-1 bg-gradient-to-r from-emerald-600/80 to-green-600/80 hover:from-emerald-500/90 hover:to-green-500/90 disabled:from-gray-700/50 disabled:to-gray-800/50 disabled:border-gray-600/30 text-white disabled:text-gray-500 font-quantico-bold py-4 px-6 rounded-xl transition-all border border-emerald-500/50 hover:border-emerald-400/70"
+                    className={`flex-1 ${
+                      challengeBlocked
+                        ? 'bg-gray-700/50 border-gray-600/30 text-gray-500 cursor-not-allowed'
+                        : 'bg-gradient-to-r from-emerald-600/80 to-green-600/80 hover:from-emerald-500/90 hover:to-green-500/90 border-emerald-500/50 hover:border-emerald-400/70'
+                    } border text-white font-quantico-bold py-4 px-6 rounded-xl transition-all`}
                   >
-                    🔄 Try Again
+                    {challengeBlocked ? '🚫 Blocked' : '🔄 Try Again'}
                   </button>
                 </>
               ) : (
                 <button
                   onClick={startChallenge}
                   disabled={challengeBlocked}
-                  className="w-full bg-gradient-to-r from-emerald-600/80 to-green-600/80 hover:from-emerald-500/90 hover:to-green-500/90 disabled:from-gray-700/50 disabled:to-gray-800/50 disabled:border-gray-600/30 text-white disabled:text-gray-500 font-quantico-bold py-4 px-6 rounded-xl transition-all text-lg border border-emerald-500/50 hover:border-emerald-400/70 shadow-lg shadow-emerald-500/20"
+                  className={`w-full ${
+                    challengeBlocked
+                      ? 'bg-gray-700/50 border-gray-600/30 text-gray-500 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-emerald-600/80 to-green-600/80 hover:from-emerald-500/90 hover:to-green-500/90 border-emerald-500/50 hover:border-emerald-400/70 shadow-lg shadow-emerald-500/20'
+                  } border text-white font-quantico-bold py-4 px-6 rounded-xl transition-all text-lg`}
                 >
-                  {challengeBlocked ? '🚫 Challenge Blocked' : '🚀 Start Challenge'}
+                  {challengeBlocked ? '🚫 Challenge Blocked - Wait for Cooldown' : '🚀 Start Challenge'}
                 </button>
               )}
             </div>

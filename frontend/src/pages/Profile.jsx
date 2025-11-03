@@ -196,6 +196,9 @@ function Profile({ user, onLogout, onNavigate, onUserUpdate }) {
   const deleteAccount = async () => {
     setShowDeleteConfirm(false);
     
+    // Show loading toast
+    showToast('🗑️ Deleting account... Please wait', 'info');
+    
     try {
       const response = await fetch('http://localhost:8000/auth/account', {
         method: 'DELETE',

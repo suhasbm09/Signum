@@ -655,6 +655,57 @@ void insertAfter(Node* node, int data) {
               </div>
             )}
 
+            {insertionLang === 'cpp' && (
+              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+                <pre className="text-emerald-300 font-mono text-sm">
+{`// Insert at head - O(1)
+void insertAtHead(int data) {
+    Node* newNode = new Node(data);
+    
+    if (head == nullptr) {
+        head = newNode;
+        tail = newNode;
+    } else {
+        newNode->next = head;
+        head->prev = newNode;
+        head = newNode;
+    }
+}
+
+// Insert at tail - O(1)
+void insertAtTail(int data) {
+    Node* newNode = new Node(data);
+    
+    if (tail == nullptr) {
+        head = newNode;
+        tail = newNode;
+    } else {
+        newNode->prev = tail;
+        tail->next = newNode;
+        tail = newNode;
+    }
+}
+
+// Insert after specific node - O(1)
+void insertAfter(Node* node, int data) {
+    if (node == nullptr) return;
+    
+    Node* newNode = new Node(data);
+    newNode->prev = node;
+    newNode->next = node->next;
+    
+    if (node->next != nullptr) {
+        node->next->prev = newNode;
+    } else {
+        tail = newNode;
+    }
+    
+    node->next = newNode;
+}`}
+                </pre>
+              </div>
+            )}
+
             {insertionLang === 'python' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
                 <pre className="text-emerald-300 font-mono text-sm">
@@ -965,6 +1016,205 @@ class LRUCache {
             moveToHead(node);
         }
     }
+}`}
+                </pre>
+              </div>
+            )}
+
+            {applicationsLang === 'cpp' && (
+              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+                <pre className="text-emerald-300 font-mono text-sm">
+{`#include <unordered_map>
+using namespace std;
+
+class LRUCache {
+private:
+    struct Node {
+        int key, value;
+        Node *prev, *next;
+        Node(int k, int v) : key(k), value(v), prev(nullptr), next(nullptr) {}
+    };
+    
+    unordered_map<int, Node*> cache;
+    Node *head, *tail;
+    int capacity;
+    
+    void addNode(Node* node) {
+        node->prev = head;
+        node->next = head->next;
+        head->next->prev = node;
+        head->next = node;
+    }
+    
+    void removeNode(Node* node) {
+        node->prev->next = node->next;
+        node->next->prev = node->prev;
+    }
+    
+    void moveToHead(Node* node) {
+        removeNode(node);
+        addNode(node);
+    }
+    
+    Node* popTail() {
+        Node* node = tail->prev;
+        removeNode(node);
+        return node;
+    }
+    
+public:
+    LRUCache(int capacity) : capacity(capacity) {
+        head = new Node(0, 0);
+        tail = new Node(0, 0);
+        head->next = tail;
+        tail->prev = head;
+    }
+    
+    int get(int key) {
+        if (cache.find(key) == cache.end()) return -1;
+        Node* node = cache[key];
+        moveToHead(node);
+        return node->value;
+    }
+    
+    void put(int key, int value) {
+        if (cache.find(key) != cache.end()) {
+            Node* node = cache[key];
+            node->value = value;
+            moveToHead(node);
+        } else {
+            if (cache.size() >= capacity) {
+                Node* tail_node = popTail();
+                cache.erase(tail_node->key);
+                delete tail_node;
+            }
+            Node* newNode = new Node(key, value);
+            cache[key] = newNode;
+            addNode(newNode);
+        }
+    }
+    
+    ~LRUCache() {
+        Node* curr = head;
+        while (curr) {
+            Node* next = curr->next;
+            delete curr;
+            curr = next;
+        }
+    }
+};`}
+                </pre>
+              </div>
+            )}
+
+            {applicationsLang === 'c' && (
+              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+                <pre className="text-emerald-300 font-mono text-sm">
+{`#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 1000
+
+typedef struct Node {
+    int key;
+    int value;
+    struct Node* prev;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node* head;
+    Node* tail;
+    Node* cache[MAX_SIZE];
+    int capacity;
+    int size;
+} LRUCache;
+
+Node* createNode(int key, int value) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    node->key = key;
+    node->value = value;
+    node->prev = NULL;
+    node->next = NULL;
+    return node;
+}
+
+void addNode(LRUCache* obj, Node* node) {
+    node->prev = obj->head;
+    node->next = obj->head->next;
+    obj->head->next->prev = node;
+    obj->head->next = node;
+}
+
+void removeNode(Node* node) {
+    node->prev->next = node->next;
+    node->next->prev = node->prev;
+}
+
+void moveToHead(LRUCache* obj, Node* node) {
+    removeNode(node);
+    addNode(obj, node);
+}
+
+Node* popTail(LRUCache* obj) {
+    Node* node = obj->tail->prev;
+    removeNode(node);
+    return node;
+}
+
+LRUCache* lRUCacheCreate(int capacity) {
+    LRUCache* obj = (LRUCache*)malloc(sizeof(LRUCache));
+    obj->capacity = capacity;
+    obj->size = 0;
+    obj->head = createNode(0, 0);
+    obj->tail = createNode(0, 0);
+    obj->head->next = obj->tail;
+    obj->tail->prev = obj->head;
+    
+    for (int i = 0; i < MAX_SIZE; i++) {
+        obj->cache[i] = NULL;
+    }
+    return obj;
+}
+
+int lRUCacheGet(LRUCache* obj, int key) {
+    if (key < 0 || key >= MAX_SIZE || obj->cache[key] == NULL) {
+        return -1;
+    }
+    Node* node = obj->cache[key];
+    moveToHead(obj, node);
+    return node->value;
+}
+
+void lRUCachePut(LRUCache* obj, int key, int value) {
+    if (key < 0 || key >= MAX_SIZE) return;
+    
+    if (obj->cache[key] != NULL) {
+        Node* node = obj->cache[key];
+        node->value = value;
+        moveToHead(obj, node);
+    } else {
+        if (obj->size >= obj->capacity) {
+            Node* tail = popTail(obj);
+            obj->cache[tail->key] = NULL;
+            free(tail);
+            obj->size--;
+        }
+        Node* newNode = createNode(key, value);
+        obj->cache[key] = newNode;
+        addNode(obj, newNode);
+        obj->size++;
+    }
+}
+
+void lRUCacheFree(LRUCache* obj) {
+    Node* curr = obj->head;
+    while (curr) {
+        Node* next = curr->next;
+        free(curr);
+        curr = next;
+    }
+    free(obj);
 }`}
                 </pre>
               </div>

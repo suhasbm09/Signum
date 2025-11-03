@@ -2,8 +2,10 @@ import { useState, useEffect, useRef } from 'react';
 import QuizContent from '../courses/data-structures/components/QuizContent';
 import { isQuizAntiCheatEnabled, isQuizTestingMode } from '../config/features';
 import progressService from '../services/progressService';
+import { useToast } from '../components/Toast';
 
 function QuizPage({ user, onLogout, onNavigate, courseId }) {
+  const { showToast, ToastContainer } = useToast();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [antiCheatEnabled, setAntiCheatEnabled] = useState(false);
   const [violations, setViolations] = useState([]);
@@ -22,7 +24,7 @@ function QuizPage({ user, onLogout, onNavigate, courseId }) {
 
   // Constants
   const MAX_VIOLATIONS = 3;
-  const COOLDOWN_MINUTES = 30;
+  const COOLDOWN_MINUTES = 15; // First block is 15 minutes per documentation
   const userId = user?.uid || 'user_123';
   
   // Session ID for current quiz attempt
@@ -31,24 +33,36 @@ function QuizPage({ user, onLogout, onNavigate, courseId }) {
   // Load violations and block status ONLY - don't start tracking yet
   useEffect(() => {
     const loadInitialState = async () => {
+      // Safety check: don't load if courseId is missing
+      if (!courseId || !userId) {
+        console.warn('⚠️ Cannot load initial state: missing courseId or userId', { courseId, userId });
+        return;
+      }
+
       try {
+        console.log('📊 Loading initial quiz state for:', { userId, courseId });
+        
         // Check if user is blocked
-        const blockStatus = await progressService.getQuizBlockStatus(userId, courseId);
+        const blockStatus = await progressService.getBlockStatus(userId, courseId, 'quiz');
         
         if (blockStatus.is_blocked) {
           setQuizBlocked(true);
           const endTime = new Date(blockStatus.block_end_time).getTime();
           setBlockEndTime(endTime);
           setTimeRemaining(blockStatus.time_remaining_ms / 1000);
+          console.log('🚫 User is blocked until:', new Date(endTime));
         } else {
           // If not blocked, auto-clear old violations when cooldown expires
           setQuizBlocked(false);
           setBlockEndTime(null);
           setTimeRemaining(null);
           setViolations([]); // Reset violations when accessing quiz page fresh
+          console.log('✅ User is not blocked - quiz accessible');
         }
       } catch (error) {
         console.error('Error loading initial state:', error);
+        // Don't block if there's an error - allow quiz to proceed
+        setQuizBlocked(false);
       }
     };
     
@@ -135,92 +149,78 @@ function QuizPage({ user, onLogout, onNavigate, courseId }) {
   };
 
   // Anti-cheat detection functions
-  const detectTabSwitch = () => {
-    if (antiCheatEnabled && quizStarted && !testingMode) {
-      addViolation('Tab/Window Switch Detected');
-    }
-  };
-
   const detectRightClick = (e) => {
-    if (antiCheatEnabled && quizStarted && !testingMode) {
-      e.preventDefault();
-      addViolation('Right-click Attempted');
-      return false;
-    }
+    // Only check if anti-cheat is active
+    if (!antiCheatEnabled || !quizStarted || testingMode) return;
+    e.preventDefault();
+    addViolation('Right-click Attempted');
+    return false;
   };
 
   const detectKeyboardShortcuts = (e) => {
-    if (antiCheatEnabled && quizStarted && !testingMode) {
-      // Prevent common shortcuts
-      const forbiddenKeys = [
-        'F12', // Developer tools
-        'F5',  // Refresh
-        'F11', // Fullscreen toggle
-      ];
+    // Only check if anti-cheat is active
+    if (!antiCheatEnabled || !quizStarted || testingMode) return;
+    
+    console.log('⌨️ Key pressed:', e.key, { ctrl: e.ctrlKey, alt: e.altKey, shift: e.shiftKey });
+    
+    // Prevent F-keys (F5 refresh, F11 fullscreen, F12 devtools)
+    const forbiddenFKeys = ['F5', 'F11', 'F12'];
+    if (forbiddenFKeys.includes(e.key)) {
+      e.preventDefault();
+      console.log('🚫 Forbidden F-key detected:', e.key);
+      addViolation(`Forbidden key: ${e.key}`);
+      return false;
+    }
 
-      const forbiddenCombos = [
-        { ctrl: true, key: 'c' }, // Copy
-        { ctrl: true, key: 'v' }, // Paste
-        { ctrl: true, key: 'x' }, // Cut
-        { ctrl: true, key: 'a' }, // Select all
-        { ctrl: true, key: 's' }, // Save
-        { ctrl: true, key: 'p' }, // Print
-        { ctrl: true, key: 'f' }, // Find
-        { ctrl: true, key: 'h' }, // History
-        { ctrl: true, key: 'j' }, // Downloads
-        { ctrl: true, key: 'k' }, // Search
-        { ctrl: true, key: 'l' }, // Address bar
-        { ctrl: true, key: 'n' }, // New tab
-        { ctrl: true, key: 't' }, // New tab
-        { ctrl: true, key: 'w' }, // Close tab
-        { ctrl: true, key: 'r' }, // Refresh
-        { ctrl: true, key: 'u' }, // View source
-        { ctrl: true, shift: true, key: 'i' }, // Developer tools
-        { ctrl: true, shift: true, key: 'j' }, // Developer tools
-        { ctrl: true, shift: true, key: 'c' }, // Developer tools
-        { alt: true, key: 'Tab' }, // Alt+Tab
-      ];
-
-      // Check forbidden keys
-      if (forbiddenKeys.includes(e.key)) {
+    // Check Ctrl combinations
+    if (e.ctrlKey && !e.shiftKey && !e.altKey) {
+      const ctrlForbidden = ['c', 'v', 'x', 'a', 's', 'p', 'f', 'h', 'j', 'k', 'l', 'n', 't', 'w', 'r', 'u'];
+      if (ctrlForbidden.includes(e.key.toLowerCase())) {
         e.preventDefault();
-        addViolation(`Forbidden key pressed: ${e.key}`);
+        const actionNames = {
+          'c': 'Copy', 'v': 'Paste', 'x': 'Cut', 'a': 'Select All',
+          's': 'Save', 'p': 'Print', 'f': 'Find', 'h': 'History',
+          'j': 'Downloads', 'k': 'Search', 'l': 'Address Bar',
+          'n': 'New Window', 't': 'New Tab', 'w': 'Close Tab',
+          'r': 'Refresh', 'u': 'View Source'
+        };
+        console.log('🚫 Forbidden Ctrl combo detected:', e.key);
+        addViolation(`Blocked ${actionNames[e.key.toLowerCase()] || 'Shortcut'}: Ctrl+${e.key.toUpperCase()}`);
         return false;
       }
+    }
 
-      // Check forbidden combinations
-      const matchesForbidden = forbiddenCombos.some(combo => {
-        return (
-          (!combo.ctrl || e.ctrlKey) &&
-          (!combo.alt || e.altKey) &&
-          (!combo.shift || e.shiftKey) &&
-          e.key.toLowerCase() === combo.key.toLowerCase()
-        );
-      });
-
-      if (matchesForbidden) {
+    // Check Ctrl+Shift combinations (Developer tools)
+    if (e.ctrlKey && e.shiftKey && !e.altKey) {
+      const ctrlShiftForbidden = ['i', 'j', 'c', 'k'];
+      if (ctrlShiftForbidden.includes(e.key.toLowerCase())) {
         e.preventDefault();
-        addViolation(`Forbidden key combination: ${e.ctrlKey ? 'Ctrl+' : ''}${e.altKey ? 'Alt+' : ''}${e.shiftKey ? 'Shift+' : ''}${e.key}`);
+        console.log('🚫 Forbidden Ctrl+Shift combo detected:', e.key);
+        addViolation(`Developer Tools Shortcut Blocked: Ctrl+Shift+${e.key.toUpperCase()}`);
         return false;
       }
     }
   };
 
   const detectDevTools = () => {
-    if (antiCheatEnabled && quizStarted && !testingMode) {
-      let devtools = { open: false, orientation: null };
-      
-      setInterval(() => {
-        if (window.outerHeight - window.innerHeight > 160 || window.outerWidth - window.innerWidth > 160) {
-          if (!devtools.open) {
-            devtools.open = true;
-            addViolation('Developer Tools Opened');
-          }
-        } else {
-          devtools.open = false;
+    // Only check if anti-cheat is active
+    if (!antiCheatEnabled || !quizStarted || testingMode) return;
+    
+    let devtools = { open: false, orientation: null };
+    
+    const checkDevTools = () => {
+      if (window.outerHeight - window.innerHeight > 160 || window.outerWidth - window.innerWidth > 160) {
+        if (!devtools.open) {
+          devtools.open = true;
+          addViolation('Developer Tools Opened');
         }
-      }, 500);
-    }
+      } else {
+        devtools.open = false;
+      }
+    };
+    
+    const interval = setInterval(checkDevTools, 500);
+    return () => clearInterval(interval);
   };
 
   const addViolation = async (type) => {
@@ -255,7 +255,7 @@ function QuizPage({ user, onLogout, onNavigate, courseId }) {
         type,
         violation.timestamp
       );
-      console.log('✅ Violation saved to backend');
+      console.log('✅ Violation saved to backend:', type, `(${updatedViolations.length}/${MAX_VIOLATIONS})`);
     } catch (error) {
       console.error('❌ Failed to save violation to backend:', error);
     }
@@ -264,10 +264,15 @@ function QuizPage({ user, onLogout, onNavigate, courseId }) {
     if (updatedViolations.length >= MAX_VIOLATIONS) {
       setWarningMessage(`QUIZ BLOCKED: Maximum violations (${MAX_VIOLATIONS}) exceeded. Access blocked for ${COOLDOWN_MINUTES} minutes.`);
       setShowWarning(true);
+      
+      // Block access and end quiz immediately
       await blockQuizAccess();
+      await endQuiz();
+      
+      // Show block message for 3 seconds then navigate
       setTimeout(() => {
-        onNavigate('dashboard');
-      }, 5000);
+        setShowWarning(false);
+      }, 3000);
     } else {
       setWarningMessage(`Security Alert: ${type} (${updatedViolations.length}/${MAX_VIOLATIONS})`);
       setShowWarning(true);
@@ -302,26 +307,68 @@ function QuizPage({ user, onLogout, onNavigate, courseId }) {
 
   // Event listeners setup
   useEffect(() => {
+    // Only attach listeners if quiz is started and anti-cheat is enabled
+    if (!quizStarted || !antiCheatEnabled) {
+      return;
+    }
+
+    console.log('🔒 Attaching anti-cheat event listeners');
+
     // Visibility change (tab switch detection)
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        detectTabSwitch();
+        console.log('👁️ Visibility changed - tab hidden');
+        addViolation('Tab/Window Switch Detected');
       }
     };
 
     // Fullscreen change detection
     const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-      if (!document.fullscreenElement && antiCheatEnabled && quizStarted && !testingMode) {
+      const wasFullscreen = isFullscreen;
+      const nowFullscreen = !!document.fullscreenElement;
+      setIsFullscreen(nowFullscreen);
+      
+      console.log('📺 Fullscreen changed:', { wasFullscreen, nowFullscreen });
+      
+      // Only flag if we were in fullscreen and now we're not
+      if (wasFullscreen && !nowFullscreen) {
         addViolation('Exited Fullscreen Mode');
       }
     };
 
-    // Blur detection (window focus loss)
+    // Window blur detection (window lost focus - catches Alt+Tab)
     const handleBlur = () => {
-      if (antiCheatEnabled && quizStarted && !testingMode) {
-        addViolation('Window Lost Focus');
-      }
+      console.log('🔍 Window lost focus (blur event)');
+      addViolation('Window Lost Focus (possible Alt+Tab)');
+    };
+
+    // Window focus detection (for tracking)
+    const handleFocus = () => {
+      console.log('🔍 Window regained focus');
+    };
+
+    // Copy detection via event
+    const handleCopy = (e) => {
+      e.preventDefault();
+      console.log('📋 Copy attempt blocked');
+      addViolation('Copy Attempt Blocked');
+      return false;
+    };
+
+    // Paste detection via event
+    const handlePaste = (e) => {
+      e.preventDefault();
+      console.log('📋 Paste attempt blocked');
+      addViolation('Paste Attempt Blocked');
+      return false;
+    };
+
+    // Cut detection via event
+    const handleCut = (e) => {
+      e.preventDefault();
+      console.log('✂️ Cut attempt blocked');
+      addViolation('Cut Attempt Blocked');
+      return false;
     };
 
     // Setup event listeners
@@ -329,26 +376,61 @@ function QuizPage({ user, onLogout, onNavigate, courseId }) {
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('contextmenu', detectRightClick);
     document.addEventListener('keydown', detectKeyboardShortcuts);
+    document.addEventListener('copy', handleCopy);
+    document.addEventListener('paste', handlePaste);
+    document.addEventListener('cut', handleCut);
     window.addEventListener('blur', handleBlur);
+    window.addEventListener('focus', handleFocus);
 
     // Detect dev tools
-    detectDevTools();
+    const cleanupDevTools = detectDevTools();
 
     // Cleanup
     return () => {
+      console.log('🔓 Removing anti-cheat event listeners');
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('contextmenu', detectRightClick);
       document.removeEventListener('keydown', detectKeyboardShortcuts);
+      document.removeEventListener('copy', handleCopy);
+      document.removeEventListener('paste', handlePaste);
+      document.removeEventListener('cut', handleCut);
       window.removeEventListener('blur', handleBlur);
+      window.removeEventListener('focus', handleFocus);
+      if (cleanupDevTools) cleanupDevTools();
     };
-  }, [antiCheatEnabled, quizStarted]);
+  }, [antiCheatEnabled, quizStarted, testingMode, violations.length, isFullscreen]);
 
   const startSecureQuiz = async () => {
-    // Check if blocked before starting
-    if (quizBlocked) {
-      console.log('❌ Cannot start quiz - user is blocked');
+    // Safety check: don't start if courseId is missing
+    if (!courseId || !userId) {
+      console.error('❌ Cannot start quiz: missing courseId or userId', { courseId, userId });
+      showToast('❌ Error: Course information missing', 'error');
       return;
+    }
+
+    // Show loading toast
+    showToast('🔒 Starting secure quiz... Please wait', 'info');
+    
+    // CRITICAL: Re-check block status from backend before allowing start
+    try {
+      console.log('🔍 Checking block status before starting quiz...', { userId, courseId });
+      const blockStatus = await progressService.getBlockStatus(userId, courseId, 'quiz');
+      
+      if (blockStatus.is_blocked) {
+        console.log('❌ Cannot start quiz - user is blocked (verified from backend)');
+        setQuizBlocked(true);
+        const endTime = new Date(blockStatus.block_end_time).getTime();
+        setBlockEndTime(endTime);
+        setTimeRemaining(blockStatus.time_remaining_ms / 1000);
+        showToast('❌ Quiz is blocked due to violations', 'error');
+        return;
+      }
+      console.log('✅ Block status check passed - user can take quiz');
+    } catch (error) {
+      console.error('❌ Error checking block status:', error);
+      showToast('⚠️ Warning: Could not verify block status', 'warning');
+      // Don't block if there's an error checking - allow quiz to proceed
     }
     
     // Clear any old violations from previous session
@@ -370,6 +452,9 @@ function QuizPage({ user, onLogout, onNavigate, courseId }) {
     if (shouldEnableAntiCheat) {
       await enterFullscreen();
     }
+    
+    // Show success toast
+    showToast('✅ Quiz started successfully!', 'success');
   };
 
   const endQuiz = async () => {
@@ -389,6 +474,37 @@ function QuizPage({ user, onLogout, onNavigate, courseId }) {
   if (!quizStarted) {
     return (
       <div ref={pageRef} className="min-h-screen bg-dark-bg flex items-center justify-center p-4">
+        {/* Show block overlay if blocked */}
+        {quizBlocked && (
+          <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center">
+            <div className="bg-gradient-to-br from-red-900 to-red-700 border border-red-500 rounded-2xl p-8 max-w-md mx-4 text-center">
+              <div className="text-6xl mb-4">🚫</div>
+              <h2 className="text-2xl font-quantico-bold text-gray-100 mb-4">Quiz Access Blocked</h2>
+              <p className="text-red-200 mb-6">
+                Maximum security violations ({MAX_VIOLATIONS}) exceeded. 
+                Please wait before attempting again.
+              </p>
+              <div className="bg-black/50 rounded-xl p-4 mb-6">
+                <div className="text-3xl font-quantico-bold text-red-300 mb-2">
+                  {formatTimeRemaining(timeRemaining)}
+                </div>
+                <div className="text-sm text-red-400">Time Remaining</div>
+              </div>
+              <div className="space-y-2 mb-6">
+                <p className="text-red-200 text-sm">
+                  You will be able to retry the quiz after the cooldown period.
+                </p>
+              </div>
+              <button
+                onClick={() => onNavigate('course', { courseId })}
+                className="w-full bg-red-600 hover:bg-red-700 text-gray-100 px-6 py-3 rounded-xl font-quantico-bold transition-colors"
+              >
+                Return to Course
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="max-w-2xl mx-auto text-center">
           <h1 className="text-4xl font-quantico-bold text-gray-100 mb-6">
             Secure Quiz Environment
@@ -443,9 +559,14 @@ function QuizPage({ user, onLogout, onNavigate, courseId }) {
           <div className="space-y-4">
             <button
               onClick={startSecureQuiz}
-              className="w-full bg-gradient-to-r from-emerald-600/80 to-green-600/80 hover:from-emerald-500/90 hover:to-green-500/90 border border-emerald-500/50 hover:border-emerald-400/70 text-white font-quantico-bold py-4 px-8 rounded-xl transition-all duration-300 shadow-lg shadow-emerald-500/20"
+              disabled={quizBlocked}
+              className={`w-full ${
+                quizBlocked 
+                  ? 'bg-gray-700/50 border-gray-600/30 text-gray-500 cursor-not-allowed' 
+                  : 'bg-gradient-to-r from-emerald-600/80 to-green-600/80 hover:from-emerald-500/90 hover:to-green-500/90 border-emerald-500/50 hover:border-emerald-400/70 shadow-lg shadow-emerald-500/20'
+              } border text-white font-quantico-bold py-4 px-8 rounded-xl transition-all duration-300`}
             >
-              Start Secure Quiz
+              {quizBlocked ? '🚫 Quiz Blocked - Wait for Cooldown' : 'Start Secure Quiz'}
             </button>
             
             <button
@@ -460,6 +581,9 @@ function QuizPage({ user, onLogout, onNavigate, courseId }) {
             By starting the quiz, you agree to the anti-cheat monitoring. All activities are logged for academic integrity.
           </p>
         </div>
+        
+        {/* Toast Notifications */}
+        <ToastContainer />
       </div>
     );
   }
@@ -576,6 +700,9 @@ function QuizPage({ user, onLogout, onNavigate, courseId }) {
           </div>
         </div>
       )}
+      
+      {/* Toast Notifications */}
+      <ToastContainer />
     </div>
   );
 }
