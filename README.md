@@ -12,6 +12,8 @@
 [![Gemini](https://img.shields.io/badge/Gemini-2.5%20Flash-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
 [![License](https://img.shields.io/badge/License-Academic-purple?style=for-the-badge)](LICENSE)
 
+### 🚀 **[Live Demo](https://signum-beta.vercel.app)** | 📡 **[API Docs](https://signum-backend.onrender.com/docs)**
+
 [Features](#-core-features) • [Demo](#-screenshots) • [Quick Start](#-quick-start) • [Documentation](#-documentation) • [Tech Stack](#-tech-stack)
 
 </div>
@@ -27,6 +29,19 @@
 - **🔗 Blockchain Certificates** - Verifiable NFT credentials minted on Solana blockchain
 
 Built for students who demand **interactive learning experiences** and employers who need **trustless credential verification**.
+
+### 🌐 Live Deployment
+
+<div align="center">
+
+| Component | URL | Status |
+|-----------|-----|--------|
+| **Frontend** | [signum-beta.vercel.app](https://signum-beta.vercel.app) | ✅ Live on Vercel |
+| **Backend API** | [signum-backend.onrender.com](https://signum-backend.onrender.com) | ✅ Live on Render |
+| **API Documentation** | [signum-backend.onrender.com/docs](https://signum-backend.onrender.com/docs) | 📖 Interactive Swagger |
+| **Blockchain** | Solana Devnet | ⛓️ Deployed |
+
+</div>
 
 ---
 
