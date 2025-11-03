@@ -13,6 +13,7 @@ import { ProgressProvider, setGlobalToast } from './contexts/ProgressContext';
 import { AIProvider } from './contexts/AIContext';
 import AIAssistant from './components/AI/AIAssistant';
 import { useToast } from './components/Toast';
+import { API_BASE_URL } from 'config/api';
 
 function App() {
   const { showToast, ToastContainer } = useToast();
@@ -50,7 +51,7 @@ function App() {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         try {
-          const response = await fetch('http://localhost:8000/auth/me', {
+          const response = await fetch(`${API_BASE_URL}/auth/me`, {
             credentials: 'include',
           });
           
@@ -210,7 +211,7 @@ function App() {
     showToast('📝 Enrolling in course...', 'info');
     
     try {
-      const response = await fetch('http://localhost:8000/auth/courses/enroll', {
+      const response = await fetch(`${API_BASE_URL}/auth/courses/enroll`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

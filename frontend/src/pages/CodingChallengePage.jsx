@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useProgress } from '../contexts/ProgressContext';
 import { useToast } from '../components/Toast';
 import CodingChallengeContent from '../courses/data-structures/components/CodingChallengeContent';
+import { API_BASE_URL } from '../config/api';
 
 const CodingChallengePage = ({ courseId, user, onNavigate }) => {
   const { showToast, ToastContainer } = useToast();
@@ -41,7 +42,7 @@ const CodingChallengePage = ({ courseId, user, onNavigate }) => {
         console.log('📊 Loading initial coding challenge state for:', { userId, courseId });
         
         const blockResponse = await fetch(
-          `http://localhost:8000/assessment/${courseId}/anti-cheat/status?user_id=${userId}&assessment_type=coding`
+          `${API_BASE_URL}/assessment/${courseId}/anti-cheat/status?user_id=${userId}&assessment_type=coding`
         );
         if (blockResponse.ok) {
           const blockData = await blockResponse.json();
@@ -83,7 +84,7 @@ const CodingChallengePage = ({ courseId, user, onNavigate }) => {
           
           // Clear from backend
           try {
-            await fetch(`http://localhost:8000/assessment/${courseId}/anti-cheat/clear?user_id=${userId}&assessment_type=coding`, {
+            await fetch(`${API_BASE_URL}/assessment/${courseId}/anti-cheat/clear?user_id=${userId}&assessment_type=coding`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -118,7 +119,7 @@ const CodingChallengePage = ({ courseId, user, onNavigate }) => {
         
         // FIRST: Check submissions directly (more reliable)
         const submissionsResponse = await fetch(
-          `http://localhost:8000/assessment/${courseId}/coding/submissions?user_id=${userId}`
+          `${API_BASE_URL}/assessment/${courseId}/coding/submissions?user_id=${userId}`
         );
         
         if (submissionsResponse.ok) {
@@ -171,7 +172,7 @@ const CodingChallengePage = ({ courseId, user, onNavigate }) => {
 
   const blockChallengeAccess = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/assessment/${courseId}/anti-cheat/report`, {
+      const response = await fetch(`${API_BASE_URL}/assessment/${courseId}/anti-cheat/report`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -226,7 +227,7 @@ const CodingChallengePage = ({ courseId, user, onNavigate }) => {
     setViolations(updatedViolations);
 
     try {
-      await fetch(`http://localhost:8000/assessment/${courseId}/anti-cheat/report`, {
+      await fetch(`${API_BASE_URL}/assessment/${courseId}/anti-cheat/report`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -474,7 +475,7 @@ const CodingChallengePage = ({ courseId, user, onNavigate }) => {
     try {
       console.log('🔍 Checking block status before starting challenge...', { userId, courseId });
       const blockResponse = await fetch(
-        `http://localhost:8000/assessment/${courseId}/anti-cheat/status?user_id=${userId}&assessment_type=coding`
+        `${API_BASE_URL}/assessment/${courseId}/anti-cheat/status?user_id=${userId}&assessment_type=coding`
       );
       if (blockResponse.ok) {
         const blockData = await blockResponse.json();
@@ -527,7 +528,7 @@ const CodingChallengePage = ({ courseId, user, onNavigate }) => {
     // CRITICAL: Re-check block status from backend before allowing retry
     try {
       const blockResponse = await fetch(
-        `http://localhost:8000/assessment/${courseId}/anti-cheat/status?user_id=${userId}&assessment_type=coding`
+        `${API_BASE_URL}/assessment/${courseId}/anti-cheat/status?user_id=${userId}&assessment_type=coding`
       );
       if (blockResponse.ok) {
         const blockData = await blockResponse.json();
@@ -570,7 +571,7 @@ const CodingChallengePage = ({ courseId, user, onNavigate }) => {
     if (!challengeResults && savedSubmission) {
       try {
         const submissionsResponse = await fetch(
-          `http://localhost:8000/assessment/${courseId}/coding/submissions?user_id=${userId}`
+          `${API_BASE_URL}/assessment/${courseId}/coding/submissions?user_id=${userId}`
         );
         
         if (submissionsResponse.ok) {

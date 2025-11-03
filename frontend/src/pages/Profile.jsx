@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { useToast } from '../components/Toast';
+import { API_BASE_URL } from '../config/api';
 
 function Profile({ user, onLogout, onNavigate, onUserUpdate }) {
   const { showToast, ToastContainer } = useToast();
@@ -46,7 +47,7 @@ function Profile({ user, onLogout, onNavigate, onUserUpdate }) {
 
   const fetchProfile = async () => {
     try {
-      const response = await fetch('http://localhost:8000/auth/me', {
+      const response = await fetch(`${API_BASE_URL}/auth/me`, {
         credentials: 'include',
       });
       
@@ -75,7 +76,7 @@ function Profile({ user, onLogout, onNavigate, onUserUpdate }) {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      const response = await fetch('http://localhost:8000/auth/profile', {
+      const response = await fetch(`${API_BASE_URL}/auth/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -97,7 +98,7 @@ function Profile({ user, onLogout, onNavigate, onUserUpdate }) {
         await fetchProfile();
         // Notify parent component to update user data
         if (onUserUpdate) {
-          const updatedResponse = await fetch('http://localhost:8000/auth/me', {
+          const updatedResponse = await fetch(`${API_BASE_URL}/auth/me`, {
             credentials: 'include',
           });
           if (updatedResponse.ok) {
@@ -132,7 +133,7 @@ function Profile({ user, onLogout, onNavigate, onUserUpdate }) {
           
           // Save wallet address to backend (users collection only)
           try {
-            const response = await fetch('http://localhost:8000/auth/phantom-wallet', {
+            const response = await fetch(`${API_BASE_URL}/auth/phantom-wallet`, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               credentials: 'include',
@@ -200,7 +201,7 @@ function Profile({ user, onLogout, onNavigate, onUserUpdate }) {
     showToast('🗑️ Deleting account... Please wait', 'info');
     
     try {
-      const response = await fetch('http://localhost:8000/auth/account', {
+      const response = await fetch(`${API_BASE_URL}/auth/account`, {
         method: 'DELETE',
         credentials: 'include',
       });

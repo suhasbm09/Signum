@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import Editor from '@monaco-editor/react';
+import { API_BASE_URL } from '../../config/api';
 
 // Code templates for different languages
 const codeTemplates = {
@@ -127,7 +128,7 @@ You can implement this using any method (iterative, recursive, etc.)`,
     setOutput('Running code...');
     
     try {
-      const response = await fetch(`http://localhost:8000/assessment/${courseId}/coding/run`, {
+      const response = await fetch(`${API_BASE_URL}/assessment/${courseId}/coding/run`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -162,7 +163,7 @@ You can implement this using any method (iterative, recursive, etc.)`,
         paste_attempts: 0
       };
 
-      const response = await fetch(`http://localhost:8000/assessment/${courseId}/coding/submit`, {
+      const response = await fetch(`${API_BASE_URL}/assessment/${courseId}/coding/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

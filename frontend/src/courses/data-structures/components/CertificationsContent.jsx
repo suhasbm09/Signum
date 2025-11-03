@@ -7,6 +7,7 @@ import * as anchor from '@coral-xyz/anchor';
 import { Connection, PublicKey, SystemProgram } from '@solana/web3.js';
 import { Buffer } from 'buffer';
 import idl from '../../../signum_certificate_idl.json';
+import { API_BASE_URL } from '../../config/api';
 
 // Make Buffer available globally (required for Anchor)
 if (typeof window !== 'undefined') {
@@ -235,7 +236,7 @@ const CertificationsContent = ({ user }) => {
     try {
       console.log('🔍 Loading NFT certificate status for:', userId, courseId);
       
-      const response = await fetch(`http://localhost:8000/certification/${courseId}/status?user_id=${userId}`);
+      const response = await fetch(`${API_BASE_URL}/certification/${courseId}/status?user_id=${userId}`);
       
       if (response.ok) {
         const data = await response.json();
@@ -279,7 +280,7 @@ const CertificationsContent = ({ user }) => {
       console.log('   Transaction:', transactionSignature);
       console.log('   Mint Address:', mintAddress);
       
-      const response = await fetch(`http://localhost:8000/certification/${courseId}/save`, {
+      const response = await fetch(`${API_BASE_URL}/certification/${courseId}/save`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -312,7 +313,7 @@ const CertificationsContent = ({ user }) => {
 
   const clearNFTStatusFromFirebase = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/certification/${courseId}/delete?user_id=${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/certification/${courseId}/delete?user_id=${userId}`, {
         method: 'DELETE',
       });
       
@@ -481,7 +482,7 @@ const CertificationsContent = ({ user }) => {
       showToast('📡 Requesting metadata from backend...', 'info');
       
             // Get metadata from backend
-      const metadataResponse = await fetch(`http://localhost:8000/certification/${courseId}/mint`, {
+      const metadataResponse = await fetch(`${API_BASE_URL}/certification/${courseId}/mint`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
