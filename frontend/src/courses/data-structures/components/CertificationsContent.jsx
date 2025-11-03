@@ -5,7 +5,6 @@ import { useToast } from '../../../components/Toast';
 import { isBlockchainEnabled, isBlockchainTestingMode } from '../../../config/features';
 import * as anchor from '@coral-xyz/anchor';
 import { Connection, PublicKey, SystemProgram } from '@solana/web3.js';
-import { getAssociatedTokenAddress } from '@solana/spl-token';
 import { Buffer } from 'buffer';
 import idl from '../../../signum_certificate_idl.json';
 
@@ -420,12 +419,13 @@ const CertificationsContent = ({ user }) => {
       // Add a small random delay to ensure unique transaction
       await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 200));
       
-      // Get token account
-      const tokenAccount = await getAssociatedTokenAddress(
-        mint.publicKey,
-        provider.wallet.publicKey,
-        false,
-        TOKEN_PROGRAM_ID,
+      // Derive associated token account address (more reliable than getAssociatedTokenAddress)
+      const [tokenAccount] = PublicKey.findProgramAddressSync(
+        [
+          provider.wallet.publicKey.toBuffer(),
+          TOKEN_PROGRAM_ID.toBuffer(),
+          mint.publicKey.toBuffer()
+        ],
         ASSOCIATED_TOKEN_PROGRAM_ID
       );
       

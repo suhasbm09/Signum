@@ -1036,7 +1036,7 @@ for (int i = 0; i < matrix.length; i++) {
           Excellent! You've mastered 2D arrays. Now let's explore <strong>Stacks</strong> - a fundamental LIFO (Last In First Out) data structure used everywhere in programming!
         </p>
         <button
-          onClick={() => onNavigate('course', { courseId, topic: 'stacks' })}
+          onClick={() => onNavigate('course', { courseId, topic: 'linked-list-singly' })}
           className="px-6 py-3 bg-gradient-to-r from-emerald-500/20 to-green-500/20 hover:from-emerald-500/30 hover:to-green-500/30 border border-emerald-500/40 hover:border-emerald-400/60 text-emerald-200 font-quantico-bold rounded-lg transition-all duration-300 hover-lift"
         >
           Continue to Stacks →
