@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
-import Editor from '@monaco-editor/react';
-import { API_BASE_URL } from '../../config/api';
+import React, { useState, useEffect, useRef } from 'react';
+import CodeEditor from '../../../components/CodeEditor';
+import { API_BASE_URL } from '../../../config/api';
 
 // Code templates for different languages
 const codeTemplates = {

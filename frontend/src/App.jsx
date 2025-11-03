@@ -13,7 +13,7 @@ import { ProgressProvider, setGlobalToast } from './contexts/ProgressContext';
 import { AIProvider } from './contexts/AIContext';
 import AIAssistant from './components/AI/AIAssistant';
 import { useToast } from './components/Toast';
-import { API_BASE_URL } from 'config/api';
+import { API_BASE_URL } from './config/api';
 
 function App() {
   const { showToast, ToastContainer } = useToast();

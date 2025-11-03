@@ -7,7 +7,7 @@ import * as anchor from '@coral-xyz/anchor';
 import { Connection, PublicKey, SystemProgram } from '@solana/web3.js';
 import { Buffer } from 'buffer';
 import idl from '../../../signum_certificate_idl.json';
-import { API_BASE_URL } from '../../config/api';
+import { API_BASE_URL } from '../../../config/api';
 
 // Make Buffer available globally (required for Anchor)
 if (typeof window !== 'undefined') {
