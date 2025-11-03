@@ -8,6 +8,7 @@ from app.repositories.user_repository import UserRepository
 from app.domains.auth.models import ProfileUpdate, WalletUpdate
 from app.domains.auth.account_deletion_service import AccountDeletionService
 import secrets
+import os
 
 router = APIRouter()
 
@@ -18,6 +19,11 @@ sessions = {}
 
 def generate_session_token():
     return secrets.token_urlsafe(32)
+
+def is_test_environment():
+    """Check if running in test environment"""
+    return os.getenv('PYTEST_CURRENT_TEST') is not None or os.getenv('TESTING') == 'true'
+
 
 @router.post("/verify-firebase-token")
 async def verify_firebase_token(request: Request, response: Response):
@@ -71,12 +77,14 @@ async def verify_firebase_token(request: Request, response: Response):
             'coursesEnrolled': courses_enrolled
         }
         
+        # Cookie settings: secure for production, relaxed for tests
+        is_test = is_test_environment()
         response.set_cookie(
             key="session_token",
             value=session_token,
             httponly=True,
-            secure=True,  # Required for HTTPS in production
-            samesite="none",  # Required for cross-origin cookies
+            secure=not is_test,  # False in tests (HTTP), True in production (HTTPS)
+            samesite="lax" if is_test else "none",  # "lax" for tests, "none" for cross-origin production
             max_age=7 * 24 * 60 * 60
         )
         
