@@ -75,8 +75,8 @@ async def verify_firebase_token(request: Request, response: Response):
             key="session_token",
             value=session_token,
             httponly=True,
-            secure=False,
-            samesite="lax",
+            secure=True,  # Required for HTTPS in production
+            samesite="none",  # Required for cross-origin cookies
             max_age=7 * 24 * 60 * 60
         )
         
