@@ -47,8 +47,8 @@ function About({ user, onLogout, onNavigate }) {
     backend: [
       "FastAPI - Python REST API",
       "Gemini 2.5 Flash - AI model",
-      "LangChain - AI orchestration",
-      "PostgreSQL - Data persistence"
+      "RAG - Content retrieval",
+      "Firebase - Firestore database"
     ],
     blockchain: [
       "Solana - L1 blockchain",
