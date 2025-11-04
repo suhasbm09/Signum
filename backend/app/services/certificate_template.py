@@ -25,10 +25,10 @@ class CertificateTemplate:
         try:
             self.title_font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', 48)
             self.subtitle_font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', 32)
-            self.name_font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', 32)  # Increased from 24 to 32
-            self.score_font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', 27)  # Reduced to 36 for better fit
+            self.name_font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', 52)  # Increased from 24 to 32
+            self.score_font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', 37)  # Reduced to 36 for better fit
             self.text_font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', 20)
-            self.wallet_font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', 16)  # Smaller font for wallet
+            self.wallet_font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', 26)  # Smaller font for wallet
         except:
             self.title_font = ImageFont.load_default()
             self.subtitle_font = ImageFont.load_default()
@@ -162,25 +162,25 @@ class CertificateTemplate:
         # FIELD 1: User name
         name_bbox = draw.textbbox((0, 0), user_name, font=self.name_font)
         name_x = (self.width - (name_bbox[2] - name_bbox[0])) // 2
-        draw.text((name_x, 320), user_name, fill='#ffffff', font=self.name_font)
+        draw.text((name_x, 220), user_name, fill='#ffffff', font=self.name_font)
         
         # FIELD 2: Wallet
         formatted_wallet = f"{wallet_address[:8]}...{wallet_address[-8:]}"
         wallet_bbox = draw.textbbox((0, 0), formatted_wallet, font=self.text_font)
         wallet_x = (self.width - (wallet_bbox[2] - wallet_bbox[0])) // 2
-        draw.text((wallet_x, 360), formatted_wallet, fill='#9ca3af', font=self.text_font)
+        draw.text((wallet_x, 160), formatted_wallet, fill='#9ca3af', font=self.text_font)
         
         # FIELD 3: Score
         score_text = f"{final_score}%"
         score_bbox = draw.textbbox((0, 0), score_text, font=self.score_font)
         score_x = (self.width - (score_bbox[2] - score_bbox[0])) // 2
-        draw.text((score_x, 449.5), score_text, fill='#fbbf24', font=self.score_font)
+        draw.text((score_x, 349.5), score_text, fill='#fbbf24', font=self.score_font)
         
         # FIELD 4: Date
         date_formatted = datetime.fromisoformat(timestamp.replace('Z', '+00:00')).strftime("%B %d, %Y")
         date_bbox = draw.textbbox((0, 0), date_formatted, font=self.text_font)
         date_x = (self.width - (date_bbox[2] - date_bbox[0])) // 2
-        draw.text((date_x, 580), date_formatted, fill='#9ca3af', font=self.text_font)
+        draw.text((date_x, 480), date_formatted, fill='#9ca3af', font=self.text_font)
         
         # Platform
         platform = "Signum Learning"
