@@ -9,6 +9,7 @@ import { Buffer } from 'buffer';
 import idl from '../../../signum_certificate_idl.json';
 import { API_BASE_URL } from '../../../config/api';
 import WalletGuideModal from '../../../components/Blockchain/WalletGuideModal';
+import WhyNFTSection from '../../../components/Blockchain/WhyNFTSection';
 
 // Make Buffer available globally (required for Anchor)
 if (typeof window !== 'undefined') {
@@ -676,6 +677,9 @@ const CertificationsContent = ({ user }) => {
           Complete the course and mint your achievement NFT
         </p>
       </div>
+
+      {/* Why NFT Certificates Matter Section */}
+      <WhyNFTSection />
 
       {/* Single Unified Progress & Certification Window */}
       <div className="bg-gradient-to-r from-emerald-500/10 to-green-500/10 border border-emerald-500/20 rounded-2xl p-8">
