@@ -8,6 +8,7 @@ import { Connection, PublicKey, SystemProgram } from '@solana/web3.js';
 import { Buffer } from 'buffer';
 import idl from '../../../signum_certificate_idl.json';
 import { API_BASE_URL } from '../../../config/api';
+import WalletGuideModal from '../../../components/Blockchain/WalletGuideModal';
 
 // Make Buffer available globally (required for Anchor)
 if (typeof window !== 'undefined') {
@@ -29,6 +30,7 @@ const CertificationsContent = ({ user }) => {
   const [nftMinted, setNftMinted] = useState(false);
   const [nftImageUrl, setNftImageUrl] = useState('');
   const [loading, setLoading] = useState(true);
+  const [showGuideModal, setShowGuideModal] = useState(false);
 
   
   // Get user ID - will be replaced with actual auth context
@@ -62,6 +64,13 @@ const CertificationsContent = ({ user }) => {
       }
       
       setLoading(false);
+      
+      // Step 5: Auto-show guide if no wallet detected (after 2 seconds)
+      if (typeof window !== 'undefined' && !window.solana) {
+        setTimeout(() => {
+          setShowGuideModal(true);
+        }, 2000);
+      }
     };
     
     initializeComponent();
@@ -395,7 +404,9 @@ const CertificationsContent = ({ user }) => {
     }
 
     if (!walletConnected || !window.solana) {
-      showToast('⚠️ Please connect your Phantom wallet first!', 'warning');
+      // Show guide modal if wallet not detected
+      setShowGuideModal(true);
+      showToast('👛 Please set up your Phantom wallet first!', 'info');
       return;
     }
     
@@ -982,26 +993,38 @@ const CertificationsContent = ({ user }) => {
                   Mint a unique NFT certificate to commemorate your achievement in mastering Data Structures
                 </div>
                 
-                <button
-                  onClick={handleMintNFT}
-                  disabled={!isEligible || !walletConnected || minting || !isBlockchainEnabled()}
-                  className={`font-quantico-bold py-3 px-8 rounded-xl transition-all duration-300 ${
-                    isEligible && walletConnected && !minting && isBlockchainEnabled()
-                      ? 'bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-black'
-                      : 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                  }`}
-                >
-                  {minting 
-                    ? '⏳ Minting NFT...' 
-                    : !isBlockchainEnabled()
-                      ? '🔒 Minting Disabled'
-                      : !isEligible 
-                      ? '🔒 Complete Requirements First'
-                      : !walletConnected 
-                        ? '👛 Connect Wallet First'
-                        : '🚀 Mint Achievement NFT'
-                  }
-                </button>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+                  {/* Guide Button */}
+                  <button
+                    onClick={() => setShowGuideModal(true)}
+                    className="font-quantico-bold py-3 px-6 rounded-xl bg-black/40 hover:bg-black/60 border border-emerald-400/30 hover:border-emerald-400/50 text-emerald-300 hover:text-emerald-200 transition-all duration-300 flex items-center gap-2"
+                  >
+                    <span>📘</span>
+                    <span>How to Mint NFT</span>
+                  </button>
+                  
+                  {/* Mint Button */}
+                  <button
+                    onClick={handleMintNFT}
+                    disabled={!isEligible || !walletConnected || minting || !isBlockchainEnabled()}
+                    className={`font-quantico-bold py-3 px-8 rounded-xl transition-all duration-300 ${
+                      isEligible && walletConnected && !minting && isBlockchainEnabled()
+                        ? 'bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-black shadow-lg shadow-yellow-500/25'
+                        : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                    }`}
+                  >
+                    {minting 
+                      ? '⏳ Minting NFT...' 
+                      : !isBlockchainEnabled()
+                        ? '🔒 Minting Disabled'
+                        : !isEligible 
+                        ? '🔒 Complete Requirements First'
+                        : !walletConnected 
+                          ? '👛 Connect Wallet First'
+                          : '🚀 Mint Achievement NFT'
+                    }
+                  </button>
+                </div>
               </div>
             )}
             
@@ -1012,6 +1035,12 @@ const CertificationsContent = ({ user }) => {
           </div>
         </div>
       </div>
+      
+      {/* Wallet Setup Guide Modal */}
+      {showGuideModal && (
+        <WalletGuideModal onClose={() => setShowGuideModal(false)} />
+      )}
+      
       <ToastContainer />
     </div>
   );

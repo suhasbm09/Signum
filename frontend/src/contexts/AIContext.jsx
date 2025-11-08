@@ -56,8 +56,22 @@ export function AIProvider({ children }) {
         const assistantMessage = { role: 'assistant', content: result.response };
         setConversationHistory(prev => [...prev, assistantMessage]);
       } else {
+        // Handle different error types
+        let errorContent = result.response || 'Sorry, I encountered an error.';
+        
+        // Special handling for daily limit
+        if (result.error === 'daily_limit_reached') {
+          errorContent = '⚠️ **AI Daily Limit Reached**\n\n' + 
+            'The AI tutor has reached its daily usage limit. Don\'t worry, you can still:\n\n' +
+            '• Continue learning with **interactive visualizations**\n' +
+            '• Practice coding in the **coding environment**\n' +
+            '• Track your progress and complete modules\n' +
+            '• Review course materials\n\n' +
+            '🔄 AI tutor will be available again tomorrow!';
+        }
+        
         // Add error message to history
-        const errorMessage = { role: 'assistant', content: result.response || 'Sorry, I encountered an error.' };
+        const errorMessage = { role: 'assistant', content: errorContent };
         setConversationHistory(prev => [...prev, errorMessage]);
       }
 

@@ -13,6 +13,7 @@ function AIChat({ isOpen, onClose, context = null }) {
   const { chat, conversationHistory, isLoading, clearHistory, setContext, aiEnabled, testingMode } = useAI();
   const [inputMessage, setInputMessage] = useState('');
   const [isListening, setIsListening] = useState(false);
+  const [dailyLimitReached, setDailyLimitReached] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const recognitionRef = useRef(null);
@@ -73,6 +74,11 @@ function AIChat({ isOpen, onClose, context = null }) {
     console.log('Sending message:', message); // Debug
     const result = await chat(message, context);
     console.log('Chat result:', result); // Debug
+    
+    // Check if daily limit was reached
+    if (result && result.error === 'daily_limit_reached') {
+      setDailyLimitReached(true);
+    }
   };
 
   const [showClearConfirm, setShowClearConfirm] = useState(false);
@@ -115,6 +121,28 @@ function AIChat({ isOpen, onClose, context = null }) {
           <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-b border-yellow-500/40 px-4 py-2 flex items-center justify-center gap-2">
             <span className="text-yellow-300 text-xs font-quantico-bold">⚠️ AI TESTING MODE</span>
             <span className="text-yellow-400/80 text-xs">Limited features for testing</span>
+          </div>
+        )}
+        
+        {/* AI Disabled Banner */}
+        {!aiEnabled && (
+          <div className="bg-gradient-to-r from-gray-500/20 to-slate-500/20 border-b border-gray-500/40 px-4 py-3 flex items-center justify-center gap-2">
+            <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+            </svg>
+            <span className="text-gray-300 text-sm font-quantico-bold">AI Features Disabled</span>
+            <span className="text-gray-400/80 text-xs">Contact administrator for access</span>
+          </div>
+        )}
+        
+        {/* Daily Limit Reached Banner */}
+        {aiEnabled && dailyLimitReached && (
+          <div className="bg-gradient-to-r from-red-500/20 to-orange-500/20 border-b border-red-500/40 px-4 py-3 flex items-center justify-center gap-2">
+            <svg className="w-5 h-5 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span className="text-red-300 text-sm font-quantico-bold">AI Daily Limit Reached</span>
+            <span className="text-red-400/80 text-xs">• Continue with visualizations & coding • Resets tomorrow</span>
           </div>
         )}
 
@@ -318,8 +346,9 @@ function AIChat({ isOpen, onClose, context = null }) {
               
               <button
                 type="submit"
-                disabled={isLoading || !inputMessage.trim()}
+                disabled={isLoading || !inputMessage.trim() || dailyLimitReached || !aiEnabled}
                 className="flex items-center justify-center w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-500/80 to-emerald-600/80 hover:from-emerald-400/85 hover:to-emerald-500/85 text-gray-100 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_15px_35px_-24px_rgba(16,185,129,0.85)]"
+                title={!aiEnabled ? "AI is disabled" : dailyLimitReached ? "Daily AI limit reached" : "Send message"}
               >
                 {isLoading ? (
                   <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
