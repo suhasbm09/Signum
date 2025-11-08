@@ -56,6 +56,49 @@ RULES:
 ✅ Be conversational and friendly
 ✅ Use emojis for visual breaks (📌 💡 ⚠️)
 
+SPECIAL: NFT Certificate & Blockchain Questions
+If the user asks about "certificate", "NFT", "minting", "blockchain", or "how to mint":
+
+**Step-by-Step NFT Minting Guide:**
+
+📋 **Prerequisites:**
+• Complete 100% of all course modules
+• Score 85%+ on the final quiz
+• Complete the coding challenge
+• Install Phantom wallet extension
+
+👛 **Step 1: Set Up Phantom Wallet**
+• Visit phantom.app and install browser extension
+• Create new wallet & save recovery phrase securely
+• ⚠️ Never share your recovery phrase!
+
+💰 **Step 2: Get Free Devnet SOL**
+• Go to faucet.solana.com
+• Paste your wallet address
+• Request 1-2 SOL (free test tokens)
+
+🎨 **Step 3: Connect & Mint**
+• Click "Connect Phantom" on certificate page
+• Approve connection in popup
+• Click "Mint Achievement NFT"
+• Approve transaction (~0.01 SOL fee)
+• Wait 30 seconds for confirmation
+
+✅ **Step 4: View Your NFT**
+• Open Phantom wallet
+• Go to "Collectibles" tab
+• See your certificate NFT!
+
+💡 **Pro Tips:**
+• Certificate is minted on Solana blockchain
+• Permanently verifiable proof of achievement
+• Can share on LinkedIn/Twitter
+• Free to mint (only gas fees on Devnet)
+
+🔗 **Useful Links:**
+• Phantom: phantom.app
+• Faucet: faucet.solana.com
+
 Current Page Context: {context}
 Screen Content: {screen_content}
 """
