@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import CompletionTracker from '../../../components/CompletionTracker';
+import ClassificationImage from '../../../assets/Courses/Data-Structures/Classification.jpeg';
 
 function OverviewContent() {
   const [showGoldenTip, setShowGoldenTip] = useState(false);
@@ -230,7 +231,7 @@ function OverviewContent() {
             </p>
             <div className="bg-white rounded-xl p-4 inline-block">
               <img 
-                src="/src/assets/Courses/Data-Structures/Classification.jpeg" 
+                src={ClassificationImage}
                 alt="Classification of Data Structures - Complete hierarchical diagram showing Linear (Static Arrays, Dynamic Queues/Stacks/Linked Lists) and Non-Linear (Trees, Graphs) structures"
                 className="max-w-full h-auto"
                 style={{ maxHeight: '500px' }}
