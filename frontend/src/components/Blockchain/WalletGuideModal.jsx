@@ -29,21 +29,36 @@ const WalletGuideModal = ({ onClose }) => {
     },
     {
       number: 3,
+      icon: '⚙️',
+      title: 'Switch to Devnet',
+      description: 'Change network to Devnet in Phantom settings',
+      tip: '🔧 Click settings icon → Change Network → Select "Devnet"'
+    },
+    {
+      number: 4,
+      icon: '📋',
+      title: 'Copy Wallet Address',
+      description: 'Copy your receive address from Phantom',
+      tip: '💡 Click "Receive" in Phantom → Copy your wallet address'
+    },
+    {
+      number: 5,
       icon: '💰',
       title: 'Get Devnet SOL',
-      description: 'Free test tokens for minting',
+      description: 'Paste your address to get free test tokens',
       action: {
         text: 'Open Faucet',
         link: 'https://faucet.solana.com/',
         external: true
-      }
+      },
+      tip: '🎁 You\'ll receive ~2 SOL for minting (FREE!)'
     },
     {
-      number: 4,
+      number: 6,
       icon: '🎨',
       title: 'Connect & Mint',
       description: 'Return here, connect wallet, mint your NFT',
-      tip: '✨ Minting is FREE on Devnet!'
+      tip: '✨ Make sure you\'re still on Devnet!'
     }
   ];
 
@@ -63,7 +78,7 @@ const WalletGuideModal = ({ onClose }) => {
                   NFT Minting Guide
                 </h2>
                 <p className="text-xs text-emerald-400/70 font-quantico uppercase tracking-wider">
-                  4 Simple Steps
+                  6 Simple Steps
                 </p>
               </div>
             </div>
@@ -153,7 +168,7 @@ const WalletGuideModal = ({ onClose }) => {
         <div className="p-6 border-t border-emerald-400/10 bg-black/20">
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-400 font-quantico">
-              <span className="text-emerald-400">💡</span> Takes ~2 minutes total
+              <span className="text-emerald-400">💡</span> Takes ~3-4 minutes total
             </div>
             <button
               onClick={onClose}
