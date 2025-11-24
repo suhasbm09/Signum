@@ -710,21 +710,24 @@ const CertificationsContent = ({ user }) => {
   const isEligible = courseCompletion >= 90 && finalExamComplete;
   
   return (
-    <div className="w-full mx-auto space-y-8">
-      <div className="text-center">
-        <h2 className="text-3xl font-quantico-bold text-gray-100 mb-4">
-          🏆 Certification & NFT
-        </h2>
-        <p className="text-gray-400 text-lg">
-          Complete the course and mint your achievement NFT
-        </p>
-      </div>
+    <>
+      {/* Global Wallet Setup Guide Modal - Shows on page load if no wallet */}
+      {showGuideModal && (
+        <WalletGuideModal onClose={() => setShowGuideModal(false)} />
+      )}
+      
+      <div className="w-full mx-auto space-y-8">
+        <div className="text-center">
+          <h2 className="text-3xl font-quantico-bold text-gray-100 mb-4">
+            🏆 Certification & NFT
+          </h2>
+          <p className="text-gray-400 text-lg">
+            Complete the course and mint your achievement NFT
+          </p>
+        </div>
 
-      {/* Why NFT Certificates Matter Section */}
-      <WhyNFTSection />
-
-      {/* Single Unified Progress & Certification Window */}
-      <div className="bg-gradient-to-r from-emerald-500/10 to-green-500/10 border border-emerald-500/20 rounded-2xl p-8">
+        {/* Single Unified Progress & Certification Window */}
+        <div className="bg-gradient-to-r from-emerald-500/10 to-green-500/10 border border-emerald-500/20 rounded-2xl p-8">
         <h3 className="text-2xl font-quantico-bold text-emerald-300 mb-6 text-center">
           📊 Certification Requirements
         </h3>
@@ -1081,14 +1084,13 @@ const CertificationsContent = ({ user }) => {
           </div>
         </div>
       </div>
-      
-      {/* Wallet Setup Guide Modal */}
-      {showGuideModal && (
-        <WalletGuideModal onClose={() => setShowGuideModal(false)} />
-      )}
+
+      {/* Why NFT Certificates Matter Section - Moved to bottom */}
+      <WhyNFTSection />
       
       <ToastContainer />
     </div>
+    </>
   );
 };
 

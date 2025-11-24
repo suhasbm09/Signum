@@ -15,27 +15,28 @@ function CompletionTracker({ courseId, moduleId, children, contentLength = 'medi
   const contentRef = useRef(null);
 
   // Dynamic timer based on content length
+  // SURVEY MODE: Reduced to 5 seconds for quick testing
   const getRequiredTime = () => {
     const lengthMap = {
-      short: 20,    // < 500 words
-      medium: 30,   // 500-1000 words
-      long: 60,     // > 1000 words
-      'x-long': 90  // > 2000 words
+      short: 5,     // Quick read
+      medium: 5,    // Quick read
+      long: 5,      // Quick read
+      'x-long': 5   // Quick read
     };
-    return lengthMap[contentLength] || 30;
+    return lengthMap[contentLength] || 5;
   };
 
   const requiredTime = getRequiredTime();
 
-  // Estimate reading time (assuming 200 words per minute)
+  // Estimate reading time (SURVEY MODE: Quick completion)
   const getEstimatedReadTime = () => {
     const timeMap = {
-      short: '1-2',
-      medium: '2-3',
-      long: '4-5',
-      'x-long': '6-8'
+      short: '<1',
+      medium: '<1',
+      long: '<1',
+      'x-long': '<1'
     };
-    return timeMap[contentLength] || '2-3';
+    return timeMap[contentLength] || '<1';
   };
 
   // Check if already completed
@@ -141,7 +142,7 @@ function CompletionTracker({ courseId, moduleId, children, contentLength = 'medi
           {/* Helper Text */}
           {!isCompleted && !canComplete && (
             <p className="text-center text-gray-500 text-xs mt-3">
-              Take your time to understand the concepts. Button will activate after {requiredTime} seconds.
+              Button activates in {requiredTime - timeSpent} seconds. Feel free to scroll through the content.
             </p>
           )}
         </div>
