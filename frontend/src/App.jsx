@@ -1,19 +1,26 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import './index.css';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import Profile from './pages/Profile';
-import About from './pages/About';
-import CourseContent from './pages/CourseContent';
-import QuizPage from './pages/QuizPage';
-import CodingChallengePage from './pages/CodingChallengePage';
-import { auth } from './firebase/config';
-import { onAuthStateChanged } from 'firebase/auth';
 import { ProgressProvider, setGlobalToast } from './contexts/ProgressContext';
 import { AIProvider } from './contexts/AIContext';
-import AIAssistant from './components/AI/AIAssistant';
 import { useToast } from './components/Toast';
 import { API_BASE_URL } from './config/api';
+
+// Lazy load Firebase to reduce initial bundle
+const getFirebaseAuth = async () => {
+  const { auth } = await import('./firebase/config');
+  const { onAuthStateChanged } = await import('firebase/auth');
+  return { auth, onAuthStateChanged };
+};
+
+// Lazy load heavy pages for code splitting
+const Login = lazy(() => import('./pages/Login'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Profile = lazy(() => import('./pages/Profile'));
+const About = lazy(() => import('./pages/About'));
+const CourseContent = lazy(() => import('./pages/CourseContent'));
+const QuizPage = lazy(() => import('./pages/QuizPage'));
+const CodingChallengePage = lazy(() => import('./pages/CodingChallengePage'));
+const AIAssistant = lazy(() => import('./components/AI/AIAssistant'));
 
 function App() {
   const { showToast, ToastContainer } = useToast();
@@ -48,7 +55,11 @@ function App() {
   }, [currentPage, selectedCourse, selectedTopic]);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    let unsubscribe;
+    
+    // Initialize Firebase auth asynchronously
+    getFirebaseAuth().then(({ auth, onAuthStateChanged }) => {
+      unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         try {
           const response = await fetch(`${API_BASE_URL}/auth/me`, {
@@ -94,10 +105,16 @@ function App() {
           window.currentUser = null;
         }
       }
+        setLoading(false);
+      });
+    }).catch(error => {
+      console.error('Firebase auth initialization failed:', error);
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -248,7 +265,20 @@ function App() {
   }
 
   if (!user) {
-    return <Login onLogin={handleLogin} />;
+    return (
+      <Suspense fallback={
+        <div className="min-h-screen bg-black flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center shadow-lg pulse-glow">
+              <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            </div>
+            <p className="text-gray-100 text-lg font-quantico">Loading...</p>
+          </div>
+        </div>
+      }>
+        <Login onLogin={handleLogin} />
+      </Suspense>
+    );
   }
 
   // Render the appropriate page based on currentPage state
@@ -282,11 +312,22 @@ function App() {
   return (
     <AIProvider>
       <ProgressProvider>
-        <div>
-          {renderPage()}
-          {user && <AIAssistant context={selectedCourse ? `Course: ${selectedCourse}` : null} />}
-          <ToastContainer />
-        </div>
+        <Suspense fallback={
+          <div className="min-h-screen bg-black flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center shadow-lg pulse-glow">
+                <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              </div>
+              <p className="text-gray-100 text-lg font-quantico">Loading...</p>
+            </div>
+          </div>
+        }>
+          <div>
+            {renderPage()}
+            {user && <AIAssistant context={selectedCourse ? `Course: ${selectedCourse}` : null} />}
+            <ToastContainer />
+          </div>
+        </Suspense>
       </ProgressProvider>
     </AIProvider>
   );

@@ -3,24 +3,47 @@ import { useProgress } from '../../../contexts/ProgressContext';
 import progressService from '../../../services/progressService';
 import { useToast } from '../../../components/Toast';
 import { isBlockchainEnabled, isBlockchainTestingMode } from '../../../config/features';
-import * as anchor from '@coral-xyz/anchor';
-import { Connection, PublicKey, SystemProgram } from '@solana/web3.js';
-import { Buffer } from 'buffer';
-import idl from '../../../signum_certificate_idl.json';
 import { API_BASE_URL } from '../../../config/api';
 import WalletGuideModal from '../../../components/Blockchain/WalletGuideModal';
 import WhyNFTSection from '../../../components/Blockchain/WhyNFTSection';
 
-// Make Buffer available globally (required for Anchor)
-if (typeof window !== 'undefined') {
-  window.Buffer = Buffer;
-}
+// Lazy load heavy Solana/Anchor libraries only when needed (~400KB)
+const loadSolanaLibraries = async () => {
+  const [anchor, web3js, buffer] = await Promise.all([
+    import('@coral-xyz/anchor'),
+    import('@solana/web3.js'),
+    import('buffer')
+  ]);
+  
+  // Make Buffer available globally (required for Anchor)
+  if (typeof window !== 'undefined') {
+    window.Buffer = buffer.Buffer;
+  }
+  
+  return {
+    anchor,
+    Connection: web3js.Connection,
+    PublicKey: web3js.PublicKey,
+    SystemProgram: web3js.SystemProgram,
+    Buffer: buffer.Buffer
+  };
+};
 
-const TOKEN_PROGRAM_ID = new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
-const ASSOCIATED_TOKEN_PROGRAM_ID = new PublicKey('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL');
-const METADATA_PROGRAM_ID = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
+// Constants (will be initialized when libraries are loaded)
+let TOKEN_PROGRAM_ID;
+let ASSOCIATED_TOKEN_PROGRAM_ID;
+let METADATA_PROGRAM_ID;
 const NETWORK = 'https://api.devnet.solana.com';
 const COMMITMENT = 'confirmed';
+
+// IDL will be loaded dynamically
+let idl = null;
+const loadIDL = async () => {
+  if (!idl) {
+    idl = (await import('../../../signum_certificate_idl.json')).default;
+  }
+  return idl;
+};
 
 const CertificationsContent = ({ user }) => {
   const { getCourseCompletionPercentage, getQuizScore, isModuleCompleted, isFinalExamComplete } = useProgress();
@@ -81,6 +104,10 @@ const CertificationsContent = ({ user }) => {
   const checkExistingCertificate = async () => {
     if (typeof window !== 'undefined' && window.solana && walletConnected) {
       try {
+        // Lazy load Solana libraries
+        const { anchor, Connection, PublicKey, Buffer } = await loadSolanaLibraries();
+        const programIDL = await loadIDL();
+        
         const provider = new anchor.AnchorProvider(
           new Connection(NETWORK, COMMITMENT),
           window.solana,
@@ -94,7 +121,7 @@ const CertificationsContent = ({ user }) => {
             Buffer.from(courseId),
             Buffer.from(userId)  // Include userId
           ],
-          new PublicKey(idl.address)
+          new PublicKey(programIDL.address)
         );
         
         const certificateAccount = await provider.connection.getAccountInfo(certificatePda);
@@ -128,13 +155,17 @@ const CertificationsContent = ({ user }) => {
     showToast('🗑️ Closing existing certificate account...', 'info');
     
     try {
+      // Lazy load Solana libraries
+      const { anchor, Connection, PublicKey, Buffer } = await loadSolanaLibraries();
+      const programIDL = await loadIDL();
+      
       const provider = new anchor.AnchorProvider(
         new Connection(NETWORK, COMMITMENT),
         window.solana,
         { commitment: COMMITMENT, preflightCommitment: COMMITMENT }
       );
       anchor.setProvider(provider);
-      const program = new anchor.Program(idl, provider);
+      const program = new anchor.Program(programIDL, provider);
       
       const [certificatePda] = PublicKey.findProgramAddressSync(
         [
@@ -143,7 +174,7 @@ const CertificationsContent = ({ user }) => {
           Buffer.from(courseId),
           Buffer.from(userId)  // Include userId
         ],
-        new PublicKey(idl.address)
+        new PublicKey(programIDL.address)
       );
       
       // Check if account exists on blockchain
@@ -415,6 +446,17 @@ const CertificationsContent = ({ user }) => {
     showToast('🎨 Generating certificate metadata...', 'info');
     
     try {
+      // Lazy load Solana libraries
+      const { anchor, Connection, PublicKey, Buffer } = await loadSolanaLibraries();
+      const programIDL = await loadIDL();
+      
+      // Initialize constants if not already done
+      if (!TOKEN_PROGRAM_ID) {
+        TOKEN_PROGRAM_ID = new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
+        ASSOCIATED_TOKEN_PROGRAM_ID = new PublicKey('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL');
+        METADATA_PROGRAM_ID = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
+      }
+      
       // Setup Anchor provider
       const provider = new anchor.AnchorProvider(
         new Connection(NETWORK, COMMITMENT),
@@ -424,7 +466,7 @@ const CertificationsContent = ({ user }) => {
       anchor.setProvider(provider);
       
       // Load program
-      const program = new anchor.Program(idl, provider);
+      const program = new anchor.Program(programIDL, provider);
       
       // Generate new mint keypair each time to avoid duplicate transaction errors
       const mint = anchor.web3.Keypair.generate();

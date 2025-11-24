@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Editor from '@monaco-editor/react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { API_BASE_URL } from '../../../config/api';
+
+// Lazy load Monaco Editor to reduce initial bundle size by ~800KB
+const Editor = lazy(() => import('@monaco-editor/react'));
 
 // Code templates for different languages
 const codeTemplates = {
@@ -306,23 +308,32 @@ You can implement this using any method (iterative, recursive, etc.)`,
 
         {/* Code Editor */}
         <div className="flex-1 overflow-hidden">
-          <Editor
-            height="60%"
-            language={monacoLanguageMap[selectedLanguage]}
-            theme="vs-dark"
-            value={code}
-            onChange={handleEditorChange}
-            onMount={(editor) => { editorRef.current = editor; }}
-            options={{
-              minimap: { enabled: false },
-              fontSize: 14,
-              lineNumbers: 'on',
-              scrollBeyondLastLine: false,
-              automaticLayout: true,
-              tabSize: 4,
-              wordWrap: 'on'
-            }}
-          />
+          <Suspense fallback={
+            <div className="h-full flex items-center justify-center bg-black/80">
+              <div className="text-center">
+                <div className="w-12 h-12 mx-auto mb-3 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-emerald-300 font-quantico">Loading Editor...</p>
+              </div>
+            </div>
+          }>
+            <Editor
+              height="60%"
+              language={monacoLanguageMap[selectedLanguage]}
+              theme="vs-dark"
+              value={code}
+              onChange={handleEditorChange}
+              onMount={(editor) => { editorRef.current = editor; }}
+              options={{
+                minimap: { enabled: false },
+                fontSize: 14,
+                lineNumbers: 'on',
+                scrollBeyondLastLine: false,
+                automaticLayout: true,
+                tabSize: 4,
+                wordWrap: 'on'
+              }}
+            />
+          </Suspense>
           
           {/* Output Console */}
           <div className="h-[40%] bg-black/80 border-t border-emerald-500/20 p-4 overflow-y-auto">
