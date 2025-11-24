@@ -81,7 +81,7 @@ const QUESTION_BANK = [
     topic: "Arrays (2D)",
     difficulty: "Medium",
     question: "In a 2D array arr[m][n], how do you access the element at row i and column j?",
-    options: ["arr[i,j]", "arr[i][j]", "arr(i)(j)", "arr{i}{j}"],
+    options: ["arr[i,j]", "arr[i][j]", "arr(i)(j)", "arr{i}(j)"],
     correct: 1,
     explanation: "2D arrays use double indexing with square brackets: arr[row][column]."
   },
@@ -194,26 +194,26 @@ using namespace std;
 stack<int> st;
 st.push(1);
 st.push(2);
-int a = st.top(); st.pop();  // a = 2
+int a = st.top(); st.pop();  
 st.push(3);
-int b = st.top(); st.pop();  // b = 3  
-int c = st.top(); st.pop();  // c = 1`,
+int b = st.top(); st.pop();   
+int c = st.top(); st.pop();  `,
       java: `import java.util.Stack;
 
 Stack<Integer> stack = new Stack<>();
 stack.push(1);
 stack.push(2);
-int a = stack.pop();  // a = 2
+int a = stack.pop();  
 stack.push(3);
-int b = stack.pop();  // b = 3
-int c = stack.pop();  // c = 1`,
+int b = stack.pop();  
+int c = stack.pop();  `,
       python: `stack = []
 stack.append(1)
 stack.append(2)
-a = stack.pop()  # a = 2
+a = stack.pop()  
 stack.append(3)
-b = stack.pop()  # b = 3
-c = stack.pop()  # c = 1`
+b = stack.pop()  
+c = stack.pop()  `
     },
     question_with_code: "What values will be popped in order?",
     options: ["1, 2, 3", "2, 3, 1", "3, 2, 1", "1, 3, 2"],
