@@ -80,21 +80,19 @@ async def verify_firebase_token(request: Request, response: Response):
         # Cookie settings: secure for production, relaxed for tests
         is_test = is_test_environment()
         
-        # CRITICAL: Set cookie with explicit path and domain for Safari/cross-browser compatibility
-        response.set_cookie(
-            key="session_token",
-            value=session_token,
-            httponly=True,
-            secure=True,  # Always True for HTTPS (both Vercel and Render use HTTPS)
-            samesite="none",  # Required for cross-origin (Vercel → Render)
-            max_age=7 * 24 * 60 * 60,
-            path="/",  # Explicit path for all routes
+        # CRITICAL: Set cookie with Partitioned flag for CHIPS compliance
+        # Modern browsers (Chrome 118+, Safari 16.4+, Firefox 120+) require Partitioned
+        # attribute for SameSite=None cookies in cross-origin contexts
+        response.headers["Set-Cookie"] = (
+            f"session_token={session_token}; "
+            f"Path=/; HttpOnly; Secure; SameSite=None; Partitioned; "
+            f"Max-Age={7 * 24 * 60 * 60}"
         )
         
         # Debug logging for troubleshooting
         print(f"✅ Session created for {user_record.email}")
         print(f"   Session Token: {session_token[:20]}...")
-        print(f"   Cookie settings: secure=True, samesite=none, httponly=True")
+        print(f"   Cookie settings: secure=True, samesite=none, httponly=True, partitioned=True")
         
         return {
             "success": True,
