@@ -79,14 +79,22 @@ async def verify_firebase_token(request: Request, response: Response):
         
         # Cookie settings: secure for production, relaxed for tests
         is_test = is_test_environment()
+        
+        # CRITICAL: Set cookie with explicit path and domain for Safari/cross-browser compatibility
         response.set_cookie(
             key="session_token",
             value=session_token,
             httponly=True,
-            secure=not is_test,  # False in tests (HTTP), True in production (HTTPS)
-            samesite="lax" if is_test else "none",  # "lax" for tests, "none" for cross-origin production
-            max_age=7 * 24 * 60 * 60
+            secure=True,  # Always True for HTTPS (both Vercel and Render use HTTPS)
+            samesite="none",  # Required for cross-origin (Vercel → Render)
+            max_age=7 * 24 * 60 * 60,
+            path="/",  # Explicit path for all routes
         )
+        
+        # Debug logging for troubleshooting
+        print(f"✅ Session created for {user_record.email}")
+        print(f"   Session Token: {session_token[:20]}...")
+        print(f"   Cookie settings: secure=True, samesite=none, httponly=True")
         
         return {
             "success": True,
@@ -96,6 +104,10 @@ async def verify_firebase_token(request: Request, response: Response):
                 "displayName": saved_display_name,
                 "photoURL": user_record.photo_url,
                 "coursesEnrolled": courses_enrolled
+            },
+            "session_debug": {
+                "token_set": True,
+                "cookie_attributes": "secure=True, samesite=none, httponly=True, path=/"
             }
         }
         
@@ -125,6 +137,15 @@ async def get_current_user(request: Request):
     """Get current authenticated user"""
     try:
         session_token = request.cookies.get("session_token")
+        
+        # DEBUG: Log cookie status for troubleshooting
+        if not session_token:
+            print(f"❌ /auth/me - No session cookie found")
+            print(f"   Cookies received: {list(request.cookies.keys())}")
+            print(f"   User-Agent: {request.headers.get('user-agent', 'unknown')}")
+        elif session_token not in sessions:
+            print(f"⚠️ /auth/me - Invalid session token: {session_token[:20]}...")
+            print(f"   Active sessions: {len(sessions)}")
         
         if not session_token or session_token not in sessions:
             raise HTTPException(status_code=401, detail="Not authenticated")
@@ -180,6 +201,12 @@ async def enroll_course(request: Request):
     """Enroll user in a course"""
     try:
         session_token = request.cookies.get("session_token")
+        
+        # DEBUG: Log enrollment auth failures
+        if not session_token:
+            print(f"❌ /courses/enroll - No session cookie")
+            print(f"   Cookies: {list(request.cookies.keys())}")
+            print(f"   Origin: {request.headers.get('origin', 'unknown')}")
 
         if not session_token or session_token not in sessions:
             raise HTTPException(status_code=401, detail="Not authenticated")

@@ -20,9 +20,10 @@ app.add_middleware(
         "http://127.0.0.1:5174",
         "https://signum-beta.vercel.app",  # Production frontend
     ],
-    allow_credentials=True,
+    allow_credentials=True,  # CRITICAL: Required for cookies to work
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["Set-Cookie"],  # Allow browser to see Set-Cookie header
 )
 
 # New optimized route structure
