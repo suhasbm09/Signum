@@ -83,8 +83,8 @@ async def verify_firebase_token(request: Request, response: Response):
             key="session_token",
             value=session_token,
             httponly=True,  # JavaScript cannot access this cookie (XSS protection)
-            secure=is_production,  # HTTPS only in production
-            samesite="lax",  # CSRF protection (prevents cross-site requests except navigation)
+            secure=True,  # Always use HTTPS (both Vercel and Render use HTTPS)
+            samesite="none",  # Allow cross-site cookies (required for Vercel <-> Render)
             max_age=7 * 24 * 60 * 60,  # 7 days
             path="/",
             domain=None  # Will be set to current domain
@@ -126,7 +126,9 @@ async def logout(response: Response, request: Request):
         response.delete_cookie(
             key="session_token",
             path="/",
-            domain=None
+            domain=None,
+            samesite="none",
+            secure=True
         )
         
         return {"success": True, "message": "Logged out successfully"}
