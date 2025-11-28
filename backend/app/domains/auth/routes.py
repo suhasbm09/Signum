@@ -27,7 +27,7 @@ def is_test_environment():
 
 @router.post("/verify-firebase-token")
 async def verify_firebase_token(request: Request, response: Response):
-    """Verify Firebase ID token and create session"""
+    """Verify Firebase ID token and create session with httpOnly cookie"""
     try:
         data = await request.json()
         id_token = data.get('idToken')
@@ -77,24 +77,24 @@ async def verify_firebase_token(request: Request, response: Response):
             'coursesEnrolled': courses_enrolled
         }
         
-        # Cookie settings: secure for production, relaxed for tests
-        is_test = is_test_environment()
-        
-        # CRITICAL: Set cookie with Partitioned flag for CHIPS compliance
-        # Modern browsers (Chrome 118+, Safari 16.4+, Firefox 120+) require Partitioned
-        # attribute for SameSite=None cookies in cross-origin contexts
-        # Domain must match backend domain for cross-origin cookies
-        response.headers["Set-Cookie"] = (
-            f"session_token={session_token}; "
-            f"Domain=signum-backend.onrender.com; "
-            f"Path=/; HttpOnly; Secure; SameSite=None; Partitioned; "
-            f"Max-Age={7 * 24 * 60 * 60}"
+        # Set httpOnly secure cookie (protects against XSS attacks)
+        is_production = os.getenv('ENV') == 'production'
+        response.set_cookie(
+            key="session_token",
+            value=session_token,
+            httponly=True,  # JavaScript cannot access this cookie (XSS protection)
+            secure=is_production,  # HTTPS only in production
+            samesite="lax",  # CSRF protection (prevents cross-site requests except navigation)
+            max_age=7 * 24 * 60 * 60,  # 7 days
+            path="/",
+            domain=None  # Will be set to current domain
         )
         
         # Debug logging for troubleshooting
         print(f"✅ Session created for {user_record.email}")
         print(f"   Session Token: {session_token[:20]}...")
-        print(f"   Cookie settings: domain=signum-backend.onrender.com, secure=True, samesite=none, httponly=True, partitioned=True")
+        print(f"   Auth Method: httpOnly cookie (secure)")
+        print(f"   Environment: {'production' if is_production else 'development'}")
         
         return {
             "success": True,
@@ -104,10 +104,6 @@ async def verify_firebase_token(request: Request, response: Response):
                 "displayName": saved_display_name,
                 "photoURL": user_record.photo_url,
                 "coursesEnrolled": courses_enrolled
-            },
-            "session_debug": {
-                "token_set": True,
-                "cookie_attributes": "secure=True, samesite=none, httponly=True, path=/"
             }
         }
         
@@ -118,14 +114,20 @@ async def verify_firebase_token(request: Request, response: Response):
 
 @router.post("/logout")
 async def logout(response: Response, request: Request):
-    """Logout user and clear session"""
+    """Logout user and clear session and httpOnly cookie"""
     try:
+        # Get token from httpOnly cookie
         session_token = request.cookies.get("session_token")
         
         if session_token and session_token in sessions:
             del sessions[session_token]
         
-        response.delete_cookie("session_token")
+        # Clear the httpOnly cookie
+        response.delete_cookie(
+            key="session_token",
+            path="/",
+            domain=None
+        )
         
         return {"success": True, "message": "Logged out successfully"}
         
@@ -136,12 +138,13 @@ async def logout(response: Response, request: Request):
 async def get_current_user(request: Request):
     """Get current authenticated user"""
     try:
+        # Get token from httpOnly cookie
         session_token = request.cookies.get("session_token")
         
-        # DEBUG: Log cookie status for troubleshooting
+        # DEBUG: Log auth status for troubleshooting
         if not session_token:
             print(f"❌ /auth/me - No session cookie found")
-            print(f"   Cookies received: {list(request.cookies.keys())}")
+            print(f"   Cookies: {request.cookies}")
             print(f"   User-Agent: {request.headers.get('user-agent', 'unknown')}")
         elif session_token not in sessions:
             print(f"⚠️ /auth/me - Invalid session token: {session_token[:20]}...")
@@ -178,6 +181,7 @@ async def get_current_user(request: Request):
 async def list_enrolled_courses(request: Request):
     """Get enrolled courses for current user"""
     try:
+        # Get token from httpOnly cookie
         session_token = request.cookies.get("session_token")
 
         if not session_token or session_token not in sessions:
@@ -200,12 +204,13 @@ async def list_enrolled_courses(request: Request):
 async def enroll_course(request: Request):
     """Enroll user in a course"""
     try:
+        # Get token from httpOnly cookie
         session_token = request.cookies.get("session_token")
         
         # DEBUG: Log enrollment auth failures
         if not session_token:
             print(f"❌ /courses/enroll - No session cookie")
-            print(f"   Cookies: {list(request.cookies.keys())}")
+            print(f"   Cookies: {request.cookies}")
             print(f"   Origin: {request.headers.get('origin', 'unknown')}")
 
         if not session_token or session_token not in sessions:
@@ -239,6 +244,7 @@ async def enroll_course(request: Request):
 async def update_profile(request: Request):
     """Update user profile"""
     try:
+        # Get token from httpOnly cookie
         session_token = request.cookies.get("session_token")
         
         if not session_token or session_token not in sessions:
@@ -272,6 +278,7 @@ async def update_profile(request: Request):
 async def update_phantom_wallet(request: Request):
     """Update Phantom wallet address"""
     try:
+        # Get token from httpOnly cookie
         session_token = request.cookies.get("session_token")
         
         if not session_token or session_token not in sessions:
@@ -292,6 +299,7 @@ async def update_phantom_wallet(request: Request):
 async def delete_account(request: Request, response: Response):
     """Complete account deletion with full data cleanup"""
     try:
+        # Get token from httpOnly cookie
         session_token = request.cookies.get("session_token")
         
         if not session_token or session_token not in sessions:
@@ -317,8 +325,6 @@ async def delete_account(request: Request, response: Response):
         # Clear session
         if session_token in sessions:
             del sessions[session_token]
-        
-        response.delete_cookie("session_token")
         
         return {
             "success": True, 

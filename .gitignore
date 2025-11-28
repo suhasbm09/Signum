@@ -13,9 +13,9 @@
 frontend/.env
 backend/.env
 # Keep .env.example files (templates for developers)
-!.env.example
-!frontend/.env.example
-!backend/.env.example
+.env.example
+frontend/.env.example
+backend/.env.example
 
 # Firebase Admin SDK
 serviceAccountKey.json
