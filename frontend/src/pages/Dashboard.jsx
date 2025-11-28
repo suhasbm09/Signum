@@ -59,20 +59,20 @@ function Dashboard({ user, onLogout, onNavigate, onCourseStart, onCourseEnroll, 
 
   return (
     <Layout user={user} onLogout={onLogout} currentPage="dashboard" onNavigate={onNavigate}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         {/* Welcome Header with animation */}
-        <div className="mb-8 animate-slideInDown">
-          <h2 className="text-3xl font-bold text-gray-100 mb-2">
+        <div className="mb-4 animate-slideInDown space-y-2">
+          <h2 className="text-3xl font-bold text-gray-100 mb-0">
             Welcome back, {user?.displayName?.split(' ')[0] || 'Learner'}! 🚀
           </h2>
-          <p className="text-gray-400 text-lg">
+          <p className="text-gray-400 text-base sm:text-lg">
             Ready to continue your AI-powered learning journey?
           </p>
         </div>
 
         {/* Continue Learning / Available Courses Section */}
         <section className="space-y-6 mb-12">
-          <div className="flex items-center justify-between animate-slideInLeft">
+          <div className="flex flex-col gap-2 animate-slideInLeft sm:flex-row sm:items-center sm:justify-between">
             <h3 className="text-2xl font-quantico-bold text-gray-100">
               {enrollments.length > 0 ? 'Continue Learning' : 'Available Courses'}
             </h3>
@@ -127,7 +127,7 @@ function Dashboard({ user, onLogout, onNavigate, onCourseStart, onCourseEnroll, 
           if (completedCourses.length > 0) {
             return (
               <section className="space-y-6 mt-12">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <h3 className="text-2xl font-quantico-bold text-emerald-300">
                     🎓 Completed Courses
                   </h3>

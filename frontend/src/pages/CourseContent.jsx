@@ -115,6 +115,7 @@ function CourseContent({ user, onLogout, onNavigate, courseId, topic }) {
   const [activeTopic, setActiveTopic] = useState(topic || outline?.[0]?.id || null);
   const [expandedSections, setExpandedSections] = useState({});
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // RIGHT content scroll ref (independent scroller)
   const contentRef = useRef(null);
@@ -158,9 +159,9 @@ function CourseContent({ user, onLogout, onNavigate, courseId, topic }) {
       <div className="relative">
         {/* Fixed-height app viewport below the Layout header/footer. Adjust if your header height differs. */}
         <div className="flex h-full min-h-0 overflow-hidden">
-          {/* Sidebar — independent scroll */}
+          {/* Desktop Sidebar — independent scroll */}
           <aside
-            className={`bg-glossy-black-ultra backdrop-blur-xl border-r border-white/10 shadow-2xl transition-all duration-300 overflow-y-auto min-h-0 ${
+            className={`hidden lg:block bg-glossy-black-ultra backdrop-blur-xl border-r border-white/10 shadow-2xl transition-all duration-300 overflow-y-auto min-h-0 ${
               sidebarCollapsed ? 'w-[2%]' : 'w-[25%]'
             }`}
           >
@@ -276,10 +277,138 @@ function CourseContent({ user, onLogout, onNavigate, courseId, topic }) {
             </div>
           </aside>
 
-          {/* Toggle Sidebar Button - Floating */}
+          {/* Mobile Sidebar Drawer */}
+          {mobileMenuOpen && (
+            <>
+              {/* Backdrop */}
+              <div 
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+                onClick={() => setMobileMenuOpen(false)}
+              />
+              
+              {/* Drawer */}
+              <aside className="fixed top-0 left-0 bottom-0 w-80 max-w-[85vw] bg-glossy-black-ultra border-r border-white/10 shadow-2xl z-50 lg:hidden overflow-y-auto">
+                <div className="p-4">
+                  {/* Header */}
+                  <div className="flex justify-between items-center mb-4">
+                    <h1 className="text-xl font-quantico-bold text-gray-100">{readableCourseName || 'Course'}</h1>
+                    <button
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="p-2 rounded-lg text-gray-300 hover:text-gray-100 hover:bg-gray-700/50 transition-all duration-300"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <ProgressBar courseId={courseId || 'data-structures'} className="mb-4" />
+
+                  <nav className="space-y-3">
+                    {outline.map((section) => {
+                      const isFinalExamComplete = section.id === 'final-exam' && 
+                        getQuizScore && 
+                        getQuizScore(courseId)?.score >= 85 && 
+                        isModuleCompleted(courseId, 'coding-challenge');
+                      
+                      const isCompleted =
+                        isModuleCompleted(courseId, section.id) ||
+                        areAllChildrenCompleted(section) ||
+                        isFinalExamComplete;
+                      const isCertification = section.id === 'certifications';
+
+                      return (
+                        <div key={section.id}>
+                          <button
+                            type="button"
+                            className={`w-full text-left px-3 py-2 rounded-lg font-quantico text-sm transition-all duration-200 flex items-center justify-between ${
+                              activeTopic === section.id
+                                ? isCertification
+                                  ? 'bg-yellow-500/20 text-yellow-200 border border-yellow-500/40'
+                                  : 'bg-emerald-500/20 text-emerald-200 border border-emerald-500/40'
+                                : isCertification
+                                  ? 'bg-yellow-500/10 text-yellow-300 border border-yellow-500/20 hover:border-yellow-500/40'
+                                  : 'bg-black/40 text-gray-200 border border-white/5 hover:border-emerald-500/30'
+                            }`}
+                            onClick={() => {
+                              setActiveTopic(section.id);
+                              if (section.children) toggleSection(section.id);
+                              contentRef.current?.scrollTo({ top: 0 });
+                              setMobileMenuOpen(false);
+                            }}
+                          >
+                            <span className="flex items-center text-xs">
+                              {isCompleted && <span className="mr-2 text-emerald-400">✓</span>}
+                              {section.title}
+                            </span>
+                            {section.children && (
+                              <svg className={`w-4 h-4 transition-transform duration-200 ${expandedSections[section.id] ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                              </svg>
+                            )}
+                          </button>
+
+                          {section.children && section.children.length > 0 && expandedSections[section.id] && (
+                            <ul className="mt-2 space-y-1 pl-3">
+                              {section.children.map((child) => (
+                                <li key={child.id}>
+                                  <button
+                                    type="button"
+                                    className={`w-full text-left px-3 py-2 rounded-lg text-xs font-quantico transition-all duration-200 ${
+                                      child.id === 'quiz' || child.id === 'coding-challenge'
+                                        ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-300 border border-yellow-500/40 hover:border-yellow-400/60'
+                                        : activeTopic === child.id
+                                          ? 'bg-emerald-500/15 text-emerald-200 border border-emerald-500/40'
+                                          : 'bg-black/30 text-gray-400 border border-white/5 hover:border-emerald-500/30'
+                                    }`}
+                                    onClick={() => {
+                                      if (child.id === 'quiz') {
+                                        onNavigate('quiz', { courseId });
+                                      } else if (child.id === 'coding-challenge') {
+                                        onNavigate('coding-challenge', { courseId });
+                                      } else {
+                                        setActiveTopic(child.id);
+                                        contentRef.current?.scrollTo({ top: 0 });
+                                      }
+                                      setMobileMenuOpen(false);
+                                    }}
+                                  >
+                                    <span className="flex items-center">
+                                      {child.id === 'quiz' && getQuizScore && getQuizScore(courseId)?.score >= 85 && (
+                                        <span className="mr-2 text-emerald-400">✓</span>
+                                      )}
+                                      {child.id === 'quiz' && (!getQuizScore || !getQuizScore(courseId) || getQuizScore(courseId)?.score < 85) && (
+                                        <span className="mr-2">🔒</span>
+                                      )}
+                                      {child.id === 'coding-challenge' && isModuleCompleted(courseId, 'coding-challenge') && (
+                                        <span className="mr-2 text-emerald-400">✓</span>
+                                      )}
+                                      {child.id === 'coding-challenge' && !isModuleCompleted(courseId, 'coding-challenge') && (
+                                        <span className="mr-2">🔒</span>
+                                      )}
+                                      {child.id !== 'quiz' && child.id !== 'coding-challenge' && (
+                                        isModuleCompleted(courseId, child.id) ? <span className="mr-2 text-emerald-400">✓</span> : null
+                                      )}
+                                      {child.title}
+                                    </span>
+                                  </button>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </nav>
+                </div>
+              </aside>
+            </>
+          )}
+
+          {/* Toggle Sidebar Button - Floating (Desktop only) */}
           <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className={`fixed top-20 z-50 bg-gradient-to-r from-emerald-800/80 to-green-800/80 hover:from-emerald-700/90 hover:to-green-700/90 text-gray-200 p-3 rounded-r-xl shadow-lg transition-all duration-300 border-y border-r border-emerald-400/40 ${
+            className={`hidden lg:block fixed top-20 z-50 bg-gradient-to-r from-emerald-800/80 to-green-800/80 hover:from-emerald-700/90 hover:to-green-700/90 text-gray-200 p-3 rounded-r-xl shadow-lg transition-all duration-300 border-y border-r border-emerald-400/40 ${
               sidebarCollapsed ? 'left-[2%]' : 'left-[25%]'
             }`}
             title={sidebarCollapsed ? 'Show Table of Contents' : 'Hide Table of Contents'}
@@ -289,14 +418,25 @@ function CourseContent({ user, onLogout, onNavigate, courseId, topic }) {
             </svg>
           </button>
 
+          {/* Mobile Menu Button - Floating */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden fixed bottom-6 left-6 z-30 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white p-4 rounded-full shadow-2xl transition-all duration-300 border border-emerald-400/40"
+            title="Open course menu"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+
           {/* RIGHT content — independent scroll + auto-hide header/footer */}
           <section
             ref={contentRef}
-            className={`bg-glossy-black-ultra backdrop-blur-xl shadow-2xl overflow-y-auto min-h-0 transition-all duration-300 ${
-              sidebarCollapsed ? 'w-full' : 'w-[75%]'
+            className={`bg-glossy-black-ultra backdrop-blur-xl shadow-2xl overflow-y-auto min-h-0 transition-all duration-300 w-full ${
+              sidebarCollapsed ? 'lg:w-full' : 'lg:w-[75%]'
             }`}
           >
-            <div className="p-10">
+            <div className="p-4 sm:p-6 md:p-10">
               {courseContent[activeTopic] ? (
                 React.createElement(courseContent[activeTopic], {
                   onNavigate,

@@ -86,10 +86,16 @@ select option:checked {
   color: #ffffff;
 }
 
+/* Global button cursor */
+button {
+  cursor: pointer;
+}
+
 /* Custom button styles */
 .btn-primary {
   background: linear-gradient(135deg, #10b981, #065f46);
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .btn-primary:hover {
@@ -101,6 +107,7 @@ select option:checked {
 .btn-secondary {
   background: linear-gradient(135deg, #7c3aed, #4c1d95);
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .btn-secondary:hover {
@@ -543,4 +550,74 @@ select option:checked {
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+/* Mobile-Specific Utilities */
+@media (max-width: 640px) {
+  /* Ensure touch targets are at least 44px */
+  button, a {
+    min-height: 44px;
+  }
+  
+  /* Reduce excessive padding on mobile */
+  .mobile-compact-padding {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  /* Stack elements on mobile */
+  .mobile-stack {
+    flex-direction: column !important;
+  }
+  
+  /* Full width on mobile */
+  .mobile-full {
+    width: 100% !important;
+  }
+  
+  /* Smaller text on mobile */
+  .mobile-text-sm {
+    font-size: 0.875rem !important;
+  }
+}
+
+/* Prevent horizontal scroll */
+body {
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Make sure code blocks scroll horizontally on mobile */
+pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Visualization layout helpers */
+.visualization-page {
+  min-height: 100vh;
+}
+.visualization-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.visualization-split {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem !important;
+}
+.visualization-trace {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+@media (max-width: 768px) {
+  .visualization-controls button,
+  .visualization-trace button {
+    width: 100%;
+  }
+  .visualization-split {
+    grid-template-columns: 1fr !important;
+  }
 }

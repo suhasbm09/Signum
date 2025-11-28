@@ -106,7 +106,7 @@ export default function QueueLearner() {
   const btnStrong = "rounded-xl px-3 py-2 text-sm font-semibold text-white bg-[#064E3B] ring-1 ring-emerald-400/50 shadow hover:bg-black active:scale-[.98] cursor-pointer";
 
   return (
-    <div className="min-h-screen w-full bg-[#060807] text-white">
+    <div className="min-h-screen w-full bg-[#060807] text-white visualization-page">
       <StyleTag />
       <div className="mx-auto max-w-7xl px-4 py-8">
         <header className="mb-4 flex items-center justify-between">
@@ -115,7 +115,7 @@ export default function QueueLearner() {
         </header>
 
         {/* Controls */}
-        <section className="rounded-2xl border border-emerald-500/10 bg-[#0A0F0E] p-4 shadow-[0_0_40px_-18px_#10B981]">
+        <section className="rounded-2xl border border-emerald-500/10 bg-[#0A0F0E] p-4 shadow-[0_0_40px_-18px_#10B981] visualization-controls">
           <div className="grid grid-cols-1 gap-3 lg:grid-cols-12">
             {/* input + enqueue */}
             <div className="lg:col-span-5 order-1 flex items-center gap-2">
@@ -151,7 +151,7 @@ export default function QueueLearner() {
         </section>
 
         {/* Split view 75 | 25 */}
-        <section className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-12">
+        <section className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-12 visualization-split">
           <div className="lg:col-span-9 rounded-2xl border border-emerald-500/10 bg-[#0B0F0E] p-5">
             <QueueTray
               arr={arr}

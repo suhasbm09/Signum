@@ -73,32 +73,32 @@ function About({ user, onLogout, onNavigate }) {
             <img 
               src={signumLogo} 
               alt="Signum" 
-              className="w-40 h-40 mx-auto object-contain relative z-10 drop-shadow-[0_0_50px_rgba(16,185,129,1)]"
+              className="w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 mx-auto object-contain relative z-10 drop-shadow-[0_0_50px_rgba(16,185,129,1)]"
             />
           </div>
           
-          <h1 className="text-7xl font-quantico-bold bg-gradient-to-r from-emerald-400 via-green-300 to-emerald-500 bg-clip-text text-transparent mb-6 tracking-tight">
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-quantico-bold bg-gradient-to-r from-emerald-400 via-green-300 to-emerald-500 bg-clip-text text-transparent mb-6 tracking-tight">
             Signum
           </h1>
           
-          <p className="text-3xl text-gray-200 font-quantico mb-4 tracking-wide">
+          <p className="text-xl sm:text-2xl lg:text-3xl text-gray-200 font-quantico mb-4 tracking-wide">
             The Future of Verified Learning
           </p>
           
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg lg:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
             AI-powered education meets blockchain certification. Master computer science fundamentals, 
             earn verifiable on-chain credentials.
           </p>
         </div>
 
         {/* Mission Statement */}
-        <section className="mb-20 animate-slideInUp">
-          <div className="bg-gradient-to-br from-emerald-500/5 via-black to-green-500/5 border border-emerald-500/30 rounded-2xl p-10 relative overflow-hidden">
+        <section className="mb-12 sm:mb-16 lg:mb-20 animate-slideInUp">
+          <div className="bg-gradient-to-br from-emerald-500/5 via-black to-green-500/5 border border-emerald-500/30 rounded-xl sm:rounded-2xl p-6 sm:p-8 lg:p-10 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl"></div>
             <div className="relative z-10">
               <div className="flex items-center justify-center mb-6">
-                <Sparkles className="w-8 h-8 text-emerald-400 mr-3" />
-                <h2 className="text-3xl font-quantico-bold text-emerald-400">What is Signum?</h2>
+                <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-emerald-400 mr-3" />
+                <h2 className="text-2xl sm:text-3xl font-quantico-bold text-emerald-400">What is Signum?</h2>
               </div>
               <p className="text-lg text-gray-300 leading-relaxed text-center max-w-4xl mx-auto">
                 <span className="text-emerald-300 font-quantico-bold">Signum</span> is a next-generation learning platform 
@@ -113,23 +113,23 @@ function About({ user, onLogout, onNavigate }) {
         </section>
 
         {/* Core Features Grid */}
-        <section className="mb-20 animate-slideInUp" style={{ animationDelay: '0.1s' }}>
-          <h2 className="text-4xl font-quantico-bold text-center mb-12">
+        <section className="mb-12 sm:mb-16 lg:mb-20 animate-slideInUp" style={{ animationDelay: '0.1s' }}>
+          <h2 className="text-3xl sm:text-4xl font-quantico-bold text-center mb-8 sm:mb-10 lg:mb-12">
             <span className="bg-gradient-to-r from-emerald-400 to-green-400 bg-clip-text text-transparent">
               Core Features
             </span>
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {features.map((feature, index) => (
               <div 
                 key={index}
-                className="bg-gradient-to-br from-emerald-500/10 via-black to-green-500/10 border border-emerald-500/30 rounded-xl p-8 hover-lift transition-all duration-300"
+                className="bg-gradient-to-br from-emerald-500/10 via-black to-green-500/10 border border-emerald-500/30 rounded-lg sm:rounded-xl p-6 sm:p-8 hover-lift transition-all duration-300"
               >
                 <div className="text-emerald-400 mb-4">
                   {feature.icon}
                 </div>
-                <h3 className="text-xl font-quantico-bold text-gray-100 mb-3">
+                <h3 className="text-lg sm:text-xl font-quantico-bold text-gray-100 mb-3">
                   {feature.title}
                 </h3>
                 <p className="text-gray-400 leading-relaxed">
@@ -141,17 +141,17 @@ function About({ user, onLogout, onNavigate }) {
         </section>
 
         {/* Technology Stack */}
-        <section className="mb-20 animate-slideInUp" style={{ animationDelay: '0.2s' }}>
-          <h2 className="text-4xl font-quantico-bold text-center mb-12">
+        <section className="mb-12 sm:mb-16 lg:mb-20 animate-slideInUp" style={{ animationDelay: '0.2s' }}>
+          <h2 className="text-3xl sm:text-4xl font-quantico-bold text-center mb-8 sm:mb-10 lg:mb-12">
             <span className="bg-gradient-to-r from-emerald-400 to-green-400 bg-clip-text text-transparent">
               Technology Stack
             </span>
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-gradient-to-br from-emerald-500/5 to-black border border-emerald-500/30 rounded-xl p-8">
-              <h3 className="text-2xl font-quantico-bold text-emerald-400 mb-6 flex items-center">
-                <Lock className="w-6 h-6 mr-3" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+            <div className="bg-gradient-to-br from-emerald-500/5 to-black border border-emerald-500/30 rounded-lg sm:rounded-xl p-6 sm:p-8">
+              <h3 className="text-xl sm:text-2xl font-quantico-bold text-emerald-400 mb-4 sm:mb-6 flex items-center">
+                <Lock className="w-5 h-5 sm:w-6 sm:h-6 mr-3" />
                 Frontend
               </h3>
               <ul className="space-y-3">
@@ -164,9 +164,9 @@ function About({ user, onLogout, onNavigate }) {
               </ul>
             </div>
             
-            <div className="bg-gradient-to-br from-green-500/5 to-black border border-green-500/30 rounded-xl p-8">
-              <h3 className="text-2xl font-quantico-bold text-green-400 mb-6 flex items-center">
-                <Zap className="w-6 h-6 mr-3" />
+            <div className="bg-gradient-to-br from-green-500/5 to-black border border-green-500/30 rounded-lg sm:rounded-xl p-6 sm:p-8">
+              <h3 className="text-xl sm:text-2xl font-quantico-bold text-green-400 mb-4 sm:mb-6 flex items-center">
+                <Zap className="w-5 h-5 sm:w-6 sm:h-6 mr-3" />
                 Backend
               </h3>
               <ul className="space-y-3">
@@ -179,9 +179,9 @@ function About({ user, onLogout, onNavigate }) {
               </ul>
             </div>
             
-            <div className="bg-gradient-to-br from-emerald-500/5 to-black border border-emerald-500/30 rounded-xl p-8">
-              <h3 className="text-2xl font-quantico-bold text-emerald-400 mb-6 flex items-center">
-                <Globe className="w-6 h-6 mr-3" />
+            <div className="bg-gradient-to-br from-emerald-500/5 to-black border border-emerald-500/30 rounded-lg sm:rounded-xl p-6 sm:p-8">
+              <h3 className="text-xl sm:text-2xl font-quantico-bold text-emerald-400 mb-4 sm:mb-6 flex items-center">
+                <Globe className="w-5 h-5 sm:w-6 sm:h-6 mr-3" />
                 Blockchain
               </h3>
               <ul className="space-y-3">

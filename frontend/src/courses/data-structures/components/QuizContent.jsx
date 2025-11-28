@@ -605,9 +605,9 @@ function QuizContent({ onNavigate, onQuizComplete }) {
 
   if (!quizStarted) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="min-h-screen flex items-center justify-center p-3 sm:p-4">
         <div className="max-w-2xl w-full text-center">
-          <h2 className="text-2xl font-quantico-bold text-gray-100 mb-6">
+          <h2 className="text-xl sm:text-2xl font-quantico-bold text-gray-100 mb-4 sm:mb-6">
             Data Structures Quiz
           </h2>
           
@@ -620,9 +620,9 @@ function QuizContent({ onNavigate, onQuizComplete }) {
             </div>
           )}
           
-          <div className="bg-gradient-to-r from-emerald-500/10 to-green-500/10 border border-emerald-500/20 rounded-2xl p-6 mb-6">
-            <h3 className="text-lg font-quantico-bold text-emerald-300 mb-4">Quiz Instructions</h3>
-            <div className="text-left space-y-2 text-gray-300 text-sm">
+          <div className="bg-gradient-to-r from-emerald-500/10 to-green-500/10 border border-emerald-500/20 rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6">
+            <h3 className="text-base sm:text-lg font-quantico-bold text-emerald-300 mb-3 sm:mb-4">Quiz Instructions</h3>
+            <div className="text-left space-y-1 sm:space-y-2 text-gray-300 text-xs sm:text-sm">
               <p>• <strong className="text-gray-100">10 questions</strong> randomly selected from our question bank</p>
               <p>• <strong className="text-gray-100">10 marks</strong> per question (Total: 100 marks)</p>
               <p>• <strong className="text-gray-100">15 minutes</strong> time limit</p>
@@ -632,14 +632,14 @@ function QuizContent({ onNavigate, onQuizComplete }) {
             </div>
           </div>
 
-          <div className="mb-6">
-            <label className="block text-emerald-300 font-quantico-bold mb-2 text-sm">
+          <div className="mb-4 sm:mb-6">
+            <label className="block text-emerald-300 font-quantico-bold mb-2 text-xs sm:text-sm">
               Preferred Programming Language:
             </label>
             <select 
               value={currentLanguage}
               onChange={(e) => setCurrentLanguage(e.target.value)}
-              className="bg-black/40 border border-emerald-500/30 rounded-lg px-4 py-2 text-gray-100 font-quantico w-48"
+              className="bg-black/40 border border-emerald-500/30 rounded-lg px-3 sm:px-4 py-2 text-gray-100 font-quantico w-full sm:w-48 text-sm"
             >
               <option value="python">Python</option>
               <option value="java">Java</option>
@@ -827,17 +827,17 @@ function QuizContent({ onNavigate, onQuizComplete }) {
   return (
     <div className="h-full flex flex-col">
       {/* Quiz Header - Fixed */}
-      <div className="flex justify-between items-center p-3 bg-black/60 border-b border-white/10 flex-shrink-0">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-2 sm:p-3 bg-black/60 border-b border-white/10 flex-shrink-0 gap-2 sm:gap-0">
         <div>
-          <h2 className="text-lg font-quantico-bold text-gray-100">
+          <h2 className="text-base sm:text-lg font-quantico-bold text-gray-100">
             Question {currentQuestionIndex + 1} of {selectedQuestions.length}
           </h2>
           <p className="text-emerald-300 text-xs">
             Topic: {currentQuestion?.topic} | Difficulty: {currentQuestion?.difficulty}
           </p>
         </div>
-        <div className="text-right">
-          <div className={`text-lg font-quantico-bold ${timeRemaining < 300 ? 'text-red-400' : 'text-emerald-300'}`}>
+        <div className="text-left sm:text-right">
+          <div className={`text-base sm:text-lg font-quantico-bold ${timeRemaining < 300 ? 'text-red-400' : 'text-emerald-300'}`}>
             ⏱ {formatTime(timeRemaining)}
           </div>
           <div className="text-xs text-gray-400">Time Remaining</div>
@@ -853,23 +853,23 @@ function QuizContent({ onNavigate, onQuizComplete }) {
       </div>
 
       {/* Scrollable Content Area */}
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-3 sm:p-4">
         <div className="max-w-5xl mx-auto">
           {/* Question Content */}
-          <div className="bg-black/30 border border-white/10 rounded-2xl p-6 mb-6">
-            <h3 className="text-lg text-gray-100 font-quantico-bold mb-4 leading-relaxed">
+          <div className="bg-black/30 border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6">
+            <h3 className="text-base sm:text-lg text-gray-100 font-quantico-bold mb-3 sm:mb-4 leading-relaxed">
               {currentQuestion?.question}
             </h3>
 
             {/* Code Block if present */}
             {currentQuestion?.code && (
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-emerald-300 font-quantico-bold text-sm">Code Example:</h4>
+              <div className="mb-4 sm:mb-6">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 sm:mb-3 gap-2">
+                  <h4 className="text-emerald-300 font-quantico-bold text-xs sm:text-sm">Code Example:</h4>
                   <select 
                     value={currentLanguage}
                     onChange={(e) => setCurrentLanguage(e.target.value)}
-                    className="bg-black/40 border border-emerald-500/30 rounded-lg px-3 py-1 text-sm text-gray-100 font-quantico"
+                    className="bg-black/40 border border-emerald-500/30 rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm text-gray-100 font-quantico w-full sm:w-auto"
                   >
                     <option value="python">Python</option>
                     <option value="java">Java</option>
@@ -877,8 +877,8 @@ function QuizContent({ onNavigate, onQuizComplete }) {
                     <option value="c">C</option>
                   </select>
                 </div>
-                <div className="bg-black/60 border border-gray-700 rounded-lg p-4 overflow-x-auto max-h-64 overflow-y-auto">
-                  <pre className="text-sm text-gray-300 font-mono">
+                <div className="bg-black/60 border border-gray-700 rounded-lg p-3 sm:p-4 overflow-x-auto max-h-48 sm:max-h-64 overflow-y-auto">
+                  <pre className="text-xs sm:text-sm text-gray-300 font-mono">
                     <code>{currentQuestion.code[currentLanguage]}</code>
                   </pre>
                 </div>
@@ -893,12 +893,12 @@ function QuizContent({ onNavigate, onQuizComplete }) {
             )}
 
             {/* Answer Options */}
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {currentQuestion?.options.map((option, index) => (
                 <button
                   key={index}
                   onClick={() => handleAnswerSelect(index)}
-                  className={`w-full text-left p-4 rounded-xl border transition-all duration-200 text-sm leading-relaxed ${
+                  className={`w-full text-left p-3 sm:p-4 rounded-lg sm:rounded-xl border transition-all duration-200 text-xs sm:text-sm leading-relaxed ${
                     selectedAnswer === index 
                       ? 'border-emerald-500/60 bg-emerald-500/10 text-emerald-300' 
                       : 'border-gray-500/30 bg-black/20 text-gray-300 hover:border-emerald-500/40 hover:bg-black/30'
@@ -914,9 +914,9 @@ function QuizContent({ onNavigate, onQuizComplete }) {
       </div>
 
       {/* Navigation Footer - Fixed */}
-      <div className="flex justify-between items-center p-3 bg-black/80 border-t border-white/10 flex-shrink-0">
-        <div className="text-gray-400 text-xs">
-          Progress: {Object.keys(userAnswers).length}/{selectedQuestions.length} questions | Current: {Math.round((Object.keys(userAnswers).length / selectedQuestions.length) * 100)}%
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-2 sm:p-3 bg-black/80 border-t border-white/10 flex-shrink-0 gap-2">
+        <div className="text-gray-400 text-xs sm:text-sm">
+          Progress: {Object.keys(userAnswers).length}/{selectedQuestions.length} | {Math.round((Object.keys(userAnswers).length / selectedQuestions.length) * 100)}%
         </div>
         <button
           onClick={handleNextQuestion}

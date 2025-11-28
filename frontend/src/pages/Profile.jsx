@@ -47,8 +47,9 @@ function Profile({ user, onLogout, onNavigate, onUserUpdate }) {
 
   const fetchProfile = async () => {
     try {
+      // No need to check localStorage - cookies are sent automatically
       const response = await fetch(`${API_BASE_URL}/auth/me`, {
-        credentials: 'include',
+        credentials: 'include'  // Send httpOnly cookie
       });
       
       if (response.ok) {
@@ -76,12 +77,11 @@ function Profile({ user, onLogout, onNavigate, onUserUpdate }) {
   const handleSave = async () => {
     setIsSaving(true);
     try {
+      // No need to check localStorage - cookies are sent automatically
       const response = await fetch(`${API_BASE_URL}/auth/profile`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',  // Send httpOnly cookie
         body: JSON.stringify({
           displayName: profile.displayName,
           bio: profile.bio,
@@ -99,7 +99,7 @@ function Profile({ user, onLogout, onNavigate, onUserUpdate }) {
         // Notify parent component to update user data
         if (onUserUpdate) {
           const updatedResponse = await fetch(`${API_BASE_URL}/auth/me`, {
-            credentials: 'include',
+            credentials: 'include'  // Send httpOnly cookie
           });
           if (updatedResponse.ok) {
             const updatedUserData = await updatedResponse.json();
@@ -136,7 +136,7 @@ function Profile({ user, onLogout, onNavigate, onUserUpdate }) {
             const response = await fetch(`${API_BASE_URL}/auth/phantom-wallet`, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
-              credentials: 'include',
+              credentials: 'include',  // Send httpOnly cookie
               body: JSON.stringify({
                 walletAddress: address
               })
@@ -201,9 +201,10 @@ function Profile({ user, onLogout, onNavigate, onUserUpdate }) {
     showToast('🗑️ Deleting account... Please wait', 'info');
     
     try {
+      // No need to check localStorage - cookies are sent automatically
       const response = await fetch(`${API_BASE_URL}/auth/account`, {
         method: 'DELETE',
-        credentials: 'include',
+        credentials: 'include'  // Send httpOnly cookie
       });
 
       if (response.ok) {
@@ -221,23 +222,23 @@ function Profile({ user, onLogout, onNavigate, onUserUpdate }) {
   return (
     <Layout user={user} onLogout={onLogout} currentPage="profile" onNavigate={onNavigate}>
       <ToastContainer />
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-glossy-black-ultra backdrop-blur-xl border-3 border-green-400 rounded-xl p-8 shadow-2xl ring-1 ring-green-600/30">
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-quantico-bold text-gray-100">Profile Management</h1>
-            <div className="space-x-4">
+      <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
+        <div className="bg-glossy-black-ultra backdrop-blur-xl border-3 border-green-400 rounded-xl p-4 sm:p-6 md:p-8 shadow-2xl ring-1 ring-green-600/30">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-quantico-bold text-gray-100">Profile Management</h1>
+            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
               {isEditing ? (
                 <>
                   <button
                     onClick={() => setIsEditing(false)}
-                    className="bg-gray-600 hover:bg-gray-700 text-gray-100 px-4 py-2 rounded-lg transition-colors font-quantico-bold"
+                    className="bg-gray-600 hover:bg-gray-700 text-gray-100 px-4 py-2 rounded-lg transition-colors font-quantico-bold flex-1 sm:flex-initial"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="btn-primary text-gray-100 px-4 py-2 rounded-lg transition-colors disabled:opacity-50 font-quantico-bold"
+                    className="btn-primary text-gray-100 px-4 py-2 rounded-lg transition-colors disabled:opacity-50 font-quantico-bold flex-1 sm:flex-initial"
                   >
                     {isSaving ? 'Saving...' : 'Save Changes'}
                   </button>
@@ -245,7 +246,7 @@ function Profile({ user, onLogout, onNavigate, onUserUpdate }) {
               ) : (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="btn-primary text-gray-100 px-4 py-2 rounded-lg transition-colors font-quantico-bold"
+                  className="btn-primary text-gray-100 px-4 py-2 rounded-lg transition-colors font-quantico-bold w-full sm:w-auto"
                 >
                   Edit Profile
                 </button>
@@ -253,10 +254,10 @@ function Profile({ user, onLogout, onNavigate, onUserUpdate }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,320px)_minmax(0,1fr)] lg:gap-8">
             {/* Profile Picture & Basic Info */}
             <div className="lg:col-span-1">
-              <div className="text-center">
+              <div className="text-center space-y-3">
                 <div className="relative inline-block mb-4">
                   {user?.photoURL ? (
                     <img
@@ -363,15 +364,15 @@ function Profile({ user, onLogout, onNavigate, onUserUpdate }) {
                 </h3>
                 
                 {walletConnected ? (
-                  <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4">
-                    <div className="flex items-center justify-between mb-3">
+                  <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 space-y-4">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <h4 className="text-emerald-300 font-quantico-bold mb-1">✓ Wallet Connected</h4>
                         <p className="text-gray-300 text-sm font-quantico">Ready for NFT minting and blockchain features</p>
                       </div>
                       <button
                         onClick={disconnectWallet}
-                        className="bg-red-600/20 hover:bg-red-600/30 border border-red-500/40 text-red-300 px-4 py-2 rounded-lg font-quantico-bold text-sm transition-all duration-300"
+                        className="bg-red-600/20 hover:bg-red-600/30 border border-red-500/40 text-red-300 px-4 py-2 rounded-lg font-quantico-bold text-sm transition-all duration-300 w-full sm:w-auto"
                       >
                         Disconnect
                       </button>
@@ -382,20 +383,20 @@ function Profile({ user, onLogout, onNavigate, onUserUpdate }) {
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-gray-500/10 border border-gray-500/30 rounded-xl p-4">
-                    <div className="flex items-center justify-between mb-3">
+                  <div className="bg-gray-500/10 border border-gray-500/30 rounded-xl p-4 space-y-4">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <h4 className="text-gray-300 font-quantico-bold mb-1">Connect Your Phantom Wallet</h4>
                         <p className="text-gray-400 text-sm font-quantico">Required for NFT certificates and blockchain features</p>
                       </div>
                       <button
                         onClick={connectPhantomWallet}
-                        className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-400 hover:to-purple-500 text-gray-100 px-6 py-2 rounded-lg font-quantico-bold transition-all duration-300"
+                        className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-400 hover:to-purple-500 text-gray-100 px-6 py-2 rounded-lg font-quantico-bold transition-all duration-300 w-full sm:w-auto"
                       >
                         Connect Phantom
                       </button>
                     </div>
-                    <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3">
+                    <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 space-y-2">
                       <div className="flex items-start space-x-2">
                         <span className="text-yellow-400 text-sm">💡</span>
                         <div>
@@ -482,7 +483,7 @@ function Profile({ user, onLogout, onNavigate, onUserUpdate }) {
                 </ul>
               </div>
 
-              <div className="flex gap-4">
+              <div className="flex flex-col gap-3 sm:flex-row">
                 <button
                   onClick={() => setShowDeleteConfirm(false)}
                   className="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-100 px-6 py-3 rounded-lg font-quantico-bold transition-colors"

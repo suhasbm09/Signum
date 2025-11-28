@@ -64,10 +64,10 @@ const WalletGuideModal = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-fade-in">
-      <div className="w-full max-w-2xl bg-gradient-to-br from-black/90 via-black/95 to-emerald-950/30 backdrop-blur-xl rounded-3xl border border-emerald-400/20 shadow-[0_0_100px_-20px_rgba(16,185,129,0.6)] overflow-hidden">
+      <div className="w-full max-w-lg sm:max-w-2xl bg-gradient-to-br from-black/90 via-black/95 to-emerald-950/30 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-emerald-400/20 shadow-[0_0_100px_-20px_rgba(16,185,129,0.6)] overflow-hidden">
         
         {/* Header */}
-        <div className="relative p-6 border-b border-emerald-400/10 bg-black/20">
+        <div className="relative p-4 sm:p-6 border-b border-emerald-400/10 bg-black/20">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 border border-emerald-400/30 flex items-center justify-center">
@@ -94,18 +94,18 @@ const WalletGuideModal = ({ onClose }) => {
         </div>
 
         {/* Steps */}
-        <div className="p-8 space-y-4">
+        <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
           {steps.map((step) => (
             <div
               key={step.number}
-              className={`relative group bg-black/30 border rounded-2xl p-5 transition-all duration-300 ${
+              className={`relative group bg-black/30 border rounded-2xl p-4 sm:p-5 transition-all duration-300 ${
                 currentStep === step.number
                   ? 'border-emerald-400/40 bg-emerald-500/5 shadow-[0_0_30px_-10px_rgba(16,185,129,0.4)]'
                   : 'border-emerald-400/10 hover:border-emerald-400/25'
               }`}
               onMouseEnter={() => setCurrentStep(step.number)}
             >
-              <div className="flex items-start gap-4">
+              <div className="flex flex-col gap-4 sm:flex-row">
                 {/* Step Number & Icon */}
                 <div className="flex-shrink-0">
                   <div className={`relative w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300 ${
@@ -125,7 +125,7 @@ const WalletGuideModal = ({ onClose }) => {
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 space-y-2">
                   <h3 className="text-lg font-quantico-bold text-emerald-300 mb-1">
                     {step.title}
                   </h3>
@@ -148,7 +148,7 @@ const WalletGuideModal = ({ onClose }) => {
                       href={step.action.link}
                       target={step.action.external ? '_blank' : '_self'}
                       rel={step.action.external ? 'noopener noreferrer' : ''}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 hover:from-emerald-500/30 hover:to-emerald-600/30 border border-emerald-400/30 text-emerald-300 text-sm font-quantico-bold transition-all duration-300 group"
+                      className="w-full sm:w-auto inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 hover:from-emerald-500/30 hover:to-emerald-600/30 border border-emerald-400/30 text-emerald-300 text-sm font-quantico-bold transition-all duration-300 group"
                     >
                       {step.action.text}
                       {step.action.external && (
@@ -165,14 +165,14 @@ const WalletGuideModal = ({ onClose }) => {
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-emerald-400/10 bg-black/20">
-          <div className="flex items-center justify-between">
+        <div className="p-4 sm:p-6 border-t border-emerald-400/10 bg-black/20">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-sm text-gray-400 font-quantico">
               <span className="text-emerald-400">💡</span> Takes ~3-4 minutes total
             </div>
             <button
               onClick={onClose}
-              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500/80 to-emerald-600/80 hover:from-emerald-500 hover:to-emerald-600 text-white font-quantico-bold transition-all duration-300 shadow-lg shadow-emerald-500/25"
+              className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500/80 to-emerald-600/80 hover:from-emerald-500 hover:to-emerald-600 text-white font-quantico-bold transition-all duration-300 shadow-lg shadow-emerald-500/25"
             >
               Got It!
             </button>

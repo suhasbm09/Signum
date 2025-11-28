@@ -35,22 +35,22 @@ const TreesIntroContent = ({ onNavigate, courseId }) => {
 
   return (
     <CompletionTracker courseId={courseId} moduleId={moduleId} contentLength="long">
-      <div className="min-h-screen bg-black text-white p-8">
-        <div className="w-full mx-auto space-y-8">
+      <div className="min-h-screen bg-black text-white p-4 sm:p-6 lg:p-8">
+        <div className="w-full mx-auto space-y-6 sm:space-y-8">
           
           {/* Header */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-4xl font-bold text-emerald-400 mb-2">Trees</h1>
-                <p className="text-gray-400">Hierarchical data structures for organized storage and efficient retrieval</p>
+                <h1 className="text-3xl sm:text-4xl font-bold text-emerald-400 mb-2">Trees</h1>
+                <p className="text-sm sm:text-base text-gray-400">Hierarchical data structures for organized storage and efficient retrieval</p>
               </div>
             </div>
           </div>
 
         {/* Introduction to Trees */}
-        <section className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20">
-          <h2 className="text-2xl font-bold text-emerald-400 mb-4">Introduction to Trees</h2>
+        <section className="bg-gray-800/50 rounded-lg sm:rounded-xl p-4 sm:p-6 border border-emerald-500/20">
+          <h2 className="text-xl sm:text-2xl font-bold text-emerald-400 mb-4">Introduction to Trees</h2>
           <div className="space-y-4 text-gray-300">
             <p>
               A <span className="text-emerald-300 font-semibold">tree</span> is a non-linear hierarchical data structure consisting of nodes connected by edges. 

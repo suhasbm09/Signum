@@ -13,9 +13,7 @@ class ProgressService {
     try {
       const response = await fetch(buildUrl(API_ENDPOINTS.AUTH.ME), {
         method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${userToken}`
-        }
+        credentials: 'include'  // Send httpOnly cookie
       });
       if (!response.ok) {
         throw new Error('Failed to fetch user wallet');

@@ -17,8 +17,8 @@ export function useToast() {
     if (!toast) return null;
 
     return (
-      <div className="fixed top-6 right-6 z-[9999] animate-slideInDown">
-        <div className={`px-6 py-4 rounded-xl backdrop-blur-xl shadow-2xl border font-quantico flex items-center gap-3 transition-all duration-300 ${
+      <div className="fixed top-4 left-1/2 -translate-x-1/2 sm:top-6 sm:left-auto sm:right-6 sm:translate-x-0 z-[9999] w-[calc(100%-2rem)] sm:w-auto max-w-md animate-slideInDown">
+        <div className={`px-4 py-3 sm:px-6 sm:py-4 rounded-xl backdrop-blur-xl shadow-2xl border font-quantico flex items-center gap-3 transition-all duration-300 ${
           toast.type === 'success' 
             ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300 shadow-emerald-500/20' 
             : toast.type === 'error'
@@ -55,7 +55,7 @@ export function useToast() {
               </svg>
             </div>
           )}
-          <span className="font-medium">{toast.message}</span>
+          <span className="font-medium text-sm sm:text-base">{toast.message}</span>
         </div>
       </div>
     );

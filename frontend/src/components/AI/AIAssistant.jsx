@@ -23,8 +23,8 @@ function AIAssistant({ context = null }) {
 
   return (
     <>
-      {/* Floating AI Button - Square with Visible Green Glow */}
-      <div className="fixed bottom-6 right-6 z-40">
+      {/* Floating AI Button - Responsive */}
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40">
         <button
           onClick={toggleChat}
           onMouseEnter={() => setIsHovered(true)}
@@ -36,13 +36,13 @@ function AIAssistant({ context = null }) {
           <div className="absolute inset-0 rounded-xl bg-emerald-500/50 blur-2xl animate-pulse"></div>
           <div className="absolute inset-0 rounded-xl bg-emerald-400/30 blur-xl"></div>
           
-          {/* Main Button - Square with gradient */}
-          <div className="relative w-14 h-14 bg-gradient-to-br from-emerald-800/90 to-green-800/90 backdrop-blur-xl rounded-xl flex items-center justify-center shadow-2xl shadow-emerald-500/50 transform transition-all duration-300 hover:scale-110 cursor-pointer border-2 border-emerald-400/60 hover:border-emerald-300">
+          {/* Main Button - Responsive size */}
+          <div className="relative w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-emerald-800/90 to-green-800/90 backdrop-blur-xl rounded-xl flex items-center justify-center shadow-2xl shadow-emerald-500/50 transform transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer border-2 border-emerald-400/60 hover:border-emerald-300">
             {testingMode && (
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-500 rounded-full animate-pulse border border-yellow-300"></div>
             )}
             <svg 
-              className="w-7 h-7 text-gray-100 transition-all duration-300 group-hover:scale-110" 
+              className="w-6 h-6 sm:w-7 sm:h-7 text-gray-100 transition-all duration-300 group-hover:scale-110" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"

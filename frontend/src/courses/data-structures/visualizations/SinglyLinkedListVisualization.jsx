@@ -116,7 +116,7 @@ export default function SinglyLinkedListLearner() {
   const btnStrong = "rounded-xl px-3 py-2 text-sm font-semibold text-white bg-[#064E3B] ring-1 ring-emerald-400/50 shadow hover:bg-black active:scale-[.98] cursor-pointer";
 
   return (
-    <div className="w-full bg-[#060807] text-white">
+    <div className="w-full bg-[#060807] text-white visualization-page">
       <div className="mx-auto max-w-7xl px-4 py-6">
         <header className="mb-4 flex items-center justify-between">
           <h1 className="text-2xl font-extrabold tracking-tight text-emerald-400 drop-shadow">Singly Linked List Visualization</h1>
@@ -124,7 +124,7 @@ export default function SinglyLinkedListLearner() {
         </header>
 
         {/* Controls */}
-        <section className="rounded-2xl border border-emerald-500/10 bg-[#0A0F0E] p-4 shadow-[0_0_40px_-18px_#10B981]">
+        <section className="rounded-2xl border border-emerald-500/10 bg-[#0A0F0E] p-4 shadow-[0_0_40px_-18px_#10B981] visualization-controls">
           <div className="grid grid-cols-1 gap-3 lg:grid-cols-12">
             <div className="lg:col-span-6 order-1 flex items-center gap-2">
               <input value={value} onChange={(e)=>setValue(e.target.value)} onKeyDown={(e)=> e.key==='Enter' && onInsertHead()} placeholder="Enter a value" className="w-full rounded-xl bg-white/5 px-3 py-2 text-white outline-none ring-1 ring-emerald-500/20 placeholder:text-white/50 focus:ring-2 focus:ring-emerald-400" />
@@ -149,7 +149,7 @@ export default function SinglyLinkedListLearner() {
         </section>
 
         {/* Split view */}
-        <section className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-12">
+        <section className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-12 visualization-split">
           <div className="lg:col-span-9 rounded-2xl border border-emerald-500/10 bg-[#0B0F0E] p-5">
             <LinkedListView nodes={nodes} hiNodes={hiNodes} />
           </div>

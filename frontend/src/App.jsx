@@ -62,8 +62,9 @@ function App() {
       unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         try {
+          // No need to check localStorage - cookies are sent automatically
           const response = await fetch(`${API_BASE_URL}/auth/me`, {
-            credentials: 'include',
+            credentials: 'include'  // Send httpOnly cookie
           });
           
           if (response.ok) {
@@ -85,6 +86,8 @@ function App() {
               }
             }
           } else {
+            // Token invalid or expired, clear it
+            localStorage.removeItem('sessionToken');
             setUser(null);
             setEnrollments([]);
             if (typeof window !== 'undefined') {
@@ -92,6 +95,7 @@ function App() {
             }
           }
         } catch (error) {
+          localStorage.removeItem('sessionToken');
           setUser(null);
           setEnrollments([]);
           if (typeof window !== 'undefined') {
@@ -99,6 +103,8 @@ function App() {
           }
         }
       } else {
+        // User signed out from Firebase
+        localStorage.removeItem('sessionToken');
         setUser(null);
         setEnrollments([]);
         if (typeof window !== 'undefined') {
@@ -228,10 +234,11 @@ function App() {
     showToast('📝 Enrolling in course...', 'info');
     
     try {
+      // No need to check localStorage - cookies are sent automatically
       const response = await fetch(`${API_BASE_URL}/auth/courses/enroll`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        credentials: 'include',  // Send httpOnly cookie
         body: JSON.stringify({ courseId })
       });
 

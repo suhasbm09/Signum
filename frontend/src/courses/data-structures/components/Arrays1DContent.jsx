@@ -40,22 +40,22 @@ const Arrays1DContent = ({ onNavigate, courseId }) => {
 
   return (
     <CompletionTracker courseId={courseId} moduleId={moduleId} contentLength="x-long">
-      <div className=" text-white p-8">
-        <div className="w-full mx-auto space-y-12">
+      <div className=" text-white p-4 sm:p-6 lg:p-8">
+        <div className="w-full mx-auto space-y-8 sm:space-y-10 lg:space-y-12">
           
           {/* Header */}
           <div className="text-center space-y-4 animate-slideInDown">
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-emerald-400 to-green-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-emerald-400 to-green-600 bg-clip-text text-transparent">
               One-Dimensional Arrays
             </h1>
-            <p className="text-xl text-gray-300">
+            <p className="text-lg sm:text-xl text-gray-300">
               Master the fundamental linear data structure
             </p>
           </div>
 
         {/* Introduction */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10 animate-slideInUp">
-          <h2 className="text-3xl font-bold mb-6 text-emerald-400">What is a 1D Array?</h2>
+        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10 animate-slideInUp">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-emerald-400">What is a 1D Array?</h2>
           
           <div className="space-y-6">
             <p className="text-lg text-gray-300 leading-relaxed">
@@ -97,8 +97,8 @@ const Arrays1DContent = ({ onNavigate, courseId }) => {
 
         {/* Key Concepts */}
         <section className="animate-slideInUp">
-          <h2 className="text-3xl font-bold mb-6 text-emerald-400">Key Concepts</h2>
-          <div className="grid md:grid-cols-2 gap-6">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-emerald-400">Key Concepts</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             
             <div className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all hover-lift">
               <div className="flex items-center gap-3 mb-4">

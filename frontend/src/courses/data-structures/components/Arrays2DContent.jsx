@@ -39,18 +39,18 @@ const Arrays2DContent = ({ onNavigate, courseId }) => {
     <CompletionTracker courseId={courseId} moduleId={moduleId} contentLength="x-long">
       <div className="w-full mx-auto">
         {/* Header */}
-        <div className="mb-8 animate-slideInDown">
-          <h1 className="text-4xl font-quantico-bold text-gray-100 mb-4">
+        <div className="mb-6 sm:mb-8 animate-slideInDown">
+          <h1 className="text-3xl sm:text-4xl font-quantico-bold text-gray-100 mb-4">
             2D Arrays (Matrices)
           </h1>
-          <p className="text-gray-400 text-lg">
+          <p className="text-gray-400 text-base sm:text-lg">
             Master multi-dimensional data structures and matrix operations
           </p>
         </div>
 
       {/* Introduction */}
-      <section className="mb-10 bg-gradient-to-br from-gray-800/30 to-gray-900/30 border border-emerald-500/20 rounded-xl p-6 animate-slideInUp">
-        <h2 className="text-2xl font-quantico-bold text-emerald-300 mb-4 flex items-center gap-2">
+      <section className="mb-6 sm:mb-8 lg:mb-10 bg-gradient-to-br from-gray-800/30 to-gray-900/30 border border-emerald-500/20 rounded-lg sm:rounded-xl p-4 sm:p-6 animate-slideInUp">
+        <h2 className="text-xl sm:text-2xl font-quantico-bold text-emerald-300 mb-4 flex items-center gap-2">
           <span>📌</span> What is a 2D Array?
         </h2>
         <div className="space-y-4">

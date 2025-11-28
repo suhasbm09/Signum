@@ -113,8 +113,8 @@ function AIChat({ isOpen, onClose, context = null }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm p-4 animate-fade-in">
-      <div className="w-full max-w-5xl h-[85vh] bg-gradient-to-br from-black/25 via-black/40 to-black/60 backdrop-blur-xl rounded-3xl border border-emerald-400/12 shadow-[0_0_75px_-35px_rgba(16,185,129,0.85)] flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm p-2 sm:p-4 animate-fade-in">
+      <div className="w-full max-w-5xl h-[90vh] sm:h-[85vh] bg-gradient-to-br from-black/25 via-black/40 to-black/60 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-emerald-400/12 shadow-[0_0_75px_-35px_rgba(16,185,129,0.85)] flex flex-col overflow-hidden">
 
         {/* Testing Mode Banner */}
         {testingMode && (
@@ -147,8 +147,8 @@ function AIChat({ isOpen, onClose, context = null }) {
         )}
 
         {/* Sleek Header */}
-  <div className="relative p-5 border-b border-emerald-400/10 bg-black/12">
-          <div className="flex items-center justify-between">
+        <div className="relative p-3 sm:p-5 border-b border-emerald-400/10 bg-black/12">
+          <div className="flex items-center justify-between gap-2">
             <div className="flex items-center space-x-4">
               <div className="relative w-10 h-10 flex items-center justify-center">
                 <div className="absolute inset-0 rounded-full bg-emerald-400/25 blur-lg animate-pulse-slow"></div>

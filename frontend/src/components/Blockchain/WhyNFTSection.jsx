@@ -78,7 +78,7 @@ const WhyNFTSection = () => {
   return (
     <div className="space-y-8 mb-8">
       {/* Why NFT Hero Section */}
-      <div className="bg-gradient-to-br from-green-950/40 via-black/50 to-green-900/30 border border-green-500/20 rounded-2xl p-8 backdrop-blur-sm">
+      <div className="bg-gradient-to-br from-green-950/40 via-black/50 to-green-900/30 border border-green-500/20 rounded-2xl p-6 sm:p-8 backdrop-blur-sm space-y-6">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-3 mb-4">
             <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500/20 to-green-600/20 border border-green-400/30 flex items-center justify-center">
@@ -94,11 +94,11 @@ const WhyNFTSection = () => {
         </div>
 
         {/* Key Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
           {features.map((feature, index) => (
             <div
               key={index}
-              className="bg-black/30 border border-green-500/20 rounded-xl p-5 hover:border-green-400/40 hover:bg-black/40 transition-all duration-300 group"
+              className="bg-black/30 border border-green-500/20 rounded-xl p-5 hover:border-green-400/40 hover:bg-black/40 transition-all duration-300 group flex flex-col items-stretch h-full"
             >
               <div className="flex flex-col items-center text-center">
                 <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-green-500/20 to-green-600/20 border border-green-400/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -119,15 +119,15 @@ const WhyNFTSection = () => {
         </div>
 
         {/* Use Cases - Storytelling Cards */}
-        <div className="border-t border-green-500/10 pt-6">
+        <div className="border-t border-green-500/10 pt-6 space-y-4">
           <h4 className="text-lg font-quantico-bold text-green-300 mb-4 text-center">
             🎯 Your NFT Certificate Opens Doors
           </h4>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {useCases.map((useCase, index) => (
               <div
                 key={index}
-                className="bg-black/20 border border-green-500/15 rounded-lg p-4 hover:bg-green-900/10 hover:border-green-400/30 transition-all duration-300"
+                className="bg-black/20 border border-green-500/15 rounded-lg p-4 hover:bg-green-900/10 hover:border-green-400/30 transition-all duration-300 h-full"
               >
                 <div className="flex items-start gap-3">
                   <span className="text-2xl flex-shrink-0">{useCase.icon}</span>
@@ -146,7 +146,7 @@ const WhyNFTSection = () => {
         </div>
 
         {/* Comparison */}
-        <div className="mt-6 bg-black/30 border border-green-500/20 rounded-lg p-4">
+        <div className="mt-6 bg-black/30 border border-green-500/20 rounded-lg p-4 sm:p-5">
           <p className="text-sm text-gray-300 mb-2">
             <span className="text-green-400 font-quantico-bold">💡 Traditional PDFs vs NFT Certificates:</span>
           </p>
@@ -159,7 +159,7 @@ const WhyNFTSection = () => {
       </div>
 
       {/* FAQ Section */}
-      <div className="bg-gradient-to-br from-black/60 via-green-950/20 to-black/60 border border-green-500/20 rounded-2xl p-6 backdrop-blur-sm">
+      <div className="bg-gradient-to-br from-black/60 via-green-950/20 to-black/60 border border-green-500/20 rounded-2xl p-5 sm:p-6 backdrop-blur-sm space-y-4">
         <h3 className="text-xl font-quantico-bold text-green-300 mb-4 flex items-center gap-2">
           <span>❓</span>
           <span>Frequently Asked Questions</span>

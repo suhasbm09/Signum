@@ -631,8 +631,8 @@ const CodingChallengePage = ({ courseId, user, onNavigate }) => {
   if (showFullscreenStartPage && !challengeStarted) {
     return (
       <div ref={containerRef} className="h-screen bg-dark-bg flex items-center justify-center p-4">
-        <div className="max-w-2xl w-full">
-          <div className="bg-gradient-to-br from-gray-900 to-black border border-emerald-500/30 rounded-2xl p-8 shadow-2xl">
+        <div className="max-w-2xl w-full px-4 sm:px-0">
+          <div className="bg-gradient-to-br from-gray-900 to-black border border-emerald-500/30 rounded-2xl p-6 sm:p-8 shadow-2xl">
             <div className="text-center mb-8">
               <div className="text-6xl mb-4">🔒</div>
               <h1 className="text-4xl font-quantico-bold text-gray-100 mb-3">
@@ -713,37 +713,37 @@ const CodingChallengePage = ({ courseId, user, onNavigate }) => {
               <div className="space-y-3">
                 <button
                   onClick={viewReview}
-                  className="w-full bg-gradient-to-r from-blue-600/80 to-blue-700/80 hover:from-blue-500/90 hover:to-blue-600/90 text-white font-quantico-bold py-4 px-6 rounded-xl transition-all border border-blue-500/50 hover:border-blue-400/70 shadow-lg shadow-blue-500/20"
+                  className="w-full bg-gradient-to-r from-blue-600/80 to-blue-700/80 hover:from-blue-500/90 hover:to-blue-600/90 text-white font-quantico-bold py-3 sm:py-4 px-4 sm:px-6 rounded-xl transition-all border border-blue-500/50 hover:border-blue-400/70 shadow-lg shadow-blue-500/20 text-sm sm:text-base"
                 >
                   📊 Review Previous Results
                 </button>
                 
                 <button
                   onClick={startSecureChallenge}
-                  className="w-full bg-gradient-to-r from-emerald-600/80 to-green-600/80 hover:from-emerald-500/90 hover:to-green-500/90 text-white font-quantico-bold py-4 px-6 rounded-xl transition-all border border-emerald-500/50 hover:border-emerald-400/70 shadow-lg shadow-emerald-500/20"
+                  className="w-full bg-gradient-to-r from-emerald-600/80 to-green-600/80 hover:from-emerald-500/90 hover:to-green-500/90 text-white font-quantico-bold py-3 sm:py-4 px-4 sm:px-6 rounded-xl transition-all border border-emerald-500/50 hover:border-emerald-400/70 shadow-lg shadow-emerald-500/20 text-sm sm:text-base"
                 >
                   🔄 Try Again
                 </button>
                 
                 <button
                   onClick={endChallenge}
-                  className="w-full bg-gradient-to-r from-gray-700/50 to-gray-800/50 hover:from-gray-600/60 hover:to-gray-700/60 border border-gray-600/40 hover:border-gray-500/60 text-gray-200 font-quantico-bold py-3 px-6 rounded-xl transition-all"
+                  className="w-full bg-gradient-to-r from-gray-700/50 to-gray-800/50 hover:from-gray-600/60 hover:to-gray-700/60 border border-gray-600/40 hover:border-gray-500/60 text-gray-200 font-quantico-bold py-3 px-4 sm:px-6 rounded-xl transition-all text-sm sm:text-base"
                 >
                   ← Back to Course
                 </button>
               </div>
             ) : (
               // Show Start and Cancel options
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <button
                   onClick={endChallenge}
-                  className="flex-1 bg-gradient-to-r from-gray-700/50 to-gray-800/50 hover:from-gray-600/60 hover:to-gray-700/60 border border-gray-600/40 hover:border-gray-500/60 text-gray-200 font-quantico-bold py-4 px-6 rounded-xl transition-all"
+                  className="flex-1 bg-gradient-to-r from-gray-700/50 to-gray-800/50 hover:from-gray-600/60 hover:to-gray-700/60 border border-gray-600/40 hover:border-gray-500/60 text-gray-200 font-quantico-bold py-3 sm:py-4 px-4 sm:px-6 rounded-xl transition-all text-sm sm:text-base"
                 >
                   ← Cancel
                 </button>
                 <button
                   onClick={startSecureChallenge}
-                  className="flex-1 bg-gradient-to-r from-emerald-600/80 to-green-600/80 hover:from-emerald-500/90 hover:to-green-500/90 text-white font-quantico-bold py-4 px-6 rounded-xl transition-all text-lg border border-emerald-500/50 hover:border-emerald-400/70 shadow-lg shadow-emerald-500/20"
+                  className="flex-1 bg-gradient-to-r from-emerald-600/80 to-green-600/80 hover:from-emerald-500/90 hover:to-green-500/90 text-white font-quantico-bold py-3 sm:py-4 px-4 sm:px-6 rounded-xl transition-all text-base sm:text-lg border border-emerald-500/50 hover:border-emerald-400/70 shadow-lg shadow-emerald-500/20"
                 >
                   🚀 Start Challenge
                 </button>
@@ -762,10 +762,10 @@ const CodingChallengePage = ({ courseId, user, onNavigate }) => {
       <div ref={containerRef} className="min-h-screen bg-dark-bg flex items-center justify-center p-4">
         {/* Show block overlay if blocked */}
         {challengeBlocked && (
-          <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center">
-            <div className="bg-gradient-to-br from-red-900 to-red-700 border border-red-500 rounded-2xl p-8 max-w-md mx-4 text-center">
-              <div className="text-6xl mb-4">🚫</div>
-              <h2 className="text-2xl font-quantico-bold text-gray-100 mb-4">
+          <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4">
+            <div className="bg-gradient-to-br from-red-900 to-red-700 border border-red-500 rounded-xl sm:rounded-2xl p-6 sm:p-8 max-w-md w-full text-center">
+              <div className="text-5xl sm:text-6xl mb-4">🚫</div>
+              <h2 className="text-xl sm:text-2xl font-quantico-bold text-gray-100 mb-4">
                 Challenge Access Blocked
               </h2>
               <p className="text-red-200 mb-6">
@@ -795,7 +795,7 @@ const CodingChallengePage = ({ courseId, user, onNavigate }) => {
 
         <div className="max-w-2xl w-full">
           <div className="bg-gradient-to-br from-gray-900 to-black border border-emerald-500/30 rounded-2xl p-8 shadow-2xl">
-            <div className="text-center mb-8">
+              <div className="text-center mb-8 space-y-3">
               <div className="text-6xl mb-4">💻</div>
               <h1 className="text-4xl font-quantico-bold text-gray-100 mb-3">
                 Coding Challenge

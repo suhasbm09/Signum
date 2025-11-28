@@ -325,19 +325,19 @@ export default function BSTLearner() {
   }, [root]);
 
   return (
-    <div className="min-h-screen w-full bg-[#060807] text-white">
+    <div className="min-h-screen w-full bg-[#060807] text-white visualization-page">
       <StyleTag />
 
-      <div className="mx-auto max-w-7xl px-4 py-8">
-        <header className="mb-4 flex items-center justify-between">
+      <div className="mx-auto max-w-7xl px-4 py-8 space-y-4">
+        <header className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-extrabold tracking-tight text-emerald-400 drop-shadow">Binary Search Tree Visualization</h1>
           <span className="text-xs text-emerald-300/80">Interactive Visualizer & Pseudocode</span>
         </header>
 
         {/* Controls */}
-        <section className="rounded-2xl border border-emerald-500/10 bg-[#0A0F0E] p-4 shadow-[0_0_40px_-18px_#10B981]">
+        <section className="rounded-2xl border border-emerald-500/10 bg-[#0A0F0E] p-4 sm:p-5 shadow-[0_0_40px_-18px_#10B981] space-y-4 visualization-controls">
           <div className="grid grid-cols-1 gap-3 lg:grid-cols-12">
-            <div className="lg:col-span-5 order-1 flex items-center gap-2">
+            <div className="lg:col-span-5 order-1 flex flex-col gap-2 sm:flex-row sm:items-center">
               <input
                 type="number"
                 value={value}
@@ -346,29 +346,29 @@ export default function BSTLearner() {
                 placeholder="Enter a number"
                 className="w-full rounded-xl bg-white/5 px-3 py-2 text-white outline-none ring-1 ring-emerald-500/20 placeholder:text-white/50 focus:ring-2 focus:ring-emerald-400"
               />
-              <button onClick={onInsert} className="rounded-xl px-3 py-2 text-sm font-semibold text-white bg-[#064E3B] ring-1 ring-emerald-400/50 shadow hover:bg-black active:scale-[.98] cursor-pointer" aria-label="Insert number">Insert</button>
+                <button onClick={onInsert} className="w-full sm:w-auto rounded-xl px-3 py-2 text-sm font-semibold text-white bg-[#064E3B] ring-1 ring-emerald-400/50 shadow hover:bg-black active:scale-[.98] cursor-pointer" aria-label="Insert number">Insert</button>
             </div>
-            <div className="lg:col-span-4 order-2 flex items-center gap-2">
+            <div className="lg:col-span-4 order-2 flex flex-wrap gap-2 items-center">
               <span className="group-label">Trace</span>
-              <button onClick={onSearch} className="rounded-xl px-3 py-2 text-sm text-white bg-[#064E3B] ring-1 ring-emerald-400/50 hover:bg-black active:scale-[.98] cursor-pointer">Search</button>
-              <button onClick={onDelete} className="rounded-xl px-3 py-2 text-sm text-white bg-[#064E3B] ring-1 ring-emerald-400/50 hover:bg-black active:scale-[.98] cursor-pointer">Delete</button>
+              <button onClick={onSearch} className="w-full sm:w-auto rounded-xl px-3 py-2 text-sm text-white bg-[#064E3B] ring-1 ring-emerald-400/50 hover:bg-black active:scale-[.98] cursor-pointer">Search</button>
+              <button onClick={onDelete} className="w-full sm:w-auto rounded-xl px-3 py-2 text-sm text-white bg-[#064E3B] ring-1 ring-emerald-400/50 hover:bg-black active:scale-[.98] cursor-pointer">Delete</button>
             </div>
             {/* Traverse row below Trace */}
-            <div className="lg:col-span-12 order-4 flex items-center gap-2 overflow-x-auto whitespace-nowrap pt-1">
+            <div className="lg:col-span-12 order-4 flex flex-wrap items-center gap-2 overflow-x-auto whitespace-nowrap pt-1">
               <span className="group-label">Traverse</span>
-              <button onClick={() => makeTraversal("in")} className="rounded-xl px-3 py-2 text-sm text-white bg-[#064E3B] ring-1 ring-emerald-400/50 hover:bg-black active:scale-[.98] cursor-pointer">Inorder</button>
-              <button onClick={() => makeTraversal("pre")} className="rounded-xl px-3 py-2 text-sm text-white bg-[#064E3B] ring-1 ring-emerald-400/50 hover:bg-black active:scale-[.98] cursor-pointer">Pre</button>
-              <button onClick={() => makeTraversal("post")} className="rounded-xl px-3 py-2 text-sm text-white bg-[#064E3B] ring-1 ring-emerald-400/50 hover:bg-black active:scale-[.98] cursor-pointer">Post</button>
-              <button onClick={() => makeTraversal("level")} className="rounded-xl px-3 py-2 text-sm text-white bg-[#064E3B] ring-1 ring-emerald-400/50 hover:bg-black active:scale-[.98] cursor-pointer">Level</button>
-              <button onClick={onMin} className="rounded-xl px-3 py-2 text-sm text-white bg-[#064E3B] ring-1 ring-emerald-400/50 hover:bg-black active:scale-[.98] cursor-pointer">Min</button>
-              <button onClick={onMax} className="rounded-xl px-3 py-2 text-sm text-white bg-[#064E3B] ring-1 ring-emerald-400/50 hover:bg-black active:scale-[.98] cursor-pointer">Max</button>
+              <button onClick={() => makeTraversal("in")} className="w-full sm:w-auto rounded-xl px-3 py-2 text-sm text-white bg-[#064E3B] ring-1 ring-emerald-400/50 hover:bg-black active:scale-[.98] cursor-pointer">Inorder</button>
+              <button onClick={() => makeTraversal("pre")} className="w-full sm:w-auto rounded-xl px-3 py-2 text-sm text-white bg-[#064E3B] ring-1 ring-emerald-400/50 hover:bg-black active:scale-[.98] cursor-pointer">Pre</button>
+              <button onClick={() => makeTraversal("post")} className="w-full sm:w-auto rounded-xl px-3 py-2 text-sm text-white bg-[#064E3B] ring-1 ring-emerald-400/50 hover:bg-black active:scale-[.98] cursor-pointer">Post</button>
+              <button onClick={() => makeTraversal("level")} className="w-full sm:w-auto rounded-xl px-3 py-2 text-sm text-white bg-[#064E3B] ring-1 ring-emerald-400/50 hover:bg-black active:scale-[.98] cursor-pointer">Level</button>
+              <button onClick={onMin} className="w-full sm:w-auto rounded-xl px-3 py-2 text-sm text-white bg-[#064E3B] ring-1 ring-emerald-400/50 hover:bg-black active:scale-[.98] cursor-pointer">Min</button>
+              <button onClick={onMax} className="w-full sm:w-auto rounded-xl px-3 py-2 text-sm text-white bg-[#064E3B] ring-1 ring-emerald-400/50 hover:bg-black active:scale-[.98] cursor-pointer">Max</button>
             </div>
             <div className="lg:col-span-3 order-3 flex items-center justify-end gap-2">
               <button onClick={seedTree} className="rounded-xl px-3 py-2 text-sm text-white bg-[#064E3B] ring-1 ring-emerald-400/50 hover:bg-black active:scale-[.98] cursor-pointer">Seed</button>
               <button onClick={clearTree} className="rounded-xl px-3 py-2 text-sm text-white bg-[#064E3B] ring-1 ring-emerald-400/50 hover:bg-black active:scale-[.98] cursor-pointer">Clear</button>
             </div>
           </div>
-          <div className="mt-3 flex flex-wrap items-center gap-3">
+          <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-emerald-200/90 flex-1">{status}</p>
             <div className="flex items-center gap-2">
               <button onClick={() => setIsPlaying((p) => !p)} disabled={!trace.length} className="rounded-xl px-3 py-2 text-sm text-white bg-[#064E3B] ring-1 ring-emerald-400/50 hover:bg-black active:scale-[.98] cursor-pointer">
@@ -381,14 +381,14 @@ export default function BSTLearner() {
         </section>
 
         {/* Split view: 75% Tree | 25% Code */}
-        <section className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-12">
-          <div className="lg:col-span-9 rounded-2xl border border-emerald-500/10 bg-[#0B0F0E] p-3">
+        <section className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-12 visualization-split">
+          <div className="lg:col-span-9 rounded-2xl border border-emerald-500/10 bg-[#0B0F0E] p-3 sm:p-4">
             <TreeSVG layout={layout} highlight={highlight} />
             {!layout.nodes.length && (
               <div className="py-10 text-center text-white/60">Tree is empty — try <span className="text-emerald-400">Seed</span> or insert values.</div>
             )}
           </div>
-          <div className="lg:col-span-3 rounded-2xl border border-emerald-500/10 bg-[#0B0F0E] p-4">
+          <div className="lg:col-span-3 rounded-2xl border border-emerald-500/10 bg-[#0B0F0E] p-4 sm:p-5">
             <div className="mb-2 text-sm text-emerald-300">{pseudo.kind ? TITLE[pseudo.kind] : "Pseudocode"}</div>
             <CodePanel lines={pseudo.lines} active={pcHi} />
           </div>
@@ -396,7 +396,7 @@ export default function BSTLearner() {
 
         {/* Tracer */}
         {trace.length > 0 && (
-          <section className="mt-5 rounded-2xl border border-emerald-500/10 bg-[#0B0F0E] p-4">
+          <section className="mt-5 rounded-2xl border border-emerald-500/10 bg-[#0B0F0E] p-4 sm:p-5 visualization-trace">
             <div className="flex items-center gap-2">
               <button onClick={() => setStep((s) => Math.max(0, s - 1))} className="rounded-xl px-3 py-2 text-sm text-white bg-[#064E3B] ring-1 ring-emerald-400/50 hover:bg-black active:scale-[.98] cursor-pointer">⟵ Prev</button>
               <button onClick={() => setStep((s) => Math.min(trace.length - 1, s + 1))} className="rounded-xl px-3 py-2 text-sm text-white bg-[#064E3B] ring-1 ring-emerald-400/50 hover:bg-black active:scale-[.98] cursor-pointer">Next ⟶</button>
@@ -410,7 +410,7 @@ export default function BSTLearner() {
 
         {/* Traversal ribbon */}
         {travOut.type && (
-          <section className="mt-5 rounded-2xl border border-emerald-500/10 bg-[#0B0F0E] p-4">
+          <section className="mt-5 rounded-2xl border border-emerald-500/10 bg-[#0B0F0E] p-4 sm:p-5 visualization-trace">
             <div className="mb-2 text-sm text-emerald-300">{labelForTraversal(travOut.type)} order</div>
             <div className="flex flex-wrap gap-2">
               {travOut.list.map((v, i) => (
@@ -527,7 +527,7 @@ function StyleTag() {
     <style>{`
       .node{ filter: drop-shadow(0 8px 20px rgba(16,185,129,0.20)); fill: #10B981; stroke: #064E3B; stroke-width: 2px; }
       .node-active{ filter: drop-shadow(0 10px 22px rgba(0,0,0,0.45)); fill: #000; stroke: #10B981; stroke-width: 3px; }
-      input[type="range"]{ width: 160px; }
+      input[type="range"]{ width: min(160px, 80vw); }
     `}</style>
   );
 }

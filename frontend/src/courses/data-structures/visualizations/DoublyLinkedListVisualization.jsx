@@ -210,21 +210,21 @@ export default function DoublyLinkedListVisualization(){
   const btnStrong = "rounded-xl px-3 py-2 text-sm font-semibold text-white bg-[#064E3B] ring-1 ring-emerald-400/50 shadow hover:bg-black active:scale-[.98] cursor-pointer transition-all";
 
   return (
-    <div className="min-h-screen w-full bg-[#060807] text-white">
+    <div className="min-h-screen w-full bg-[#060807] text-white visualization-page">
       <StyleTag />
-      <div className="mx-auto max-w-7xl px-4 py-8">
-        <header className="mb-6 flex items-center justify-between">
+      <div className="mx-auto max-w-7xl px-4 py-8 space-y-4">
+        <header className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-extrabold tracking-tight text-emerald-400 drop-shadow">Doubly Linked List Visualization</h1>
           <span className="text-xs text-emerald-300/80">Interactive Visualizer & Pseudocode</span>
         </header>
 
         {/* Controls */}
-        <section className="rounded-2xl border border-emerald-500/10 bg-[#0A0F0E] p-6 shadow-[0_0_40px_-18px_#10B981]">
+        <section className="rounded-2xl border border-emerald-500/10 bg-[#0A0F0E] p-4 sm:p-6 shadow-[0_0_40px_-18px_#10B981] space-y-4 visualization-controls">
           {/* Main Value Input Row */}
           <div className="mb-4">
             <label className="block text-sm text-emerald-300 mb-2">Value Operations</label>
-            <div className="flex flex-col lg:flex-row gap-3">
-              <div className="flex-1 flex gap-2">
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <input 
                   value={value} 
                   onChange={(e)=>setValue(e.target.value)} 
@@ -232,12 +232,12 @@ export default function DoublyLinkedListVisualization(){
                   placeholder="Enter a value" 
                   className="flex-1 rounded-xl bg-white/5 px-4 py-3 text-white outline-none ring-1 ring-emerald-500/20 placeholder:text-white/50 focus:ring-2 focus:ring-emerald-400" 
                 />
-                <button onClick={onInsertHead} className={btnStrong}>Insert Head</button>
+                <button onClick={onInsertHead} className={`w-full sm:w-auto ${btnStrong}`}>Insert Head</button>
               </div>
-              <div className="flex gap-2">
-                <button onClick={onInsertTail} className={btn}>Insert Tail</button>
-                <button onClick={onDeleteByValue} className={btn}>Delete Value</button>
-                <button onClick={onSearch} className={btn}>Search</button>
+              <div className="flex flex-wrap gap-2">
+                <button onClick={onInsertTail} className={`w-full sm:w-auto ${btn}`}>Insert Tail</button>
+                <button onClick={onDeleteByValue} className={`w-full sm:w-auto ${btn}`}>Delete Value</button>
+                <button onClick={onSearch} className={`w-full sm:w-auto ${btn}`}>Search</button>
               </div>
             </div>
           </div>
@@ -245,19 +245,19 @@ export default function DoublyLinkedListVisualization(){
           {/* Index-based Operations Row */}
           <div className="mb-4">
             <label className="block text-sm text-emerald-300 mb-2">Index Operations</label>
-            <div className="flex flex-col lg:flex-row gap-3">
-              <div className="flex-1 flex gap-2">
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <input 
                   value={targetIndex} 
                   onChange={(e)=>setTargetIndex(e.target.value)} 
                   placeholder="Enter index" 
                   className="flex-1 rounded-xl bg-white/5 px-4 py-3 text-white outline-none ring-1 ring-emerald-500/20 placeholder:text-white/50 focus:ring-2 focus:ring-emerald-400" 
                 />
-                <button onClick={onInsertAfter} className={btn}>Insert After</button>
-                <button onClick={onInsertBefore} className={btn}>Insert Before</button>
+                <button onClick={onInsertAfter} className={`w-full sm:w-auto ${btn}`}>Insert After</button>
+                <button onClick={onInsertBefore} className={`w-full sm:w-auto ${btn}`}>Insert Before</button>
               </div>
-              <div className="flex gap-2">
-                <button onClick={onDeleteAtIndex} className={btn}>Delete at Index</button>
+              <div className="flex flex-wrap gap-2">
+                <button onClick={onDeleteAtIndex} className={`w-full sm:w-auto ${btn}`}>Delete at Index</button>
               </div>
             </div>
           </div>
@@ -278,8 +278,8 @@ export default function DoublyLinkedListVisualization(){
         </section>
 
         {/* Split view */}
-        <section className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12">
-          <div className="lg:col-span-9 rounded-2xl border border-emerald-500/10 bg-[#0B0F0E] p-6">
+        <section className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12 visualization-split">
+          <div className="lg:col-span-9 rounded-2xl border border-emerald-500/10 bg-[#0B0F0E] p-6 sm:p-8">
             <DoublyListView nodes={nodes} hiNodes={hiNodes} />
           </div>
           <div className="lg:col-span-3 rounded-2xl border border-emerald-500/10 bg-[#0B0F0E] p-4">
@@ -301,7 +301,7 @@ function DoublyListView({ nodes, hiNodes }){
     </div>
   );
   return (
-    <div className="mx-auto w-full max-w-4xl overflow-auto">
+    <div className="mx-auto w-full max-w-4xl overflow-auto px-2 sm:px-4">
       <div className="flex items-center justify-center gap-4 p-4">
         {nodes.map((v,i)=>{
           const active = hiNodes.has(`n-${i}`);

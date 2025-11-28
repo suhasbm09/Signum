@@ -39,21 +39,21 @@ const LinkedListSinglyContent = ({ courseId, onNavigate }) => {
       moduleId={moduleId} 
       contentLength="x-long"
     >
-    <div className="min-h-screen text-white p-8">
+    <div className="min-h-screen text-white p-4 sm:p-6 lg:p-8">
       <div className="w-full mx-auto space-y-6">
         
         {/* Header */}
         <div className="text-center space-y-4 animate-slideInDown">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-emerald-400 to-green-600 bg-clip-text text-transparent">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-emerald-400 to-green-600 bg-clip-text text-transparent">
             Linked Lists - Dynamic Data Structure
           </h1>
-          <p className="text-xl text-gray-300">
+          <p className="text-lg sm:text-xl text-gray-300">
             Master linear data structures with efficient insertions and deletions
           </p>
         </div>
 
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-6 border border-emerald-500/20 shadow-xl shadow-emerald-500/10 animate-slideInUp">
-  <h2 className="text-3xl font-bold mb-6 text-emerald-400">What is a Singly Linked List?</h2>
+        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-emerald-500/20 shadow-xl shadow-emerald-500/10 animate-slideInUp">
+  <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-emerald-400">What is a Singly Linked List?</h2>
   
   <div className="space-y-6">
     <p className="text-lg text-gray-300 leading-relaxed">

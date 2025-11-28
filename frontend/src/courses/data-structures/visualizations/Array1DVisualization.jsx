@@ -297,7 +297,7 @@ export default function ArrayLearner(){
   const displayArr = viewArr ?? arr;
 
   return (
-    <div className="min-h-screen w-full bg-[#060807] text-white rounded-2xl">
+    <div className="min-h-screen w-full bg-[#060807] text-white rounded-2xl visualization-page">
       <StyleTag />
       <div className="mx-auto max-w-7xl px-4 py-8">
         <header className="mb-4 flex items-center justify-between">
@@ -306,7 +306,7 @@ export default function ArrayLearner(){
         </header>
 
         {/* Controls */}
-        <section className="rounded-2xl border border-emerald-500/10 bg-[#0A0F0E] p-4 shadow-[0_0_40px_-18px_#10B981]">
+        <section className="rounded-2xl border border-emerald-500/10 bg-[#0A0F0E] p-4 shadow-[0_0_40px_-18px_#10B981] visualization-controls">
           {/* Row 1: length + search + play */}
           <div className="grid grid-cols-1 gap-3 lg:grid-cols-12">
             <div className="lg:col-span-4 order-1 flex flex-wrap items-center gap-2">
@@ -359,7 +359,7 @@ export default function ArrayLearner(){
         </section>
 
         {/* Split view 75 | 25 */}
-        <section className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-12">
+        <section className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-12 visualization-split">
           {/* Visualizer */}
           <div className="lg:col-span-9 rounded-2xl border border-emerald-500/10 bg-[#0B0F0E] p-5">
             <ArrayRow
@@ -382,7 +382,7 @@ export default function ArrayLearner(){
 
         {/* Tracer */}
         {trace.length>0 && (
-          <section className="mt-5 rounded-2xl border border-emerald-500/10 bg-[#0B0F0E] p-4">
+          <section className="mt-5 rounded-2xl border border-emerald-500/10 bg-[#0B0F0E] p-4 visualization-trace">
             <div className="flex items-center gap-2">
               <button onClick={()=>setStep(s=>Math.max(0,s-1))} className={btn}>⟵ Prev</button>
               <button onClick={()=>setStep(s=>Math.min(trace.length-1,s+1))} className={btn}>Next ⟶</button>

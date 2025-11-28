@@ -28,12 +28,13 @@ export const signInWithGoogle = async () => {
     const response = await fetch(`${backendUrl}/auth/verify-firebase-token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
+      credentials: 'include',  // CRITICAL: Send and receive cookies
       body: JSON.stringify({ idToken })
     });
     
     if (response.ok) {
       const userData = await response.json();
+      // No need to store anything - httpOnly cookie is set automatically
       return { success: true, user: userData.user };
     } else {
       const errorData = await response.json();
@@ -48,10 +49,13 @@ export const logOut = async () => {
   try {
     await signOut(auth);
     const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+    
     await fetch(`${backendUrl}/auth/logout`, {
       method: 'POST',
-      credentials: 'include',
+      credentials: 'include'  // Send cookie for logout
     });
+    
+    // Cookie is cleared by backend automatically
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
