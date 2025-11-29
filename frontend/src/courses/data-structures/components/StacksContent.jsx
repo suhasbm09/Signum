@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 import StackVisualization from '../visualizations/StackVisualization';
 import CompletionTracker from '../../../components/CompletionTracker';
+import CodeView from '../../../components/CodeView';
 
 const StacksContent = ({ onNavigate, courseId }) => {
   const moduleId = 'stacks';
@@ -174,271 +175,263 @@ const StacksContent = ({ onNavigate, courseId }) => {
 
             {implementationLang === 'c' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
+              <CodeView code={`#include <stdio.h>
+      #include <stdlib.h>
+      #include <stdbool.h>
 
-#define MAX_SIZE 100
+      #define MAX_SIZE 100
 
-typedef struct {
-    int items[MAX_SIZE];
-    int top;
-} Stack;
+      typedef struct {
+        int items[MAX_SIZE];
+        int top;
+      } Stack;
 
-// Initialize stack
-void init(Stack* s) {
-    s->top = -1;
-}
+      // Initialize stack
+      void init(Stack* s) {
+        s->top = -1;
+      }
 
-// Check if stack is empty
-bool isEmpty(Stack* s) {
-    return s->top == -1;
-}
+      // Check if stack is empty
+      bool isEmpty(Stack* s) {
+        return s->top == -1;
+      }
 
-// Check if stack is full
-bool isFull(Stack* s) {
-    return s->top == MAX_SIZE - 1;
-}
+      // Check if stack is full
+      bool isFull(Stack* s) {
+        return s->top == MAX_SIZE - 1;
+      }
 
-// Push element
-void push(Stack* s, int value) {
-    if (isFull(s)) {
-        printf("Stack overflow\\n");
-        return;
-    }
-    s->items[++(s->top)] = value;
-}
+      // Push element
+      void push(Stack* s, int value) {
+        if (isFull(s)) {
+          printf("Stack overflow\\n");
+          return;
+        }
+        s->items[++(s->top)] = value;
+      }
 
-// Pop element
-int pop(Stack* s) {
-    if (isEmpty(s)) {
-        printf("Stack underflow\\n");
-        return -1;
-    }
-    return s->items[(s->top)--];
-}
+      // Pop element
+      int pop(Stack* s) {
+        if (isEmpty(s)) {
+          printf("Stack underflow\\n");
+          return -1;
+        }
+        return s->items[(s->top)--];
+      }
 
-// Peek top element
-int peek(Stack* s) {
-    if (isEmpty(s)) {
-        printf("Stack is empty\\n");
-        return -1;
-    }
-    return s->items[s->top];
-}
+      // Peek top element
+      int peek(Stack* s) {
+        if (isEmpty(s)) {
+          printf("Stack is empty\\n");
+          return -1;
+        }
+        return s->items[s->top];
+      }
 
-// Usage
-int main() {
-    Stack s;
-    init(&s);
+      // Usage
+      int main() {
+        Stack s;
+        init(&s);
     
-    push(&s, 10);
-    push(&s, 20);
-    push(&s, 30);
+        push(&s, 10);
+        push(&s, 20);
+        push(&s, 30);
     
-    printf("Top: %d\\n", peek(&s));  // Output: 30
-    printf("Pop: %d\\n", pop(&s));   // Output: 30
-    printf("Top: %d\\n", peek(&s));  // Output: 20
+        printf("Top: %d\\n", peek(&s));  // Output: 30
+        printf("Pop: %d\\n", pop(&s));   // Output: 30
+        printf("Top: %d\\n", peek(&s));  // Output: 20
     
-    return 0;
-}`}
-                </pre>
+        return 0;
+      }`} language={implementationLang} />
               </div>
             )}
 
             {implementationLang === 'cpp' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`#include <iostream>
-#include <stack>
-#include <vector>
-using namespace std;
+              <CodeView code={`#include <iostream>
+      #include <stack>
+      #include <vector>
+      using namespace std;
 
-// Method 1: Using STL stack
-void usingSTL() {
-    stack<int> s;
+      // Method 1: Using STL stack
+      void usingSTL() {
+        stack<int> s;
     
-    s.push(10);
-    s.push(20);
-    s.push(30);
+        s.push(10);
+        s.push(20);
+        s.push(30);
     
-    cout << "Top: " << s.top() << endl;  // Output: 30
-    s.pop();
-    cout << "Top after pop: " << s.top() << endl;  // Output: 20
-    cout << "Size: " << s.size() << endl;  // Output: 2
-}
+        cout << "Top: " << s.top() << endl;  // Output: 30
+        s.pop();
+        cout << "Top after pop: " << s.top() << endl;  // Output: 20
+        cout << "Size: " << s.size() << endl;  // Output: 2
+      }
 
-// Method 2: Custom implementation using vector
-class Stack {
-private:
-    vector<int> items;
+      // Method 2: Custom implementation using vector
+      class Stack {
+      private:
+        vector<int> items;
     
-public:
-    void push(int value) {
-        items.push_back(value);
-    }
+      public:
+        void push(int value) {
+          items.push_back(value);
+        }
     
-    int pop() {
-        if (isEmpty()) {
+        int pop() {
+          if (isEmpty()) {
             throw runtime_error("Stack underflow");
+          }
+          int value = items.back();
+          items.pop_back();
+          return value;
         }
-        int value = items.back();
-        items.pop_back();
-        return value;
-    }
     
-    int peek() {
-        if (isEmpty()) {
+        int peek() {
+          if (isEmpty()) {
             throw runtime_error("Stack is empty");
+          }
+          return items.back();
         }
-        return items.back();
-    }
     
-    bool isEmpty() {
-        return items.empty();
-    }
+        bool isEmpty() {
+          return items.empty();
+        }
     
-    int size() {
-        return items.size();
-    }
-};
+        int size() {
+          return items.size();
+        }
+      };
 
-int main() {
-    Stack s;
-    s.push(10);
-    s.push(20);
-    s.push(30);
+      int main() {
+        Stack s;
+        s.push(10);
+        s.push(20);
+        s.push(30);
     
-    cout << "Top: " << s.peek() << endl;  // Output: 30
-    cout << "Pop: " << s.pop() << endl;   // Output: 30
+        cout << "Top: " << s.peek() << endl;  // Output: 30
+        cout << "Pop: " << s.pop() << endl;   // Output: 30
     
-    return 0;
-}`}
-                </pre>
+        return 0;
+      }`} language={implementationLang} />
               </div>
             )}
 
             {implementationLang === 'python' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`class Stack:
-    def __init__(self):
-        self.items = []
+              <CodeView code={`class Stack:
+        def __init__(self):
+          self.items = []
     
-    def push(self, item):
-        """Add item to top of stack"""
-        self.items.append(item)
+        def push(self, item):
+          """Add item to top of stack"""
+          self.items.append(item)
     
-    def pop(self):
-        """Remove and return top item"""
-        if self.is_empty():
+        def pop(self):
+          """Remove and return top item"""
+          if self.is_empty():
             raise IndexError("Stack is empty")
-        return self.items.pop()
+          return self.items.pop()
     
-    def peek(self):
-        """Return top item without removing"""
-        if self.is_empty():
+        def peek(self):
+          """Return top item without removing"""
+          if self.is_empty():
             raise IndexError("Stack is empty")
-        return self.items[-1]
+          return self.items[-1]
     
-    def is_empty(self):
-        """Check if stack is empty"""
-        return len(self.items) == 0
+        def is_empty(self):
+          """Check if stack is empty"""
+          return len(self.items) == 0
     
-    def size(self):
-        """Return number of items"""
-        return len(self.items)
+        def size(self):
+          """Return number of items"""
+          return len(self.items)
 
-# Usage
-stack = Stack()
-stack.push(10)
-stack.push(20)
-stack.push(30)
+      # Usage
+      stack = Stack()
+      stack.push(10)
+      stack.push(20)
+      stack.push(30)
 
-print(f"Top: {stack.peek()}")   # Output: 30
-print(f"Pop: {stack.pop()}")    # Output: 30
-print(f"Size: {stack.size()}")  # Output: 2
+      print(f"Top: {stack.peek()}")   # Output: 30
+      print(f"Pop: {stack.pop()}")    # Output: 30
+      print(f"Size: {stack.size()}")  # Output: 2
 
-# Alternative: Using list directly
-stack_simple = []
-stack_simple.append(10)  # push
-stack_simple.append(20)
-top = stack_simple[-1]   # peek
-popped = stack_simple.pop()  # pop`}
-                </pre>
+      # Alternative: Using list directly
+      stack_simple = []
+      stack_simple.append(10)  # push
+      stack_simple.append(20)
+      top = stack_simple[-1]   # peek
+      popped = stack_simple.pop()  # pop`} language={implementationLang} />
               </div>
             )}
 
             {implementationLang === 'java' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`import java.util.Stack;
-import java.util.ArrayList;
+              <CodeView code={`import java.util.Stack;
+      import java.util.ArrayList;
 
-// Method 1: Using built-in Stack class
-class UsingBuiltIn {
-    public static void main(String[] args) {
-        Stack<Integer> stack = new Stack<>();
+      // Method 1: Using built-in Stack class
+      class UsingBuiltIn {
+        public static void main(String[] args) {
+          Stack<Integer> stack = new Stack<>();
         
-        stack.push(10);
-        stack.push(20);
-        stack.push(30);
+          stack.push(10);
+          stack.push(20);
+          stack.push(30);
         
-        System.out.println("Top: " + stack.peek());  // Output: 30
-        System.out.println("Pop: " + stack.pop());   // Output: 30
-        System.out.println("Empty: " + stack.isEmpty());  // false
-    }
-}
+          System.out.println("Top: " + stack.peek());  // Output: 30
+          System.out.println("Pop: " + stack.pop());   // Output: 30
+          System.out.println("Empty: " + stack.isEmpty());  // false
+        }
+      }
 
-// Method 2: Custom implementation
-class CustomStack {
-    private ArrayList<Integer> items;
+      // Method 2: Custom implementation
+      class CustomStack {
+        private ArrayList<Integer> items;
     
-    public CustomStack() {
-        items = new ArrayList<>();
-    }
+        public CustomStack() {
+          items = new ArrayList<>();
+        }
     
-    public void push(int value) {
-        items.add(value);
-    }
+        public void push(int value) {
+          items.add(value);
+        }
     
-    public int pop() {
-        if (isEmpty()) {
+        public int pop() {
+          if (isEmpty()) {
             throw new RuntimeException("Stack underflow");
+          }
+          return items.remove(items.size() - 1);
         }
-        return items.remove(items.size() - 1);
-    }
     
-    public int peek() {
-        if (isEmpty()) {
+        public int peek() {
+          if (isEmpty()) {
             throw new RuntimeException("Stack is empty");
+          }
+          return items.get(items.size() - 1);
         }
-        return items.get(items.size() - 1);
-    }
     
-    public boolean isEmpty() {
-        return items.isEmpty();
-    }
+        public boolean isEmpty() {
+          return items.isEmpty();
+        }
     
-    public int size() {
-        return items.size();
-    }
-}
+        public int size() {
+          return items.size();
+        }
+      }
 
-// Usage
-public class StackExample {
-    public static void main(String[] args) {
-        CustomStack s = new CustomStack();
-        s.push(10);
-        s.push(20);
-        s.push(30);
+      // Usage
+      public class StackExample {
+        public static void main(String[] args) {
+          CustomStack s = new CustomStack();
+          s.push(10);
+          s.push(20);
+          s.push(30);
         
-        System.out.println("Top: " + s.peek());  // Output: 30
-        System.out.println("Pop: " + s.pop());   // Output: 30
-    }
-}`}
-                </pre>
+          System.out.println("Top: " + s.peek());  // Output: 30
+          System.out.println("Pop: " + s.pop());   // Output: 30
+        }
+      }`} language={implementationLang} />
               </div>
             )}
           </div>
@@ -512,61 +505,58 @@ public class StackExample {
 
             {applicationsLang === 'c' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`#include <stdio.h>
-#include <string.h>
-#include <stdbool.h>
+              <CodeView code={`#include <stdio.h>
+      #include <string.h>
+      #include <stdbool.h>
 
-#define MAX 100
+      #define MAX 100
 
-bool isValid(char* s) {
-    char stack[MAX];
-    int top = -1;
+      bool isValid(char* s) {
+        char stack[MAX];
+        int top = -1;
     
-    for (int i = 0; s[i] != '\\0'; i++) {
-        char c = s[i];
+        for (int i = 0; s[i] != '\\0'; i++) {
+          char c = s[i];
         
-        // Push opening brackets
-        if (c == '(' || c == '{' || c == '[') {
+          // Push opening brackets
+          if (c == '(' || c == '{' || c == '[') {
             stack[++top] = c;
-        }
-        // Check closing brackets
-        else {
+          }
+          // Check closing brackets
+          else {
             if (top == -1) return false;
             
             char last = stack[top--];
             if ((c == ')' && last != '(') ||
-                (c == '}' && last != '{') ||
-                (c == ']' && last != '[')) {
-                return false;
+              (c == '}' && last != '{') ||
+              (c == ']' && last != '[')) {
+              return false;
             }
+          }
         }
-    }
     
-    return top == -1;  // Stack should be empty
-}
+        return top == -1;  // Stack should be empty
+      }
 
-int main() {
-    printf("%d\\n", isValid("()[]{}"));    // 1 (true)
-    printf("%d\\n", isValid("([)]"));      // 0 (false)
-    printf("%d\\n", isValid("{[()]}"));    // 1 (true)
-    return 0;
-}`}
-                </pre>
+      int main() {
+        printf("%d\\n", isValid("()[]{}"));    // 1 (true)
+        printf("%d\\n", isValid("([)]"));      // 0 (false)
+        printf("%d\\n", isValid("{[()]}"));    // 1 (true)
+        return 0;
+      }`} language={applicationsLang} />
               </div>
             )}
 
             {applicationsLang === 'cpp' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`#include <iostream>
+                <CodeView code={`#include <iostream>
 #include <stack>
 #include <string>
 using namespace std;
 
 bool isValid(string s) {
     stack<char> st;
-    
+
     for (char c : s) {
         // Push opening brackets
         if (c == '(' || c == '{' || c == '[') {
@@ -575,10 +565,10 @@ bool isValid(string s) {
         // Check closing brackets
         else {
             if (st.empty()) return false;
-            
+
             char top = st.top();
             st.pop();
-            
+
             if ((c == ')' && top != '(') ||
                 (c == '}' && top != '{') ||
                 (c == ']' && top != '[')) {
@@ -586,7 +576,7 @@ bool isValid(string s) {
             }
         }
     }
-    
+
     return st.empty();  // Stack should be empty
 }
 
@@ -595,8 +585,7 @@ int main() {
     cout << isValid("([)]") << endl;      // 0 (false)
     cout << isValid("{[()]}") << endl;    // 1 (true)
     return 0;
-}`}
-                </pre>
+}`} language={applicationsLang} />
               </div>
             )}
 

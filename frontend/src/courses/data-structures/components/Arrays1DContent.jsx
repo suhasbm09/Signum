@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle2, Clock, TrendingUp, AlertCircle } from 'lucide-react';
 import CompletionTracker from '../../../components/CompletionTracker';
+import CodeView from '../../../components/CodeView';
 import Array1DVisualization from '../visualizations/Array1DVisualization';
 
 const Arrays1DContent = ({ onNavigate, courseId }) => {
@@ -173,8 +174,7 @@ const Arrays1DContent = ({ onNavigate, courseId }) => {
 
             {declarationLang === 'c' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`// Method 1: Declaration with size
+                <CodeView code={`// Method 1: Declaration with size
 int arr[5];
 
 // Method 2: Declaration with initialization
@@ -187,15 +187,13 @@ int arr[] = {10, 20, 30, 40, 50};
 int arr[5] = {10, 20}; // {10, 20, 0, 0, 0}
 
 // Method 5: All elements initialized to 0
-int arr[5] = {0};`}
-                </pre>
+int arr[5] = {0};`} language={declarationLang} />
               </div>
             )}
 
             {declarationLang === 'cpp' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`// Method 1: C-style array
+                <CodeView code={`// Method 1: C-style array
 int arr[5] = {10, 20, 30, 40, 50};
 
 // Method 2: std::array (recommended)
@@ -210,15 +208,13 @@ std::vector<int> arr = {10, 20, 30, 40, 50};
 std::vector<int> arr(5); // 5 elements, all 0
 
 // Method 5: Initialization with value
-std::vector<int> arr(5, 10); // 5 elements, all 10`}
-                </pre>
+std::vector<int> arr(5, 10); // 5 elements, all 10`} language={declarationLang} />
               </div>
             )}
 
             {declarationLang === 'python' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`# Method 1: List literal (most common)
+                <CodeView code={`# Method 1: List literal (most common)
 arr = [10, 20, 30, 40, 50]
 
 # Method 2: List comprehension
@@ -232,15 +228,13 @@ arr = list(range(10, 60, 10))  # [10, 20, 30, 40, 50]
 
 # Method 5: Empty list
 arr = []
-arr.append(10)  # Add elements dynamically`}
-                </pre>
+arr.append(10)  # Add elements dynamically`} language={declarationLang} />
               </div>
             )}
 
             {declarationLang === 'java' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`// Method 1: Declaration and initialization
+                <CodeView code={`// Method 1: Declaration and initialization
 int[] arr = {10, 20, 30, 40, 50};
 
 // Method 2: Declaration then initialization
@@ -260,8 +254,7 @@ arr.add(20);
 
 // Method 5: Arrays.asList
 import java.util.Arrays;
-List<Integer> arr = Arrays.asList(10, 20, 30, 40, 50);`}
-                </pre>
+List<Integer> arr = Arrays.asList(10, 20, 30, 40, 50);`} language={declarationLang} />
               </div>
             )}
           </div>
@@ -282,8 +275,7 @@ List<Integer> arr = Arrays.asList(10, 20, 30, 40, 50);`}
 
             {accessLang === 'c' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`#include <stdio.h>
+                <CodeView code={`#include <stdio.h>
 
 int main() {
     int arr[5] = {10, 20, 30, 40, 50};
@@ -298,15 +290,13 @@ int main() {
     printf("Last element: %d\\n", arr[4]); // Output: 50
     
     return 0;
-}`}
-                </pre>
+}`} language={accessLang} />
               </div>
             )}
 
             {accessLang === 'cpp' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`#include <iostream>
+                <CodeView code={`#include <iostream>
 #include <vector>
 using namespace std;
 
@@ -323,15 +313,13 @@ int main() {
     cout << "Last element: " << arr.back() << endl; // Output: 50
     
     return 0;
-}`}
-                </pre>
+}`} language={accessLang} />
               </div>
             )}
 
             {accessLang === 'python' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`arr = [10, 20, 30, 40, 50]
+                <CodeView code={`arr = [10, 20, 30, 40, 50]
 
 # Access first element
 print(f"First element: {arr[0]}")  # Output: 10
@@ -343,15 +331,13 @@ print(f"Third element: {arr[2]}")  # Output: 30
 print(f"Last element: {arr[-1]}")  # Output: 50
 
 # Access second last element
-print(f"Second last: {arr[-2]}")   # Output: 40`}
-                </pre>
+print(f"Second last: {arr[-2]}")   # Output: 40`} language={accessLang} />
               </div>
             )}
 
             {accessLang === 'java' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`public class ArrayAccess {
+                <CodeView code={`public class ArrayAccess {
     public static void main(String[] args) {
         int[] arr = {10, 20, 30, 40, 50};
         
@@ -364,8 +350,7 @@ print(f"Second last: {arr[-2]}")   # Output: 40`}
         // Access last element
         System.out.println("Last element: " + arr[arr.length - 1]); // Output: 50
     }
-}`}
-                </pre>
+}`} language={accessLang} />
               </div>
             )}
           </div>
@@ -381,40 +366,37 @@ print(f"Second last: {arr[-2]}")   # Output: 40`}
 
             {insertLang === 'c' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`#include <stdio.h>
+              <CodeView code={`#include <stdio.h>
 
-void insertElement(int arr[], int *n, int pos, int value) {
-    // Shift elements to the right
-    for (int i = *n; i > pos; i--) {
-        arr[i] = arr[i - 1];
-    }
-    arr[pos] = value;
-    (*n)++;
-}
+      void insertElement(int arr[], int *n, int pos, int value) {
+        // Shift elements to the right
+        for (int i = *n; i > pos; i--) {
+          arr[i] = arr[i - 1];
+        }
+        arr[pos] = value;
+        (*n)++;
+      }
 
-int main() {
-    int arr[10] = {10, 20, 30, 40, 50};
-    int n = 5;
+      int main() {
+        int arr[10] = {10, 20, 30, 40, 50};
+        int n = 5;
     
-    // Insert 25 at index 2
-    insertElement(arr, &n, 2, 25);
+        // Insert 25 at index 2
+        insertElement(arr, &n, 2, 25);
     
-    // Print array: 10 20 25 30 40 50
-    for (int i = 0; i < n; i++) {
-        printf("%d ", arr[i]);
-    }
+        // Print array: 10 20 25 30 40 50
+        for (int i = 0; i < n; i++) {
+          printf("%d ", arr[i]);
+        }
     
-    return 0;
-}`}
-                </pre>
+        return 0;
+      }`} language={insertLang} />
               </div>
             )}
 
             {insertLang === 'cpp' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`#include <iostream>
+                <CodeView code={`#include <iostream>
 #include <vector>
 using namespace std;
 
@@ -434,15 +416,13 @@ int main() {
     arr.push_back(60);
     
     return 0;
-}`}
-                </pre>
+}`} language={insertLang} />
               </div>
             )}
 
             {insertLang === 'python' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`arr = [10, 20, 30, 40, 50]
+                <CodeView code={`arr = [10, 20, 30, 40, 50]
 
 # Insert 25 at index 2
 arr.insert(2, 25)
@@ -454,15 +434,13 @@ print(arr)  # [10, 20, 25, 30, 40, 50, 60]
 
 # Insert at beginning
 arr.insert(0, 5)
-print(arr)  # [5, 10, 20, 25, 30, 40, 50, 60]`}
-                </pre>
+print(arr)  # [5, 10, 20, 25, 30, 40, 50, 60]`} language={insertLang} />
               </div>
             )}
 
             {insertLang === 'java' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`import java.util.ArrayList;
+                <CodeView code={`import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ArrayInsert {
@@ -480,8 +458,7 @@ public class ArrayInsert {
         arr.add(60);
         System.out.println(arr); // [10, 20, 25, 30, 40, 50, 60]
     }
-}`}
-                </pre>
+}`} language={insertLang} />
               </div>
             )}
           </div>
@@ -497,39 +474,36 @@ public class ArrayInsert {
 
             {deleteLang === 'c' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`#include <stdio.h>
+              <CodeView code={`#include <stdio.h>
 
-void deleteElement(int arr[], int *n, int pos) {
-    // Shift elements to the left
-    for (int i = pos; i < *n - 1; i++) {
-        arr[i] = arr[i + 1];
-    }
-    (*n)--;
-}
+      void deleteElement(int arr[], int *n, int pos) {
+        // Shift elements to the left
+        for (int i = pos; i < *n - 1; i++) {
+          arr[i] = arr[i + 1];
+        }
+        (*n)--;
+      }
 
-int main() {
-    int arr[10] = {10, 20, 30, 40, 50};
-    int n = 5;
+      int main() {
+        int arr[10] = {10, 20, 30, 40, 50};
+        int n = 5;
     
-    // Delete element at index 2
-    deleteElement(arr, &n, 2);
+        // Delete element at index 2
+        deleteElement(arr, &n, 2);
     
-    // Print array: 10 20 40 50
-    for (int i = 0; i < n; i++) {
-        printf("%d ", arr[i]);
-    }
+        // Print array: 10 20 40 50
+        for (int i = 0; i < n; i++) {
+          printf("%d ", arr[i]);
+        }
     
-    return 0;
-}`}
-                </pre>
+        return 0;
+      }`} language={deleteLang} />
               </div>
             )}
 
             {deleteLang === 'cpp' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`#include <iostream>
+                <CodeView code={`#include <iostream>
 #include <vector>
 using namespace std;
 
@@ -549,15 +523,13 @@ int main() {
     arr.pop_back();
     
     return 0;
-}`}
-                </pre>
+}`} language={deleteLang} />
               </div>
             )}
 
             {deleteLang === 'python' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`arr = [10, 20, 30, 40, 50]
+                <CodeView code={`arr = [10, 20, 30, 40, 50]
 
 # Delete by index
 del arr[2]
@@ -574,15 +546,13 @@ print(arr)  # [10, 20, 40]
 
 # Delete specific index
 arr.pop(1)  # Deletes element at index 1
-print(arr)  # [10, 40]`}
-                </pre>
+print(arr)  # [10, 40]`} language={deleteLang} />
               </div>
             )}
 
             {deleteLang === 'java' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`import java.util.ArrayList;
+                <CodeView code={`import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ArrayDelete {
@@ -603,8 +573,7 @@ public class ArrayDelete {
         arr.remove(arr.size() - 1);
         System.out.println(arr); // [10, 20]
     }
-}`}
-                </pre>
+}`} language={deleteLang} />
               </div>
             )}
           </div>
@@ -620,40 +589,37 @@ public class ArrayDelete {
 
             {searchLang === 'c' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`#include <stdio.h>
+              <CodeView code={`#include <stdio.h>
 
-// Linear Search
-int linearSearch(int arr[], int n, int target) {
-    for (int i = 0; i < n; i++) {
-        if (arr[i] == target) {
+      // Linear Search
+      int linearSearch(int arr[], int n, int target) {
+        for (int i = 0; i < n; i++) {
+          if (arr[i] == target) {
             return i; // Return index if found
+          }
         }
-    }
-    return -1; // Not found
-}
+        return -1; // Not found
+      }
 
-int main() {
-    int arr[] = {10, 20, 30, 40, 50};
-    int n = 5;
+      int main() {
+        int arr[] = {10, 20, 30, 40, 50};
+        int n = 5;
     
-    int index = linearSearch(arr, n, 30);
-    if (index != -1) {
-        printf("Element found at index: %d\\n", index);
-    } else {
-        printf("Element not found\\n");
-    }
+        int index = linearSearch(arr, n, 30);
+        if (index != -1) {
+          printf("Element found at index: %d\\n", index);
+        } else {
+          printf("Element not found\\n");
+        }
     
-    return 0;
-}`}
-                </pre>
+        return 0;
+      }`} language={searchLang} />
               </div>
             )}
 
             {searchLang === 'cpp' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`#include <iostream>
+                <CodeView code={`#include <iostream>
 #include <vector>
 #include <algorithm>
 using namespace std;
@@ -676,73 +642,68 @@ int main() {
     cout << "Binary search: " << (found ? "Found" : "Not found") << endl;
     
     return 0;
-}`}
-                </pre>
+}`} language={searchLang} />
               </div>
             )}
 
             {searchLang === 'python' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`arr = [10, 20, 30, 40, 50]
+              <CodeView code={`arr = [10, 20, 30, 40, 50]
 
-# Using 'in' operator
-if 30 in arr:
-    index = arr.index(30)
-    print(f"Element found at index: {index}")
-else:
-    print("Element not found")
+      # Using 'in' operator
+      if 30 in arr:
+        index = arr.index(30)
+        print(f"Element found at index: {index}")
+      else:
+        print("Element not found")
 
-# Linear search function
-def linear_search(arr, target):
-    for i, num in enumerate(arr):
-        if num == target:
+      # Linear search function
+      def linear_search(arr, target):
+        for i, num in enumerate(arr):
+          if num == target:
             return i
-    return -1
+        return -1
 
-result = linear_search(arr, 30)
-print(f"Search result: {result}")  # Output: 2
+      result = linear_search(arr, 30)
+      print(f"Search result: {result}")  # Output: 2
 
-# Binary search (on sorted array)
-import bisect
-index = bisect.bisect_left(arr, 30)
-if index < len(arr) and arr[index] == 30:
-    print(f"Binary search found at: {index}")`}
-                </pre>
+      # Binary search (on sorted array)
+      import bisect
+      index = bisect.bisect_left(arr, 30)
+      if index < len(arr) and arr[index] == 30:
+        print(f"Binary search found at: {index}")`} language={searchLang} />
               </div>
             )}
 
             {searchLang === 'java' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+              <CodeView code={`import java.util.ArrayList;
+      import java.util.Arrays;
+      import java.util.Collections;
 
-public class ArraySearch {
-    // Linear search
-    public static int linearSearch(int[] arr, int target) {
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i] == target) {
-                return i;
-            }
-        }
-        return -1;
-    }
-    
-    public static void main(String[] args) {
-        int[] arr = {10, 20, 30, 40, 50};
-        
+      public class ArraySearch {
         // Linear search
-        int index = linearSearch(arr, 30);
-        System.out.println("Element found at index: " + index);
+        public static int linearSearch(int[] arr, int target) {
+          for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == target) {
+              return i;
+            }
+          }
+          return -1;
+        }
+    
+        public static void main(String[] args) {
+          int[] arr = {10, 20, 30, 40, 50};
         
-        // Binary search (on sorted array)
-        int binaryIndex = Arrays.binarySearch(arr, 30);
-        System.out.println("Binary search index: " + binaryIndex);
-    }
-}`}
-                </pre>
+          // Linear search
+          int index = linearSearch(arr, 30);
+          System.out.println("Element found at index: " + index);
+        
+          // Binary search (on sorted array)
+          int binaryIndex = Arrays.binarySearch(arr, 30);
+          System.out.println("Binary search index: " + binaryIndex);
+        }
+      }`} language={searchLang} />
               </div>
             )}
           </div>
@@ -758,8 +719,7 @@ public class ArraySearch {
 
             {traversalLang === 'c' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`#include <stdio.h>
+                <CodeView code={`#include <stdio.h>
 
 int main() {
     int arr[] = {10, 20, 30, 40, 50};
@@ -780,112 +740,105 @@ int main() {
     printf("\\n");
     
     return 0;
-}`}
-                </pre>
+}`} language={traversalLang} />
               </div>
             )}
 
             {traversalLang === 'cpp' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`#include <iostream>
-#include <vector>
-using namespace std;
+              <CodeView code={`#include <iostream>
+      #include <vector>
+      using namespace std;
 
-int main() {
-    vector<int> arr = {10, 20, 30, 40, 50};
+      int main() {
+        vector<int> arr = {10, 20, 30, 40, 50};
     
-    // Range-based for loop
-    cout << "Forward: ";
-    for (int num : arr) {
-        cout << num << " ";
-    }
-    cout << endl;
+        // Range-based for loop
+        cout << "Forward: ";
+        for (int num : arr) {
+          cout << num << " ";
+        }
+        cout << endl;
     
-    // Index-based forward
-    cout << "Index-based: ";
-    for (size_t i = 0; i < arr.size(); i++) {
-        cout << arr[i] << " ";
-    }
-    cout << endl;
+        // Index-based forward
+        cout << "Index-based: ";
+        for (size_t i = 0; i < arr.size(); i++) {
+          cout << arr[i] << " ";
+        }
+        cout << endl;
     
-    // Backward traversal
-    cout << "Backward: ";
-    for (int i = arr.size() - 1; i >= 0; i--) {
-        cout << arr[i] << " ";
-    }
-    cout << endl;
+        // Backward traversal
+        cout << "Backward: ";
+        for (int i = (int)arr.size() - 1; i >= 0; i--) {
+          cout << arr[i] << " ";
+        }
+        cout << endl;
     
-    return 0;
-}`}
-                </pre>
+        return 0;
+      }`} language={traversalLang} />
               </div>
             )}
 
             {traversalLang === 'python' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`arr = [10, 20, 30, 40, 50]
+              <CodeView code={`arr = [10, 20, 30, 40, 50]
 
-# Forward traversal
-print("Forward:", end=" ")
-for num in arr:
-    print(num, end=" ")
-print()
+      # Forward traversal
+      print("Forward:", end=" ")
+      for num in arr:
+        print(num, end=" ")
+      print()
 
-# Forward with index
-print("With index:")
-for i, num in enumerate(arr):
-    print(f"Index {i}: {num}")
+      # Forward with index
+      print("With index:")
+      for i, num in enumerate(arr):
+        print(f"Index {i}: {num}")
 
-# Backward traversal
-print("Backward:", end=" ")
-for num in reversed(arr):
-    print(num, end=" ")
-print()
+      # Backward traversal
+      print("Backward:", end=" ")
+      for num in reversed(arr):
+        print(num, end=" ")
+      print()
 
-# Backward using negative indexing
-print("Negative index:", end=" ")
-for i in range(len(arr) - 1, -1, -1):
-    print(arr[i], end=" ")
-print()`}
-                </pre>
+      # Backward using negative indexing
+      print("Negative index:", end=" ")
+      for i in range(len(arr) - 1, -1, -1):
+        print(arr[i], end=" ")
+      print()`} language={traversalLang} />
               </div>
             )}
 
             {traversalLang === 'java' && (
               <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`import java.util.ArrayList;
-import java.util.Arrays;
+              <CodeView code={`import java.util.ArrayList;
+      import java.util.Arrays;
 
-public class ArrayTraversal {
-    public static void main(String[] args) {
-        int[] arr = {10, 20, 30, 40, 50};
+      public class ArrayTraversal {
+        public static void main(String[] args) {
+          int[] arr = {10, 20, 30, 40, 50};
         
-        // Forward traversal - traditional for loop
-        System.out.print("Forward: ");
-        for (int i = 0; i < arr.length; i++) {
+          // Forward traversal - traditional for loop
+          System.out.print("Forward: ");
+          for (int i = 0; i < arr.length; i++) {
             System.out.print(arr[i] + " ");
-        }
-        System.out.println();
+          }
+          System.out.println();
         
-        // Enhanced for loop
-        System.out.print("Enhanced: ");
-        for (int num : arr) {
+          // Enhanced for loop
+          System.out.print("Enhanced: ");
+          for (int num : arr) {
             System.out.print(num + " ");
-        }
-        System.out.println();
+          }
+          System.out.println();
         
-        // Backward traversal
-        System.out.print("Backward: ");
-        for (int i = arr.length - 1; i >= 0; i--) {
+          // Backward traversal
+          System.out.print("Backward: ");
+          for (int i = arr.length - 1; i >= 0; i--) {
             System.out.print(arr[i] + " ");
+          }
+          System.out.println();
         }
-        System.out.println();
-    }
-}`}
-                </pre>
+      }`} language={traversalLang} />
               </div>
             )}
           </div>

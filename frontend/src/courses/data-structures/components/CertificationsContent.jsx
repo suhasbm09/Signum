@@ -105,7 +105,7 @@ const CertificationsContent = ({ user }) => {
     if (typeof window !== 'undefined' && window.solana && walletConnected) {
       try {
         // Lazy load Solana libraries
-        const { anchor, Connection, PublicKey, Buffer } = await loadSolanaLibraries();
+        const { anchor, Connection, PublicKey, SystemProgram, Buffer } = await loadSolanaLibraries();
         const programIDL = await loadIDL();
         
         const provider = new anchor.AnchorProvider(
@@ -156,7 +156,7 @@ const CertificationsContent = ({ user }) => {
     
     try {
       // Lazy load Solana libraries
-      const { anchor, Connection, PublicKey, Buffer } = await loadSolanaLibraries();
+      const { anchor, Connection, PublicKey, SystemProgram, Buffer } = await loadSolanaLibraries();
       const programIDL = await loadIDL();
       
       const provider = new anchor.AnchorProvider(
@@ -447,7 +447,7 @@ const CertificationsContent = ({ user }) => {
     
     try {
       // Lazy load Solana libraries
-      const { anchor, Connection, PublicKey, Buffer } = await loadSolanaLibraries();
+      const { anchor, Connection, PublicKey, SystemProgram, Buffer } = await loadSolanaLibraries();
       const programIDL = await loadIDL();
       
       // Initialize constants if not already done
