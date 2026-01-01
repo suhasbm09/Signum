@@ -2,8 +2,10 @@
 Assessment routes - Quiz, Coding, and Anti-cheat
 """
 from fastapi import APIRouter, HTTPException
+from datetime import datetime
 from app.domains.assessment.models import (
-    QuizSubmission, RunCodeRequest, SubmitCodeRequest, ViolationReport
+    QuizSubmission, QuizStartRequest, QuizSubmitRequest, QuizSessionStatusRequest,
+    RunCodeRequest, SubmitCodeRequest, ViolationReport
 )
 from app.domains.assessment.quiz_service import QuizService
 from app.domains.assessment.coding_service import CodingService
@@ -14,18 +16,112 @@ quiz_service = QuizService()
 coding_service = CodingService()
 anti_cheat_service = AntiCheatService()
 
-# ========== QUIZ ENDPOINTS ==========
+def serialize_for_json(obj):
+    """Convert Firestore objects to JSON-serializable format"""
+    if isinstance(obj, dict):
+        return {k: serialize_for_json(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [serialize_for_json(item) for item in obj]
+    elif isinstance(obj, datetime):
+        return obj.isoformat()
+    elif hasattr(obj, 'isoformat'):  # Handle Firestore timestamps
+        return obj.isoformat()
+    elif hasattr(obj, '_seconds'):  # Firestore Timestamp object
+        return datetime.fromtimestamp(obj._seconds).isoformat()
+    return obj
+
+# ========== QUIZ ENDPOINTS (NEW - Server-side scoring) ==========
+
+@router.post("/{course_id}/quiz/start")
+async def start_quiz(course_id: str, request: QuizStartRequest):
+    """
+    Start a new quiz session - returns questions WITHOUT answers
+    Frontend must use the returned session_id for submission
+    """
+    try:
+        result = quiz_service.start_quiz_session(
+            user_id=request.user_id,
+            course_id=course_id,
+            num_questions=request.num_questions
+        )
+        
+        if not result.get("success"):
+            raise HTTPException(status_code=404, detail=result.get("error", "Failed to start quiz"))
+        
+        return result
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/{course_id}/quiz/submit")
+async def submit_quiz_new(course_id: str, request: QuizSubmitRequest):
+    """
+    Submit quiz for SERVER-SIDE scoring
+    Answers are validated against server-stored correct answers
+    """
+    try:
+        result = quiz_service.submit_quiz(
+            user_id=request.user_id,
+            session_id=request.session_id,
+            answers=request.answers,
+            anti_cheat_data=request.anti_cheat_data
+        )
+        
+        if not result.get("success"):
+            raise HTTPException(status_code=400, detail=result.get("error", "Failed to submit quiz"))
+        
+        return result
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/{course_id}/quiz/session/{session_id}/status")
+async def get_quiz_session_status(course_id: str, session_id: str):
+    """Check if a quiz session is still valid and get time remaining"""
+    try:
+        result = quiz_service.get_session_status(session_id)
+        return {"success": True, "data": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# IMPORTANT: This route must come BEFORE /{quiz_id} to avoid "attempts" being captured as quiz_id
+@router.get("/{course_id}/quiz/attempts")
+async def get_quiz_attempts(course_id: str, user_id: str):
+    """Get quiz attempts for a user"""
+    try:
+        attempts = quiz_service.get_quiz_attempts(user_id, course_id)
+        
+        # Serialize timestamps for JSON response
+        serialized_attempts = serialize_for_json(attempts)
+        return {"success": True, "data": serialized_attempts}
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ========== QUIZ ENDPOINTS (LEGACY - for backwards compatibility) ==========
 
 @router.get("/{course_id}/quiz/{quiz_id}")
 async def get_quiz_questions(course_id: str, quiz_id: str):
-    """Get quiz questions"""
+    """Get quiz questions (LEGACY - use /quiz/start instead)"""
     try:
-        quiz_data = quiz_service.get_quiz_questions(course_id, quiz_id)
+        # For backwards compatibility, start a session and return questions
+        # This won't have proper session tracking
+        result = quiz_service.start_quiz_session(
+            user_id="legacy_user",
+            course_id=course_id,
+            num_questions=10
+        )
         
-        if "error" in quiz_data:
-            raise HTTPException(status_code=404, detail=quiz_data["error"])
+        if not result.get("success"):
+            raise HTTPException(status_code=404, detail=result.get("error", "Quiz not found"))
         
-        return {"success": True, "data": quiz_data}
+        return {"success": True, "data": {"questions": result["questions"]}}
         
     except HTTPException:
         raise
@@ -33,8 +129,8 @@ async def get_quiz_questions(course_id: str, quiz_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/{course_id}/quiz/{quiz_id}/submit")
-async def submit_quiz(course_id: str, quiz_id: str, submission: QuizSubmission):
-    """Submit quiz - saves score and answers together"""
+async def submit_quiz_legacy(course_id: str, quiz_id: str, submission: QuizSubmission):
+    """Submit quiz (LEGACY - uses frontend-calculated score)"""
     try:
         from app.repositories.assessment_repository import AssessmentRepository
         from app.repositories.progress_repository import ProgressRepository
@@ -74,20 +170,34 @@ async def submit_quiz(course_id: str, quiz_id: str, submission: QuizSubmission):
     except HTTPException:
         raise
     except Exception as e:
-        print(f"Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/{course_id}/quiz/attempts")
-async def get_quiz_attempts(course_id: str, user_id: str, quiz_id: str = None):
-    """Get quiz attempts for a user"""
+# ========== CODING CHALLENGE ENDPOINTS ==========
+
+@router.post("/{course_id}/coding/start")
+async def start_coding_session(course_id: str, user_id: str, problem_id: str = "factorial"):
+    """
+    Start a new coding session - returns session info with timer
+    """
     try:
-        attempts = quiz_service.get_quiz_attempts(user_id, course_id, quiz_id)
-        return {"success": True, "data": attempts}
+        result = coding_service.start_coding_session(
+            user_id=user_id,
+            course_id=course_id,
+            problem_id=problem_id
+        )
+        return result
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# ========== CODING CHALLENGE ENDPOINTS ==========
+@router.get("/{course_id}/coding/session/{session_id}/status")
+async def get_coding_session_status(course_id: str, session_id: str):
+    """Check if a coding session is still valid and get time remaining"""
+    try:
+        result = coding_service.get_session_status(session_id)
+        return {"success": True, "data": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/{course_id}/coding/run")
 async def run_code(course_id: str, request: RunCodeRequest):
@@ -113,7 +223,8 @@ async def submit_code(course_id: str, request: SubmitCodeRequest):
             code=request.code,
             language=request.language,
             problem_id=request.problem_id,
-            anti_cheat_data=request.anti_cheat_data
+            anti_cheat_data=request.anti_cheat_data,
+            session_id=request.session_id
         )
         
         if not result.get('success'):
@@ -126,12 +237,29 @@ async def submit_code(course_id: str, request: SubmitCodeRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# IMPORTANT: This route must come BEFORE /{problem_id} to avoid conflicts
+@router.get("/{course_id}/coding/attempts")
+async def get_coding_attempts(course_id: str, user_id: str):
+    """Get coding attempts for a user (with AI reports)"""
+    try:
+        attempts = coding_service.get_submissions(user_id, course_id)
+        
+        # Serialize timestamps
+        serialized_attempts = serialize_for_json(attempts)
+        return {"success": True, "data": serialized_attempts}
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.get("/{course_id}/coding/submissions")
 async def get_coding_submissions(course_id: str, user_id: str):
     """Get coding submissions for a user"""
     try:
         submissions = coding_service.get_submissions(user_id, course_id)
-        return {"success": True, "data": submissions}
+        serialized_submissions = serialize_for_json(submissions)
+        return {"success": True, "data": serialized_submissions}
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

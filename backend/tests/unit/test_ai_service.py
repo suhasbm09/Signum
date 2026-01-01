@@ -72,6 +72,53 @@ class TestAIService:
             print("✅ AI error handling structure validated")
         except Exception as e:
             print(f"✅ Error handling works: {str(e)}")
+
+
+    @pytest.mark.unit
+    def test_scope_guard_blocks_out_of_platform_questions_even_with_context(self):
+        """BMW-style questions must never reach Gemini, even if user is on a course page."""
+        from app.services.ai.ai_service import AIService
+
+        svc = AIService()
+
+        # Simulate being inside a course page context
+        in_scope = svc.is_in_scope(
+            message="Explain BMW cars and their best models",
+            context="Data Structures - Arrays",
+            screen_content="",
+        )
+
+        assert in_scope is False
+
+
+    @pytest.mark.unit
+    def test_scope_guard_allows_page_summary_when_screen_present(self):
+        from app.services.ai.ai_service import AIService
+
+        svc = AIService()
+
+        in_scope = svc.is_in_scope(
+            message="what this page contain?",
+            context="General Learning",
+            screen_content=("Signum Learning Platform\n" + ("Course Modules\n" * 200)),
+        )
+
+        assert in_scope is True
+
+
+    @pytest.mark.unit
+    def test_scope_guard_allows_what_is_this_platform(self):
+        from app.services.ai.ai_service import AIService
+
+        svc = AIService()
+
+        in_scope = svc.is_in_scope(
+            message="what is this platform?",
+            context="General Learning",
+            screen_content="",
+        )
+
+        assert in_scope is True
     
     
 

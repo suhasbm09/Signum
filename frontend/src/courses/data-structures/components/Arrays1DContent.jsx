@@ -22,15 +22,15 @@ const Arrays1DContent = ({ onNavigate, courseId }) => {
 
   // Language selector component
   const LanguageSelector = ({ currentLang, setLang }) => (
-    <div className="flex gap-2 mb-3">
+    <div className="flex gap-2 mb-4">
       {['C', 'C++', 'Python', 'Java'].map((lang) => (
         <button
           key={lang}
           onClick={() => setLang(lang.toLowerCase().replace('++', 'pp'))}
-          className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+          className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
             currentLang === lang.toLowerCase().replace('++', 'pp')
-              ? 'bg-emerald-500 text-black'
-              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/30'
+              : 'bg-black/60 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/20 hover:border-emerald-500/50'
           }`}
         >
           {lang}
@@ -41,12 +41,12 @@ const Arrays1DContent = ({ onNavigate, courseId }) => {
 
   return (
     <CompletionTracker courseId={courseId} moduleId={moduleId} contentLength="x-long">
-      <div className=" text-white p-4 sm:p-6 lg:p-8">
-        <div className="w-full mx-auto space-y-8 sm:space-y-10 lg:space-y-12">
+      <div className="text-white p-4 sm:p-6 lg:p-8" style={{ contain: 'layout style' }}>
+        <div className="w-full mx-auto space-y-6 sm:space-y-8">
           
           {/* Header */}
-          <div className="text-center space-y-4 animate-slideInDown">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-emerald-400 to-green-600 bg-clip-text text-transparent">
+          <div className="text-center space-y-3">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-emerald-400">
               One-Dimensional Arrays
             </h1>
             <p className="text-lg sm:text-xl text-gray-300">
@@ -55,7 +55,7 @@ const Arrays1DContent = ({ onNavigate, courseId }) => {
           </div>
 
         {/* Introduction */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10 animate-slideInUp">
+        <section className="bg-black/80 rounded-xl p-6 sm:p-8 border border-emerald-500/20">
           <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-emerald-400">What is a 1D Array?</h2>
           
           <div className="space-y-6">
@@ -65,7 +65,7 @@ const Arrays1DContent = ({ onNavigate, courseId }) => {
             </p>
 
             {/* Visual Representation */}
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/30">
+            <div className="bg-black/80 rounded-xl p-6 border border-emerald-500/20">
               <h3 className="text-xl font-semibold mb-4 text-emerald-300">Visual Representation</h3>
               <div className="overflow-x-auto">
                 <div className="flex items-center justify-center gap-2 min-w-max py-4">
@@ -75,7 +75,7 @@ const Arrays1DContent = ({ onNavigate, courseId }) => {
                       {/* Index */}
                       <div className="text-sm text-gray-400 mb-2">Index {index}</div>
                       {/* Box */}
-                      <div className="w-20 h-20 border-2 border-emerald-500 rounded-lg flex items-center justify-center bg-emerald-500/10 hover:bg-emerald-500/20 transition-all hover:scale-105">
+                      <div className="w-20 h-20 border-2 border-emerald-500 rounded-lg flex items-center justify-center bg-emerald-500/10 hover:bg-emerald-500/20 transition-colors">
                         <span className="text-2xl font-bold text-emerald-300">{value}</span>
                       </div>
                       {/* Memory address (example) */}
@@ -97,11 +97,11 @@ const Arrays1DContent = ({ onNavigate, courseId }) => {
         </section>
 
         {/* Key Concepts */}
-        <section className="animate-slideInUp">
+        <section>
           <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-emerald-400">Key Concepts</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             
-            <div className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all hover-lift">
+            <div className="bg-black/80 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 shadow-lg shadow-emerald-500/10 transition-colors">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
                   <span className="text-2xl">📍</span>
@@ -109,12 +109,12 @@ const Arrays1DContent = ({ onNavigate, courseId }) => {
                 <h3 className="text-xl font-semibold text-emerald-300">Index</h3>
               </div>
               <p className="text-gray-300">
-                The position of an element in the array, starting from <code className="text-emerald-400 bg-gray-800 px-2 py-1 rounded">0</code>.
+                The position of an element in the array, starting from <code className="text-emerald-400 bg-black/80 px-2 py-1 rounded">0</code>.
                 For array of size n, valid indices are 0 to n-1.
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all hover-lift">
+            <div className="bg-black/80 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 shadow-lg shadow-emerald-500/10 transition-colors">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
                   <span className="text-2xl">📏</span>
@@ -126,7 +126,7 @@ const Arrays1DContent = ({ onNavigate, courseId }) => {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all hover-lift">
+            <div className="bg-black/80 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 shadow-lg shadow-emerald-500/10 transition-colors">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
                   <span className="text-2xl">🧱</span>
@@ -138,7 +138,7 @@ const Arrays1DContent = ({ onNavigate, courseId }) => {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all hover-lift">
+            <div className="bg-black/80 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 shadow-lg shadow-emerald-500/10 transition-colors">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
                   <span className="text-2xl">💾</span>
@@ -154,15 +154,15 @@ const Arrays1DContent = ({ onNavigate, courseId }) => {
         </section>
 
         {/* Interactive Visualizer */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
-          <h2 className="text-3xl font-bold mb-6 text-emerald-400">Interactive Array Visualizer</h2>
-          <div className="bg-gray-800/50 rounded-xl border border-emerald-500/30">
-            <Array1DVisualization />
+        <section className="bg-black/80 rounded-xl p-4 sm:p-6 border border-emerald-500/20">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-emerald-400">Interactive Array Visualizer</h2>
+          <div className="bg-black/60 rounded-lg border border-emerald-500/30 p-3 min-w-0">
+            <Array1DVisualization embedded={true} />
           </div>
         </section>
 
         {/* Declaration and Initialization */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+        <section className="bg-black/80 rounded-2xl p-8 border border-emerald-500/20 ">
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Declaration & Initialization</h2>
           
           <div className="space-y-6">
@@ -173,7 +173,7 @@ const Arrays1DContent = ({ onNavigate, courseId }) => {
             <LanguageSelector currentLang={declarationLang} setLang={setDeclarationLang} />
 
             {declarationLang === 'c' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
                 <CodeView code={`// Method 1: Declaration with size
 int arr[5];
 
@@ -192,7 +192,7 @@ int arr[5] = {0};`} language={declarationLang} />
             )}
 
             {declarationLang === 'cpp' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
                 <CodeView code={`// Method 1: C-style array
 int arr[5] = {10, 20, 30, 40, 50};
 
@@ -213,7 +213,7 @@ std::vector<int> arr(5, 10); // 5 elements, all 10`} language={declarationLang} 
             )}
 
             {declarationLang === 'python' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
                 <CodeView code={`# Method 1: List literal (most common)
 arr = [10, 20, 30, 40, 50]
 
@@ -233,7 +233,7 @@ arr.append(10)  # Add elements dynamically`} language={declarationLang} />
             )}
 
             {declarationLang === 'java' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
                 <CodeView code={`// Method 1: Declaration and initialization
 int[] arr = {10, 20, 30, 40, 50};
 
@@ -265,7 +265,7 @@ List<Integer> arr = Arrays.asList(10, 20, 30, 40, 50);`} language={declarationLa
           <h2 className="text-3xl font-bold text-emerald-400">Common Operations</h2>
 
           {/* Access Operation */}
-          <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+          <div className="bg-black/80 rounded-2xl p-8 border border-emerald-500/20 ">
             <h3 className="text-2xl font-semibold mb-4 text-emerald-300">1. Access Element</h3>
             <p className="text-gray-300 mb-6">
               Accessing an element by its index is the most basic and efficient operation with <span className="text-emerald-400 font-semibold">O(1)</span> time complexity.
@@ -274,7 +274,7 @@ List<Integer> arr = Arrays.asList(10, 20, 30, 40, 50);`} language={declarationLa
             <LanguageSelector currentLang={accessLang} setLang={setAccessLang} />
 
             {accessLang === 'c' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
                 <CodeView code={`#include <stdio.h>
 
 int main() {
@@ -295,7 +295,7 @@ int main() {
             )}
 
             {accessLang === 'cpp' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
                 <CodeView code={`#include <iostream>
 #include <vector>
 using namespace std;
@@ -318,7 +318,7 @@ int main() {
             )}
 
             {accessLang === 'python' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
                 <CodeView code={`arr = [10, 20, 30, 40, 50]
 
 # Access first element
@@ -336,7 +336,7 @@ print(f"Second last: {arr[-2]}")   # Output: 40`} language={accessLang} />
             )}
 
             {accessLang === 'java' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
                 <CodeView code={`public class ArrayAccess {
     public static void main(String[] args) {
         int[] arr = {10, 20, 30, 40, 50};
@@ -356,7 +356,7 @@ print(f"Second last: {arr[-2]}")   # Output: 40`} language={accessLang} />
           </div>
 
           {/* Insert Operation */}
-          <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+          <div className="bg-black/80 rounded-2xl p-8 border border-emerald-500/20 ">
             <h3 className="text-2xl font-semibold mb-4 text-emerald-300">2. Insert Element</h3>
             <p className="text-gray-300 mb-6">
               Inserting an element requires shifting all subsequent elements, resulting in <span className="text-emerald-400 font-semibold">O(n)</span> time complexity.
@@ -365,7 +365,7 @@ print(f"Second last: {arr[-2]}")   # Output: 40`} language={accessLang} />
             <LanguageSelector currentLang={insertLang} setLang={setInsertLang} />
 
             {insertLang === 'c' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
               <CodeView code={`#include <stdio.h>
 
       void insertElement(int arr[], int *n, int pos, int value) {
@@ -395,7 +395,7 @@ print(f"Second last: {arr[-2]}")   # Output: 40`} language={accessLang} />
             )}
 
             {insertLang === 'cpp' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
                 <CodeView code={`#include <iostream>
 #include <vector>
 using namespace std;
@@ -421,7 +421,7 @@ int main() {
             )}
 
             {insertLang === 'python' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
                 <CodeView code={`arr = [10, 20, 30, 40, 50]
 
 # Insert 25 at index 2
@@ -439,7 +439,7 @@ print(arr)  # [5, 10, 20, 25, 30, 40, 50, 60]`} language={insertLang} />
             )}
 
             {insertLang === 'java' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
                 <CodeView code={`import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -464,7 +464,7 @@ public class ArrayInsert {
           </div>
 
           {/* Delete Operation */}
-          <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+          <div className="bg-black/80 rounded-2xl p-8 border border-emerald-500/20 ">
             <h3 className="text-2xl font-semibold mb-4 text-emerald-300">3. Delete Element</h3>
             <p className="text-gray-300 mb-6">
               Deleting an element requires shifting elements to fill the gap, also <span className="text-emerald-400 font-semibold">O(n)</span> time complexity.
@@ -473,7 +473,7 @@ public class ArrayInsert {
             <LanguageSelector currentLang={deleteLang} setLang={setDeleteLang} />
 
             {deleteLang === 'c' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
               <CodeView code={`#include <stdio.h>
 
       void deleteElement(int arr[], int *n, int pos) {
@@ -502,7 +502,7 @@ public class ArrayInsert {
             )}
 
             {deleteLang === 'cpp' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
                 <CodeView code={`#include <iostream>
 #include <vector>
 using namespace std;
@@ -528,7 +528,7 @@ int main() {
             )}
 
             {deleteLang === 'python' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
                 <CodeView code={`arr = [10, 20, 30, 40, 50]
 
 # Delete by index
@@ -551,7 +551,7 @@ print(arr)  # [10, 40]`} language={deleteLang} />
             )}
 
             {deleteLang === 'java' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
                 <CodeView code={`import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -579,7 +579,7 @@ public class ArrayDelete {
           </div>
 
           {/* Search Operation */}
-          <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+          <div className="bg-black/80 rounded-2xl p-8 border border-emerald-500/20 ">
             <h3 className="text-2xl font-semibold mb-4 text-emerald-300">4. Search Element</h3>
             <p className="text-gray-300 mb-6">
               Linear search checks each element sequentially - <span className="text-emerald-400 font-semibold">O(n)</span>. Binary search on sorted arrays is <span className="text-emerald-400 font-semibold">O(log n)</span>.
@@ -588,7 +588,7 @@ public class ArrayDelete {
             <LanguageSelector currentLang={searchLang} setLang={setSearchLang} />
 
             {searchLang === 'c' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
               <CodeView code={`#include <stdio.h>
 
       // Linear Search
@@ -618,7 +618,7 @@ public class ArrayDelete {
             )}
 
             {searchLang === 'cpp' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
                 <CodeView code={`#include <iostream>
 #include <vector>
 #include <algorithm>
@@ -647,7 +647,7 @@ int main() {
             )}
 
             {searchLang === 'python' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
               <CodeView code={`arr = [10, 20, 30, 40, 50]
 
       # Using 'in' operator
@@ -676,7 +676,7 @@ int main() {
             )}
 
             {searchLang === 'java' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
               <CodeView code={`import java.util.ArrayList;
       import java.util.Arrays;
       import java.util.Collections;
@@ -709,7 +709,7 @@ int main() {
           </div>
 
           {/* Traversal Operation */}
-          <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+          <div className="bg-black/80 rounded-2xl p-8 border border-emerald-500/20 ">
             <h3 className="text-2xl font-semibold mb-4 text-emerald-300">5. Traverse Array</h3>
             <p className="text-gray-300 mb-6">
               Traversing means visiting each element once, typically with <span className="text-emerald-400 font-semibold">O(n)</span> time complexity.
@@ -718,7 +718,7 @@ int main() {
             <LanguageSelector currentLang={traversalLang} setLang={setTraversalLang} />
 
             {traversalLang === 'c' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
                 <CodeView code={`#include <stdio.h>
 
 int main() {
@@ -745,7 +745,7 @@ int main() {
             )}
 
             {traversalLang === 'cpp' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
               <CodeView code={`#include <iostream>
       #include <vector>
       using namespace std;
@@ -780,7 +780,7 @@ int main() {
             )}
 
             {traversalLang === 'python' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
               <CodeView code={`arr = [10, 20, 30, 40, 50]
 
       # Forward traversal
@@ -809,7 +809,7 @@ int main() {
             )}
 
             {traversalLang === 'java' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
               <CodeView code={`import java.util.ArrayList;
       import java.util.Arrays;
 
@@ -846,7 +846,7 @@ int main() {
         </section>
 
         {/* Time Complexity */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+        <section className="bg-black/80 rounded-2xl p-8 border border-emerald-500/20 ">
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Time Complexity Summary</h2>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
@@ -858,59 +858,59 @@ int main() {
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-gray-700 hover:bg-emerald-500/5 transition-colors">
+                <tr className="border-b border-emerald-500/10 hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">Access</td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                   <td className="p-4 text-gray-400">Direct access using index</td>
                 </tr>
-                <tr className="border-b border-gray-700 hover:bg-emerald-500/5 transition-colors">
+                <tr className="border-b border-emerald-500/10 hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">Search (Unsorted)</td>
                   <td className="p-4">
-                    <code className="text-yellow-400 bg-gray-800 px-3 py-1 rounded">O(n)</code>
+                    <code className="text-yellow-400 bg-black/80 px-3 py-1 rounded">O(n)</code>
                   </td>
                   <td className="p-4 text-gray-400">Linear search through all elements</td>
                 </tr>
-                <tr className="border-b border-gray-700 hover:bg-emerald-500/5 transition-colors">
+                <tr className="border-b border-emerald-500/10 hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">Search (Sorted)</td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(log n)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(log n)</code>
                   </td>
                   <td className="p-4 text-gray-400">Binary search on sorted array</td>
                 </tr>
-                <tr className="border-b border-gray-700 hover:bg-emerald-500/5 transition-colors">
+                <tr className="border-b border-emerald-500/10 hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">Insert (Beginning)</td>
                   <td className="p-4">
-                    <code className="text-yellow-400 bg-gray-800 px-3 py-1 rounded">O(n)</code>
+                    <code className="text-yellow-400 bg-black/80 px-3 py-1 rounded">O(n)</code>
                   </td>
                   <td className="p-4 text-gray-400">Shift all elements to right</td>
                 </tr>
-                <tr className="border-b border-gray-700 hover:bg-emerald-500/5 transition-colors">
+                <tr className="border-b border-emerald-500/10 hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">Insert (End)</td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                   <td className="p-4 text-gray-400">Direct append (if space available)</td>
                 </tr>
-                <tr className="border-b border-gray-700 hover:bg-emerald-500/5 transition-colors">
+                <tr className="border-b border-emerald-500/10 hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">Delete (Beginning)</td>
                   <td className="p-4">
-                    <code className="text-yellow-400 bg-gray-800 px-3 py-1 rounded">O(n)</code>
+                    <code className="text-yellow-400 bg-black/80 px-3 py-1 rounded">O(n)</code>
                   </td>
                   <td className="p-4 text-gray-400">Shift all elements to left</td>
                 </tr>
-                <tr className="border-b border-gray-700 hover:bg-emerald-500/5 transition-colors">
+                <tr className="border-b border-emerald-500/10 hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">Delete (End)</td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                   <td className="p-4 text-gray-400">Direct removal from end</td>
                 </tr>
                 <tr className="hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">Traverse</td>
                   <td className="p-4">
-                    <code className="text-yellow-400 bg-gray-800 px-3 py-1 rounded">O(n)</code>
+                    <code className="text-yellow-400 bg-black/80 px-3 py-1 rounded">O(n)</code>
                   </td>
                   <td className="p-4 text-gray-400">Visit all elements once</td>
                 </tr>
@@ -921,7 +921,7 @@ int main() {
 
         {/* Advantages and Disadvantages */}
         <section className="grid md:grid-cols-2 gap-6">
-          <div className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-2xl p-8 border border-emerald-500/30">
+          <div className="bg-black/80 rounded-2xl p-8 border border-emerald-500/30">
             <h3 className="text-2xl font-semibold mb-6 text-emerald-300 flex items-center gap-3">
               <CheckCircle2 className="w-8 h-8" />
               Advantages
@@ -946,7 +946,7 @@ int main() {
             </ul>
           </div>
 
-          <div className="bg-gradient-to-br from-red-900/30 to-gray-800/30 rounded-2xl p-8 border border-red-500/30">
+          <div className="bg-black/70 rounded-2xl p-8 border border-red-500/40">
             <h3 className="text-2xl font-semibold mb-6 text-red-300 flex items-center gap-3">
               <AlertCircle className="w-8 h-8" />
               Disadvantages
@@ -973,13 +973,13 @@ int main() {
         </section>
 
         {/* Practice Problems */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+        <section className="bg-black/80 rounded-2xl p-8 border border-emerald-500/20 ">
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Practice Problems</h2>
           
           <div className="space-y-6">
             
             {/* Problem 1 */}
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-colors">
               <div className="flex items-start justify-between mb-3">
                 <h3 className="text-xl font-semibold text-emerald-300">1. Two Sum</h3>
                 <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-sm">Easy</span>
@@ -1004,7 +1004,7 @@ int main() {
             </div>
 
             {/* Problem 2 */}
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-colors">
               <div className="flex items-start justify-between mb-3">
                 <h3 className="text-xl font-semibold text-emerald-300">2. Maximum Subarray Sum</h3>
                 <span className="px-3 py-1 bg-yellow-500/20 text-yellow-300 rounded-full text-sm">Medium</span>
@@ -1029,7 +1029,7 @@ int main() {
             </div>
 
             {/* Problem 3 */}
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-colors">
               <div className="flex items-start justify-between mb-3">
                 <h3 className="text-xl font-semibold text-emerald-300">3. Rotate Array</h3>
                 <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-sm">Easy</span>
@@ -1053,7 +1053,7 @@ int main() {
             </div>
 
             {/* Problem 4 */}
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-colors">
               <div className="flex items-start justify-between mb-3">
                 <h3 className="text-xl font-semibold text-emerald-300">4. Find Duplicate Number</h3>
                 <span className="px-3 py-1 bg-yellow-500/20 text-yellow-300 rounded-full text-sm">Medium</span>
@@ -1077,7 +1077,7 @@ int main() {
             </div>
 
             {/* Problem 5 */}
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-colors">
               <div className="flex items-start justify-between mb-3">
                 <h3 className="text-xl font-semibold text-emerald-300">5. Merge Sorted Arrays</h3>
                 <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-sm">Easy</span>
@@ -1105,11 +1105,11 @@ int main() {
         </section>
 
         {/* Use Cases */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+        <section className="bg-black/80 rounded-2xl p-8 border border-emerald-500/20 ">
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Real-World Use Cases</h2>
           
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">📊</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">Data Storage</h3>
               <p className="text-gray-300">
@@ -1117,7 +1117,7 @@ int main() {
               </p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">🎮</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">Game Development</h3>
               <p className="text-gray-300">
@@ -1125,7 +1125,7 @@ int main() {
               </p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">🖼️</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">Image Processing</h3>
               <p className="text-gray-300">
@@ -1133,7 +1133,7 @@ int main() {
               </p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">📱</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">Mobile Apps</h3>
               <p className="text-gray-300">

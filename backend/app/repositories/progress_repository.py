@@ -17,7 +17,7 @@ class ProgressRepository(BaseRepository):
     def sync_progress(self, user_id: str, course_id: str, 
                      modules_completed: List[str], 
                      completion_percentage: float) -> Dict[str, Any]:
-        """Sync course progress"""
+        """Sync course progress - MERGE to preserve quiz/coding data"""
         doc_id = f"{user_id}_{course_id}"
         data = {
             'user_id': user_id,
@@ -26,7 +26,8 @@ class ProgressRepository(BaseRepository):
             'completion_percentage': completion_percentage,
             'last_updated': datetime.now()
         }
-        return self.set(doc_id, data)
+        # Use merge=True to preserve quiz and coding data!
+        return self.set(doc_id, data, merge=True)
     
     def update_quiz_progress(self, user_id: str, course_id: str, 
                             score: float, passed: bool) -> Dict[str, Any]:

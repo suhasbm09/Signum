@@ -9,6 +9,7 @@ import os
 import requests
 from datetime import datetime
 from dotenv import load_dotenv
+from app.core.logging import metadata_logger
 from app.services.certificate_template import CertificateTemplate
 
 load_dotenv()
@@ -31,7 +32,7 @@ class MetadataService:
         self.use_ipfs = bool(self.pinata_jwt or (self.pinata_api_key and self.pinata_secret))
         
         if not self.use_ipfs:
-            print("⚠️  Pinata not configured - using data URIs. Add PINATA_JWT to .env for IPFS upload")
+            metadata_logger.warning("Pinata not configured - using data URIs. Add PINATA_JWT to .env for IPFS upload")
 
     
     def generate_metadata(
@@ -42,7 +43,8 @@ class MetadataService:
         completion_percentage: int,
         final_score: int,
         wallet_address: str,
-        user_name: str = "Student"
+        user_name: str = "Student",
+        mint_address: str = None
     ) -> Dict[str, Any]:
         """
         Generate NFT metadata JSON with course-specific certificate image
@@ -54,6 +56,8 @@ class MetadataService:
             completion_percentage: Course completion (0-100)
             final_score: Calculated final score
             wallet_address: User's Solana wallet
+            user_name: Student display name
+            mint_address: NFT mint address for QR code (optional)
             
         Returns:
             Dictionary with metadata and URI
@@ -62,13 +66,14 @@ class MetadataService:
             # Current timestamp
             timestamp = datetime.now().isoformat() + 'Z'
             
-            # Generate course-specific certificate image
+            # Generate course-specific certificate image with QR code (if mint_address provided)
             certificate_image = self.template_generator.generate_certificate(
                 course_id=course_id,
                 wallet_address=wallet_address,
                 final_score=final_score,
                 timestamp=timestamp,
-                user_name=user_name
+                user_name=user_name,
+                mint_address=mint_address  # Pass for QR code generation
             )
             
             # Upload certificate image to IPFS (or use data URI)
@@ -230,7 +235,7 @@ class MetadataService:
             else:
                 return self._create_data_uri(json.dumps(metadata))
         except Exception as e:
-            print(f"Error uploading metadata: {e}")
+            metadata_logger.error(f"Error uploading metadata: {e}")
             return self._create_data_uri(json.dumps(metadata))
     
     def _upload_image_sync(self, image_data: bytes, filename: str) -> str:
@@ -265,14 +270,14 @@ class MetadataService:
                 # Get gateway URL from environment or use default
                 gateway = os.getenv('PINATA_GATEWAY', 'gateway.pinata.cloud')
                 # Return HTTPS gateway URL instead of ipfs:// for browser compatibility
-                print(f"✅ Image uploaded to IPFS: {ipfs_hash}")
+                metadata_logger.info(f"Image uploaded to IPFS: {ipfs_hash}")
                 return f"https://{gateway}/ipfs/{ipfs_hash}"
             else:
-                print(f"❌ Pinata image upload failed: {response.text}")
+                metadata_logger.error(f"Pinata image upload failed: {response.text}")
                 b64_image = base64.b64encode(image_data).decode()
                 return f"data:image/png;base64,{b64_image}"
         except Exception as e:
-            print(f"❌ Error uploading image: {e}")
+            metadata_logger.error(f"Error uploading image: {e}")
             b64_image = base64.b64encode(image_data).decode()
             return f"data:image/png;base64,{b64_image}"
     
@@ -327,15 +332,15 @@ class MetadataService:
                 result = response.json()
                 ipfs_hash = result.get('IpfsHash')
                 ipfs_uri = f"ipfs://{ipfs_hash}"
-                print(f"✅ Metadata uploaded to IPFS: {ipfs_uri}")
+                metadata_logger.info(f"Metadata uploaded to IPFS: {ipfs_uri}")
                 return ipfs_uri
             else:
-                print(f"❌ Pinata upload failed: {response.text}")
+                metadata_logger.error(f"Pinata upload failed: {response.text}")
                 # Fallback to data URI
                 return self._create_data_uri(json.dumps(metadata))
                 
         except Exception as e:
-            print(f"❌ Error uploading to IPFS: {str(e)}")
+            metadata_logger.error(f"Error uploading to IPFS: {str(e)}")
             # Fallback to data URI
             return self._create_data_uri(json.dumps(metadata))
     
@@ -390,10 +395,10 @@ class MetadataService:
                 result = response.json()
                 ipfs_hash = result.get('IpfsHash')
                 ipfs_uri = f"ipfs://{ipfs_hash}"
-                print(f"✅ Image uploaded to IPFS: {ipfs_uri}")
+                metadata_logger.info(f"Image uploaded to IPFS: {ipfs_uri}")
                 return ipfs_uri
             else:
-                print(f"❌ Pinata image upload failed: {response.text}")
+                metadata_logger.error(f"Pinata image upload failed: {response.text}")
                 b64_image = base64.b64encode(image_data).decode()
                 return f"data:image/png;base64,{b64_image}"
                 

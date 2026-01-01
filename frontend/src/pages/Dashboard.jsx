@@ -59,13 +59,13 @@ function Dashboard({ user, onLogout, onNavigate, onCourseStart, onCourseEnroll, 
 
   return (
     <Layout user={user} onLogout={onLogout} currentPage="dashboard" onNavigate={onNavigate}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
         {/* Welcome Header with animation */}
         <div className="mb-4 animate-slideInDown space-y-2">
-          <h2 className="text-3xl font-bold text-gray-100 mb-0">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-100 mb-0">
             Welcome back, {user?.displayName?.split(' ')[0] || 'Learner'}! 🚀
           </h2>
-          <p className="text-gray-400 text-base sm:text-lg">
+          <p className="text-gray-300 text-base sm:text-lg">
             Ready to continue your AI-powered learning journey?
           </p>
         </div>

@@ -49,7 +49,6 @@ export function AIProvider({ children }) {
         context || currentContext
       );
 
-      console.log('AI Response:', result); // Debug log
 
       if (result.success) {
         // Add assistant response to history

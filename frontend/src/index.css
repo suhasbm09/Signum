@@ -39,22 +39,42 @@
 
 body {
   background: #000000;
-  color: #ffffff;
+  color: #f3f4f6; /* Improved contrast from #ffffff */
 }
 
-/* Custom focus styles with green accent */
+/* Improved text contrast ratios for WCAG AA compliance */
+.text-gray-300 {
+  color: #d1d5db; /* Better contrast */
+}
+
+.text-gray-400 {
+  color: #e5e7eb; /* Improved from darker gray */
+}
+
+.text-gray-500 {
+  color: #9ca3af; /* Minimum contrast for non-essential text */
+}
+
+/* Custom focus styles with green accent - Enhanced visibility */
 .focus-green:focus {
   outline: none;
   border-color: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
 }
 
-/* Enhanced input focus styles */
+/* Enhanced input focus styles for better accessibility */
 input:focus, textarea:focus, select:focus {
   outline: none;
-  border-color: #065f46 !important;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2) !important;
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3) !important;
   background-color: rgba(16, 185, 129, 0.05) !important;
+}
+
+/* AI Chat: remove global green focus box for the chat input */
+.ai-chat-input:focus {
+  border-color: transparent !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
 }
 
 /* Dropdown styling */

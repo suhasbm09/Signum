@@ -50,7 +50,6 @@ export const ProgressProvider = ({ children }) => {
       return uid || email;
     }
     
-    console.warn('⚠️ No currentUser found yet. User may still be loading...');
     return null; // Return null if user not ready yet
   };
   
@@ -68,7 +67,6 @@ export const ProgressProvider = ({ children }) => {
   // Load progress from Firebase (NO localStorage fallback for sensitive data)
   const loadProgressFromFirebase = useCallback(async (courseId) => {
     if (!isUserReady) {
-      console.warn('⚠️ User not ready yet, skipping progress load');
       return { modules: [], quizScore: null, completionPercentage: 0 };
     }
     
@@ -111,7 +109,6 @@ export const ProgressProvider = ({ children }) => {
   // Save progress to Firebase ONLY (removed localStorage)
   const syncToFirebase = useCallback(async (courseId, progress) => {
     if (!isUserReady) {
-      console.warn('⚠️ User not ready yet, skipping progress sync');
       return;
     }
     
@@ -126,7 +123,6 @@ export const ProgressProvider = ({ children }) => {
         progress.completionPercentage
       );
       
-      console.log('✅ Progress synced to Firebase successfully');
     } catch (error) {
       console.error('❌ Failed to sync progress to Firebase:', error);
       // NO localStorage fallback - data must be in Firebase
@@ -162,7 +158,6 @@ export const ProgressProvider = ({ children }) => {
         }));
         // Sync to Firebase (NO localStorage)
         await syncToFirebase(courseId, currentProgress);
-        console.log(`\u2705 Module ${moduleId} marked complete for ${courseId}`);
       }
     } catch (error) {
       // Use toast if available, otherwise console error
@@ -248,7 +243,6 @@ export const ProgressProvider = ({ children }) => {
   // Save quiz score
   const saveQuizScore = useCallback(async (courseId, score, answersData = []) => {
     if (!isUserReady) {
-      console.warn('User not ready');
       return;
     }
     
@@ -312,7 +306,8 @@ export const ProgressProvider = ({ children }) => {
     saveQuizScore,
     initializeCourseProgress,
     isCertificationModule,
-    loadProgressFromFirebase
+    loadProgressFromFirebase,
+    refreshProgress: loadProgressFromFirebase  // Alias for QuizContent compatibility
   };
   
   return (

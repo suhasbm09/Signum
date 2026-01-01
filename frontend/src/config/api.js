@@ -26,12 +26,19 @@ export const API_ENDPOINTS = {
   
   // Assessment endpoints
   ASSESSMENT: {
-    // Quiz
-    QUIZ: (courseId, quizId) => `/assessment/${courseId}/quiz/${quizId}`,
-    QUIZ_SUBMIT: (courseId, quizId) => `/assessment/${courseId}/quiz/${quizId}/submit`,
+    // Quiz (NEW - Server-side scoring)
+    QUIZ_START: (courseId) => `/assessment/${courseId}/quiz/start`,
+    QUIZ_SUBMIT: (courseId) => `/assessment/${courseId}/quiz/submit`,
+    QUIZ_SESSION_STATUS: (courseId, sessionId) => `/assessment/${courseId}/quiz/session/${sessionId}/status`,
     QUIZ_ATTEMPTS: (courseId) => `/assessment/${courseId}/quiz/attempts`,
     
+    // Quiz (LEGACY)
+    QUIZ: (courseId, quizId) => `/assessment/${courseId}/quiz/${quizId}`,
+    QUIZ_SUBMIT_LEGACY: (courseId, quizId) => `/assessment/${courseId}/quiz/${quizId}/submit`,
+    
     // Coding
+    CODING_START: (courseId) => `/assessment/${courseId}/coding/start`,
+    CODING_SESSION_STATUS: (courseId, sessionId) => `/assessment/${courseId}/coding/session/${sessionId}/status`,
     CODING_RUN: (courseId) => `/assessment/${courseId}/coding/run`,
     CODING_SUBMIT: (courseId) => `/assessment/${courseId}/coding/submit`,
     CODING_SUBMISSIONS: (courseId) => `/assessment/${courseId}/coding/submissions`,

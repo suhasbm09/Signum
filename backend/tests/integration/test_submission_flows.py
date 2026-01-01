@@ -11,7 +11,7 @@ class TestSubmissionFlows:
     
     @pytest.mark.integration
     def test_complete_quiz_submission_flow(self):
-        """Test complete quiz submission: get questions → submit → verify score → update progress"""
+        """Test complete quiz submission: start session → submit → verify score → update progress"""
         from app.domains.assessment.quiz_service import QuizService
         
         with patch('app.domains.assessment.quiz_service.AssessmentRepository') as mock_assessment, \
@@ -24,23 +24,26 @@ class TestSubmissionFlows:
             mock_progress_instance.update_quiz_progress.return_value = {"success": True}
             
             quiz_service = QuizService()
-            
-            # Step 1: Get quiz questions
-            questions = quiz_service.get_quiz_questions(
-                course_id="data-structures",
-                quiz_id="quiz-1"
-            )
-            
-            assert 'questions' in questions
-            assert len(questions['questions']) == 5
-            
-            # Step 2: Submit answers
-            result = quiz_service.submit_quiz(
+
+            # Step 1: Start quiz session (NEW)
+            start = quiz_service.start_quiz_session(
                 user_id="student_123",
                 course_id="data-structures",
-                quiz_id="quiz-1",
-                answers=["a", "b", "c", "d", "c"],  # All correct
-                time_taken=300
+                num_questions=5
+            )
+            assert start["success"] is True
+            assert 'questions' in start
+            assert len(start['questions']) == 5
+            session_id = start["session_id"]
+
+            # Step 2: Submit answers (perfect)
+            session_questions = quiz_service.active_sessions[session_id]["questions"]
+            answers = {q["id"]: q["correct"] for q in session_questions}
+
+            result = quiz_service.submit_quiz(
+                user_id="student_123",
+                session_id=session_id,
+                answers=answers
             )
             
             # Step 3: Verify result

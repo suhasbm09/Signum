@@ -86,7 +86,84 @@ class ProgressService {
   }
 
   /**
-   * Save quiz result
+   * Start a new quiz session (SERVER-SIDE) - returns questions WITHOUT answers
+   */
+  async startQuizSession(userId, courseId, numQuestions = 10) {
+    try {
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.ASSESSMENT.QUIZ_START(courseId)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userId,
+          num_questions: numQuestions
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to start quiz session');
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Error starting quiz session:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Submit quiz for SERVER-SIDE scoring
+   */
+  async submitQuizServerSide(userId, courseId, sessionId, answers, antiCheatData = null) {
+    try {
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.ASSESSMENT.QUIZ_SUBMIT(courseId)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userId,
+          session_id: sessionId,
+          answers: answers,  // {question_id: selected_option_index}
+          anti_cheat_data: antiCheatData
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Failed to submit quiz');
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Error submitting quiz:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Check quiz session status (time remaining)
+   */
+  async getQuizSessionStatus(courseId, sessionId) {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}${API_ENDPOINTS.ASSESSMENT.QUIZ_SESSION_STATUS(courseId, sessionId)}`,
+        { method: 'GET' }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to get session status');
+      }
+
+      const data = await response.json();
+      return data.data;
+    } catch (error) {
+      console.error('Error getting session status:', error);
+      return { valid: false, error: error.message };
+    }
+  }
+
+  /**
+   * Save quiz result (LEGACY - frontend calculated)
    */
   async saveQuizResult(userId, courseId, score, answersData) {
     try {
@@ -109,12 +186,55 @@ class ProgressService {
       }
 
       const result = await response.json();
-      console.log('✅ Quiz saved:', result);
       
       return { success: true, score };
     } catch (error) {
       console.error('Error saving quiz:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Start a new coding session (SERVER-SIDE) - returns session info with timer
+   */
+  async startCodingSession(userId, courseId, problemId = 'factorial') {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}${API_ENDPOINTS.ASSESSMENT.CODING_START(courseId)}?user_id=${userId}&problem_id=${problemId}`,
+        { method: 'POST' }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to start coding session');
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Error starting coding session:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Check coding session status (time remaining)
+   */
+  async getCodingSessionStatus(courseId, sessionId) {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}${API_ENDPOINTS.ASSESSMENT.CODING_SESSION_STATUS(courseId, sessionId)}`,
+        { method: 'GET' }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to get session status');
+      }
+
+      const data = await response.json();
+      return data.data;
+    } catch (error) {
+      console.error('Error getting coding session status:', error);
+      return { valid: false, error: error.message };
     }
   }
 
@@ -225,14 +345,12 @@ class ProgressService {
    */
   async getBlockStatus(userId, courseId, assessmentType) {
     try {
-      console.log('📡 Fetching block status:', { userId, courseId, assessmentType });
       
       const url = buildUrl(`${API_ENDPOINTS.ASSESSMENT.ANTI_CHEAT_STATUS(courseId)}`, {
         user_id: userId,
         assessment_type: assessmentType
       });
       
-      console.log('📡 Request URL:', url);
       
       const response = await fetch(url, { method: 'GET' });
 
@@ -247,7 +365,6 @@ class ProgressService {
       }
 
       const data = await response.json();
-      console.log('✅ Block status received:', data);
       
       return data.data || {
         is_blocked: false,
@@ -303,7 +420,6 @@ class ProgressService {
 
   async blockQuizAccess(userId, courseId, blockDurationMinutes, violationCount) {
     // This is now handled automatically by the backend when violations are reported
-    console.warn('blockQuizAccess is deprecated - blocking is automatic based on violations');
     return { success: true };
   }
 }

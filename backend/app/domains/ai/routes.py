@@ -66,12 +66,19 @@ async def check_and_increment_ai_usage() -> bool:
             
     except Exception as e:
         # On error, allow request (fail open)
-        print(f"AI usage check error: {e}")
         return True
 
 @router.post("/chat")
 async def chat(request: ChatRequest):
     """AI chatbot endpoint - context-aware Q&A with rate limiting"""
+
+    # Scope guard first: if out-of-scope, return a fixed response without consuming quota/usage.
+    if not ai_service.is_in_scope(
+        message=request.message,
+        context=request.context or "",
+        screen_content=request.screen_content or "",
+    ):
+        return ai_service.out_of_scope_response()
     
     # Check daily limit
     can_proceed = await check_and_increment_ai_usage()

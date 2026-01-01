@@ -4,6 +4,13 @@ import { ProgressProvider, setGlobalToast } from './contexts/ProgressContext';
 import { AIProvider } from './contexts/AIContext';
 import { useToast } from './components/Toast';
 import { API_BASE_URL } from './config/api';
+import SEO from './components/SEO';
+import initWebVitals from './utils/webVitals';
+
+// Initialize Web Vitals tracking
+if (typeof window !== 'undefined') {
+  initWebVitals();
+}
 
 // Lazy load Firebase to reduce initial bundle
 const getFirebaseAuth = async () => {
@@ -40,7 +47,7 @@ function App() {
   const [selectedCourse, setSelectedCourse] = useState(initialState.course);
   const [selectedTopic, setSelectedTopic] = useState(initialState.topic);
   const [enrollments, setEnrollments] = useState([]);
-  const [enrolling, setEnrolling] = useState(false);
+  const [, setEnrolling] = useState(false);
   const historyInitializedRef = useRef(false);
   
   // Save navigation state to sessionStorage whenever it changes
@@ -94,7 +101,7 @@ function App() {
               window.currentUser = null;
             }
           }
-        } catch (error) {
+        } catch (_error) {
           localStorage.removeItem('sessionToken');
           setUser(null);
           setEnrollments([]);
@@ -113,8 +120,8 @@ function App() {
       }
         setLoading(false);
       });
-    }).catch(error => {
-      console.error('Firebase auth initialization failed:', error);
+    }).catch(_error => {
+      console.error('Firebase auth initialization failed:', _error);
       setLoading(false);
     });
 
@@ -319,6 +326,7 @@ function App() {
   return (
     <AIProvider>
       <ProgressProvider>
+        <SEO />
         <Suspense fallback={
           <div className="min-h-screen bg-black flex items-center justify-center">
             <div className="text-center">

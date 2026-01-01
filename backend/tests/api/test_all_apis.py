@@ -64,8 +64,9 @@ class TestAssessmentAPI:
     @pytest.mark.api
     def test_get_quiz_questions(self):
         """Test GET /assessment/{course_id}/quiz/{quiz_id}"""
-        with patch('app.domains.assessment.quiz_service.QuizService.get_quiz_questions') as mock_get:
-            mock_get.return_value = {"quiz_id": "module1-quiz", "questions": []}
+        # Legacy route internally calls routes.quiz_service.start_quiz_session
+        with patch('app.domains.assessment.routes.quiz_service.start_quiz_session') as mock_start:
+            mock_start.return_value = {"success": True, "questions": []}
             
             response = client.get("/assessment/data-structures/quiz/module1-quiz")
             

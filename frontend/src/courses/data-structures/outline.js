@@ -31,8 +31,8 @@ export const dataStructuresOutline = [
     id: 'trees',
     title: 'Trees',
     children: [
-      { id: 'trees-intro', title: 'Introduction' },
-      { id: 'trees-tbd', title: 'More coming soon' },
+      { id: 'trees-intro', title: 'Binary Search Trees' },
+      { id: 'trees-tbd', title: 'Advanced Trees (Coming Soon)' },
     ],
   },
   {

@@ -3,9 +3,11 @@ uvicorn[standard]
 python-dotenv
 firebase-admin
 pydantic
-google-generativeai
+google-genai
 langchain
 langchain-google-genai
 chromadb
+fastembed
 requests
 pillow
+qrcode[pil]

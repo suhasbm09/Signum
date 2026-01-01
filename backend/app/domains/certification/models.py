@@ -5,6 +5,7 @@ class MintRequest(BaseModel):
     user_id: str
     wallet_address: str
     user_name: str = "Student"
+    mint_address: str = None  # Optional: NFT mint address for QR code
 
 class NFTCertificate(BaseModel):
     user_id: str

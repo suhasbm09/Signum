@@ -70,6 +70,10 @@ build/
 .dmypy.json
 dmypy.json
 
+# RAG / Vector DB (generated locally)
+backend/app/services/ai/rag_storage/
+backend/app/services/ai/rag_storage/**
+
 # ========================================
 # NODE.JS / FRONTEND
 # ========================================
@@ -235,6 +239,37 @@ coverage/
 .coverage
 htmlcov/
 
+# Test Scripts & Outputs
+test_certificate.py
+test_certificate_output.png
+backend/test_certificate.py
+backend/test_certificate_output.png
+**/test_certificate*.py
+**/test_certificate*.png
+
+# ========================================
+# TEMPORARY FILES & SCRIPTS
+# ========================================
+
+# Cleanup scripts (development only)
+cleanup_console.sh
+**/cleanup_console.sh
+
+# Zone Identifier (Windows/WSL artifacts)
+*:Zone.Identifier
+**/*:Zone.Identifier
+
+# Temporary certificate templates (keep only production ones)
+**/yy.jpeg
+**/zz.png
+backend/app/templates/certificates/**/yy.*
+backend/app/templates/certificates/**/zz.*
+
+# Font files copied during build (source in frontend/assets)
+backend/app/services/*.ttf
+backend/app/services/*.otf
+backend/app/services/Quantico-*.ttf
+
 # ========================================
 # DOCUMENTATION (DRAFTS/OLD)
 # ========================================
@@ -244,6 +279,7 @@ htmlcov/
 *BACKUP*.md
 notes.md
 TODO_PRIVATE.md
+RAG_IMPLEMNTATION.md
 
 # ========================================
 # MISC
@@ -255,4 +291,6 @@ paper.md
 
 # Backup files
 *.backup
+
+SIGNUM_PAPER.pdf
 

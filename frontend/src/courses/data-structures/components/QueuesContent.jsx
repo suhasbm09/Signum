@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle2, AlertCircle } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Clock, TrendingUp } from 'lucide-react';
 import QueueVisualization from '../visualizations/QueueVisualization';
 import CompletionTracker from '../../../components/CompletionTracker';
+import CodeView from '../../../components/CodeView';
 
 const QueuesContent = ({ onNavigate, courseId }) => {
   const moduleId = 'queues';
@@ -18,15 +19,15 @@ const QueuesContent = ({ onNavigate, courseId }) => {
 
   // Language selector component
   const LanguageSelector = ({ currentLang, setLang }) => (
-    <div className="flex gap-2 mb-3">
+    <div className="flex gap-2 mb-4">
       {['C', 'C++', 'Python', 'Java'].map((lang) => (
         <button
           key={lang}
           onClick={() => setLang(lang.toLowerCase().replace('++', 'pp'))}
-          className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+          className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
             currentLang === lang.toLowerCase().replace('++', 'pp')
-              ? 'bg-emerald-500 text-black'
-              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/30'
+              : 'bg-black/60 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/20 hover:border-emerald-500/50'
           }`}
         >
           {lang}
@@ -37,12 +38,12 @@ const QueuesContent = ({ onNavigate, courseId }) => {
 
   return (
     <CompletionTracker courseId={courseId} moduleId={moduleId} contentLength="x-long">
-      <div className="min-h-screen  text-white p-4 sm:p-6 lg:p-8">
-        <div className="w-full mx-auto space-y-8 sm:space-y-10 lg:space-y-12">
+      <div className="min-h-screen text-white p-4 sm:p-6 lg:p-8" style={{contain: 'layout style'}}>
+        <div className="w-full mx-auto space-y-6 sm:space-y-8">
           
           {/* Header */}
-          <div className="text-center space-y-4 animate-slideInDown">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-emerald-400 to-green-600 bg-clip-text text-transparent">
+          <div className="text-center space-y-4">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-emerald-400">
               Queues - FIFO Data Structure
             </h1>
             <p className="text-lg sm:text-xl text-gray-300">
@@ -51,7 +52,7 @@ const QueuesContent = ({ onNavigate, courseId }) => {
           </div>
 
         {/* Introduction */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10 animate-slideInUp">
+        <section className="bg-black/80 rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-emerald-500/20 shadow-md shadow-emerald-500/5">
           <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-emerald-400">What is a Queue?</h2>
           
           <div className="space-y-6">
@@ -61,7 +62,7 @@ const QueuesContent = ({ onNavigate, courseId }) => {
             </p>
 
             {/* Visual Representation */}
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/30">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/30">
               <h3 className="text-xl font-semibold mb-4 text-emerald-300">Visual Representation</h3>
               <div className="flex flex-col items-center gap-6">
                 {/* Queue visualization */}
@@ -103,11 +104,11 @@ const QueuesContent = ({ onNavigate, courseId }) => {
         </section>
 
         {/* Key Concepts */}
-        <section className="animate-slideInUp">
+        <section>
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Core Operations</h2>
           <div className="grid md:grid-cols-2 gap-6">
             
-            <div className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all hover-lift">
+            <div className="bg-black/80 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all hover-lift">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
                   <span className="text-2xl">📥</span>
@@ -115,10 +116,10 @@ const QueuesContent = ({ onNavigate, courseId }) => {
                 <h3 className="text-xl font-semibold text-emerald-300">Enqueue</h3>
               </div>
               <p className="text-gray-300 mb-2">Add element to the rear of queue</p>
-              <code className="text-emerald-400 bg-gray-800 px-2 py-1 rounded text-sm">Time: O(1)</code>
+              <code className="text-emerald-400 bg-black/80 px-2 py-1 rounded text-sm">Time: O(1)</code>
             </div>
 
-            <div className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all hover-lift">
+            <div className="bg-black/80 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all hover-lift">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
                   <span className="text-2xl">📤</span>
@@ -126,10 +127,10 @@ const QueuesContent = ({ onNavigate, courseId }) => {
                 <h3 className="text-xl font-semibold text-emerald-300">Dequeue</h3>
               </div>
               <p className="text-gray-300 mb-2">Remove and return front element</p>
-              <code className="text-emerald-400 bg-gray-800 px-2 py-1 rounded text-sm">Time: O(1)</code>
+              <code className="text-emerald-400 bg-black/80 px-2 py-1 rounded text-sm">Time: O(1)</code>
             </div>
 
-            <div className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all hover-lift">
+            <div className="bg-black/80 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all hover-lift">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
                   <span className="text-2xl">👁️</span>
@@ -137,10 +138,10 @@ const QueuesContent = ({ onNavigate, courseId }) => {
                 <h3 className="text-xl font-semibold text-emerald-300">Front / Peek</h3>
               </div>
               <p className="text-gray-300 mb-2">View front element without removing</p>
-              <code className="text-emerald-400 bg-gray-800 px-2 py-1 rounded text-sm">Time: O(1)</code>
+              <code className="text-emerald-400 bg-black/80 px-2 py-1 rounded text-sm">Time: O(1)</code>
             </div>
 
-            <div className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all hover-lift">
+            <div className="bg-black/80 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all hover-lift">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
                   <span className="text-2xl">❓</span>
@@ -148,18 +149,18 @@ const QueuesContent = ({ onNavigate, courseId }) => {
                 <h3 className="text-xl font-semibold text-emerald-300">isEmpty</h3>
               </div>
               <p className="text-gray-300 mb-2">Check if queue is empty</p>
-              <code className="text-emerald-400 bg-gray-800 px-2 py-1 rounded text-sm">Time: O(1)</code>
+              <code className="text-emerald-400 bg-black/80 px-2 py-1 rounded text-sm">Time: O(1)</code>
             </div>
 
           </div>
         </section>
 
         {/* Types of Queues */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+        <section className="bg-black/80 rounded-xl p-4 sm:p-6 border border-emerald-500/20 shadow-md shadow-emerald-500/5">
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Types of Queues</h2>
           
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">📝</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">Simple Queue</h3>
               <p className="text-gray-300">
@@ -167,7 +168,7 @@ const QueuesContent = ({ onNavigate, courseId }) => {
               </p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">🔄</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">Circular Queue</h3>
               <p className="text-gray-300">
@@ -175,7 +176,7 @@ const QueuesContent = ({ onNavigate, courseId }) => {
               </p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">⭐</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">Priority Queue</h3>
               <p className="text-gray-300">
@@ -183,7 +184,7 @@ const QueuesContent = ({ onNavigate, courseId }) => {
               </p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">⏭️</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">Deque (Double-Ended)</h3>
               <p className="text-gray-300">
@@ -194,12 +195,15 @@ const QueuesContent = ({ onNavigate, courseId }) => {
         </section>
 
         {/* Interactive Visualizer */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl border border-emerald-500/20 shadow-xl shadow-emerald-500/10 overflow-hidden">
-          <QueueVisualization />
+        <section className="bg-black/80 rounded-xl p-4 sm:p-6 border border-emerald-500/20">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-emerald-400">Interactive Queue Visualizer</h2>
+          <div className="bg-black/60 rounded-lg border border-emerald-500/30 p-3 min-w-0">
+            <QueueVisualization embedded={true} />
+          </div>
         </section>
 
         {/* Implementation */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+        <section className="bg-black/80 rounded-xl p-4 sm:p-6 border border-emerald-500/20 shadow-md shadow-emerald-500/5">
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Simple Queue Implementation</h2>
           
           <div className="space-y-6">
@@ -210,9 +214,9 @@ const QueuesContent = ({ onNavigate, courseId }) => {
             <LanguageSelector currentLang={implementationLang} setLang={setImplementationLang} />
 
             {implementationLang === 'c' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`#include <stdio.h>
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
+                <CodeView language="c" code={
+`#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
@@ -290,15 +294,14 @@ int main() {
     printf("Front: %d\\n", front(&q));     // Output: 20
     
     return 0;
-}`}
-                </pre>
+}`} />
               </div>
             )}
 
             {implementationLang === 'cpp' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`#include <iostream>
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
+                <CodeView language="cpp" code={
+`#include <iostream>
 #include <queue>
 using namespace std;
 
@@ -363,15 +366,14 @@ int main() {
     cout << "Dequeue: " << q.dequeue() << endl; // Output: 10
     
     return 0;
-}`}
-                </pre>
+}`} />
               </div>
             )}
 
             {implementationLang === 'python' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`from collections import deque
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
+                <CodeView language="python" code={
+`from collections import deque
 
 class Queue:
     def __init__(self):
@@ -417,15 +419,14 @@ q = deque()
 q.append(10)        # enqueue
 q.append(20)
 front = q[0]        # front
-popped = q.popleft()  # dequeue`}
-                </pre>
+popped = q.popleft()  # dequeue`} />
               </div>
             )}
 
             {implementationLang === 'java' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`import java.util.Queue;
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
+                <CodeView language="java" code={
+`import java.util.Queue;
 import java.util.LinkedList;
 
 // Method 1: Using built-in Queue (LinkedList implementation)
@@ -489,15 +490,14 @@ public class QueueExample {
         System.out.println("Front: " + q.front());     // Output: 10
         System.out.println("Dequeue: " + q.dequeue()); // Output: 10
     }
-}`}
-                </pre>
+}`} />
               </div>
             )}
           </div>
         </section>
 
         {/* Circular Queue */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+        <section className="bg-black/80 rounded-xl p-4 sm:p-6 border border-emerald-500/20 shadow-md shadow-emerald-500/5">
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Circular Queue Implementation</h2>
           
           <div className="space-y-6">
@@ -508,9 +508,9 @@ public class QueueExample {
             <LanguageSelector currentLang={circularLang} setLang={setCircularLang} />
 
             {circularLang === 'c' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`#include <stdio.h>
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
+                <CodeView language="c" code={
+`#include <stdio.h>
 #include <stdbool.h>
 
 #define MAX_SIZE 5
@@ -568,15 +568,14 @@ int main() {
     enqueue(&q, 50);
     
     return 0;
-}`}
-                </pre>
+}`} />
               </div>
             )}
 
             {circularLang === 'cpp' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`#include <iostream>
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
+                <CodeView language="cpp" code={
+`#include <iostream>
 #include <vector>
 using namespace std;
 
@@ -644,15 +643,14 @@ int main() {
     q.enqueue(40);
     
     return 0;
-}`}
-                </pre>
+}`} />
               </div>
             )}
 
             {circularLang === 'python' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`class CircularQueue:
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
+                <CodeView language="python" code={
+`class CircularQueue:
     def __init__(self, size):
         self.items = [None] * size
         self.capacity = size
@@ -700,15 +698,14 @@ q.enqueue(30)
 
 print(f"Dequeue: {q.dequeue()}")  # Output: 10
 q.enqueue(40)
-print(f"Size: {q.size()}")        # Output: 3`}
-                </pre>
+print(f"Size: {q.size()}")        # Output: 3`} />
               </div>
             )}
 
             {circularLang === 'java' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`public class CircularQueue {
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
+                <CodeView language="java" code={
+`public class CircularQueue {
     private int[] items;
     private int front, rear, capacity, count;
     
@@ -767,19 +764,18 @@ print(f"Size: {q.size()}")        # Output: 3`}
         System.out.println("Dequeue: " + q.dequeue());  // 10
         q.enqueue(40);
     }
-}`}
-                </pre>
+}`} />
               </div>
             )}
           </div>
         </section>
 
         {/* Real-World Applications */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+        <section className="bg-black/80 rounded-xl p-4 sm:p-6 border border-emerald-500/20 shadow-md shadow-emerald-500/5">
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Real-World Applications</h2>
           
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">🖨️</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">Print Queue</h3>
               <p className="text-gray-300">
@@ -787,7 +783,7 @@ print(f"Size: {q.size()}")        # Output: 3`}
               </p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">🔍</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">BFS Algorithm</h3>
               <p className="text-gray-300">
@@ -795,7 +791,7 @@ print(f"Size: {q.size()}")        # Output: 3`}
               </p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">💻</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">CPU Scheduling</h3>
               <p className="text-gray-300">
@@ -803,7 +799,7 @@ print(f"Size: {q.size()}")        # Output: 3`}
               </p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">📞</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">Call Center</h3>
               <p className="text-gray-300">
@@ -811,7 +807,7 @@ print(f"Size: {q.size()}")        # Output: 3`}
               </p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">🌐</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">Network Buffers</h3>
               <p className="text-gray-300">
@@ -819,7 +815,7 @@ print(f"Size: {q.size()}")        # Output: 3`}
               </p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">⌨️</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">IO Buffers</h3>
               <p className="text-gray-300">
@@ -830,7 +826,7 @@ print(f"Size: {q.size()}")        # Output: 3`}
         </section>
 
         {/* Time Complexity */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+        <section className="bg-black/80 rounded-xl p-4 sm:p-6 border border-emerald-500/20 shadow-md shadow-emerald-500/5">
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Time & Space Complexity</h2>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
@@ -842,49 +838,49 @@ print(f"Size: {q.size()}")        # Output: 3`}
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-gray-700 hover:bg-emerald-500/5 transition-colors">
+                <tr className="border-b border-emerald-500/10 hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">Enqueue</td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                 </tr>
-                <tr className="border-b border-gray-700 hover:bg-emerald-500/5 transition-colors">
+                <tr className="border-b border-emerald-500/10 hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">Dequeue</td>
                   <td className="p-4">
-                    <code className="text-yellow-400 bg-gray-800 px-3 py-1 rounded">O(n)</code>
+                    <code className="text-yellow-400 bg-black/80 px-3 py-1 rounded">O(n)</code>
                   </td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                 </tr>
-                <tr className="border-b border-gray-700 hover:bg-emerald-500/5 transition-colors">
+                <tr className="border-b border-emerald-500/10 hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">Front/Peek</td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                 </tr>
-                <tr className="border-b border-gray-700 hover:bg-emerald-500/5 transition-colors">
+                <tr className="border-b border-emerald-500/10 hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">isEmpty</td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                 </tr>
                 <tr className="hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">Overall Space</td>
                   <td className="p-4">
-                    <code className="text-yellow-400 bg-gray-800 px-3 py-1 rounded">O(n)</code>
+                    <code className="text-yellow-400 bg-black/80 px-3 py-1 rounded">O(n)</code>
                   </td>
                   <td className="p-4">
-                    <code className="text-yellow-400 bg-gray-800 px-3 py-1 rounded">O(n)</code>
+                    <code className="text-yellow-400 bg-black/80 px-3 py-1 rounded">O(n)</code>
                   </td>
                 </tr>
               </tbody>
@@ -897,7 +893,7 @@ print(f"Size: {q.size()}")        # Output: 3`}
 
         {/* Advantages and Disadvantages */}
         <section className="grid md:grid-cols-2 gap-6">
-          <div className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-2xl p-8 border border-emerald-500/30">
+          <div className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-xl p-4 sm:p-6 border border-emerald-500/30">
             <h3 className="text-2xl font-semibold mb-6 text-emerald-300 flex items-center gap-3">
               <CheckCircle2 className="w-8 h-8" />
               Advantages
@@ -922,7 +918,7 @@ print(f"Size: {q.size()}")        # Output: 3`}
             </ul>
           </div>
 
-          <div className="bg-gradient-to-br from-red-900/30 to-gray-800/30 rounded-2xl p-8 border border-red-500/30">
+          <div className="bg-gradient-to-br from-red-900/30 to-gray-800/30 rounded-xl p-4 sm:p-6 border border-red-500/30">
             <h3 className="text-2xl font-semibold mb-6 text-red-300 flex items-center gap-3">
               <AlertCircle className="w-8 h-8" />
               Disadvantages
@@ -949,11 +945,11 @@ print(f"Size: {q.size()}")        # Output: 3`}
         </section>
 
         {/* Practice Problems */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+        <section className="bg-black/80 rounded-xl p-4 sm:p-6 border border-emerald-500/20 shadow-md shadow-emerald-500/5">
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Practice Problems</h2>
           
           <div className="space-y-6">
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
               <div className="flex items-start justify-between mb-3">
                 <h3 className="text-xl font-semibold text-emerald-300">1. Implement Queue using Stacks</h3>
                 <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-sm">Easy</span>
@@ -976,7 +972,7 @@ print(f"Size: {q.size()}")        # Output: 3`}
               </a>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
               <div className="flex items-start justify-between mb-3">
                 <h3 className="text-xl font-semibold text-emerald-300">2. Design Circular Queue</h3>
                 <span className="px-3 py-1 bg-yellow-500/20 text-yellow-300 rounded-full text-sm">Medium</span>
@@ -999,7 +995,7 @@ print(f"Size: {q.size()}")        # Output: 3`}
               </a>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
               <div className="flex items-start justify-between mb-3">
                 <h3 className="text-xl font-semibold text-emerald-300">3. First Non-Repeating Character in Stream</h3>
                 <span className="px-3 py-1 bg-yellow-500/20 text-yellow-300 rounded-full text-sm">Medium</span>
@@ -1022,7 +1018,7 @@ print(f"Size: {q.size()}")        # Output: 3`}
               </a>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
               <div className="flex items-start justify-between mb-3">
                 <h3 className="text-xl font-semibold text-emerald-300">4. Sliding Window Maximum</h3>
                 <span className="px-3 py-1 bg-red-500/20 text-red-300 rounded-full text-sm">Hard</span>

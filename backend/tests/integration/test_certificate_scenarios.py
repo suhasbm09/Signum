@@ -120,13 +120,22 @@ class TestCertificateEligibilityScenarios:
              patch('app.domains.assessment.quiz_service.ProgressRepository'):
             
             quiz_service = QuizService()
-            
-            result = quiz_service.submit_quiz(
+
+            start = quiz_service.start_quiz_session(
                 user_id="test_user",
                 course_id="data-structures",
-                quiz_id="quiz-1",
-                answers=["a", "b", "c", "d", "c"],  # 5/5 correct = 100%
-                time_taken=300
+                num_questions=5
+            )
+            assert start["success"] is True
+            session_id = start["session_id"]
+
+            session_questions = quiz_service.active_sessions[session_id]["questions"]
+            answers = {q["id"]: q["correct"] for q in session_questions}
+
+            result = quiz_service.submit_quiz(
+                user_id="test_user",
+                session_id=session_id,
+                answers=answers
             )
             
             # With perfect answers, should get 100%

@@ -3,13 +3,21 @@ services:
     name: signum-backend
     env: docker
     dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
+    # Build from repo root so the backend container can ingest course content
+    # from frontend/src/courses/** and root docs for RAG indexing.
+    dockerContext: .
     plan: free
+    disk:
+      name: rag-data
+      mountPath: /var/data
+      sizeGB: 2
     envVars:
       - key: GEMINI_API_KEY
         sync: false
       - key: GEMINI_MODEL
         value: gemini-2.5-flash
+      - key: RAG_PERSIST_DIR
+        value: /var/data/rag_storage
       - key: PINATA_API_KEY
         sync: false
       - key: PINATA_SECRET_API_KEY

@@ -79,12 +79,14 @@ async def verify_firebase_token(request: Request, response: Response):
         
         # Set httpOnly secure cookie (protects against XSS attacks)
         is_production = os.getenv('ENV') == 'production'
+        testing = is_test_environment()
         response.set_cookie(
             key="session_token",
             value=session_token,
             httponly=True,  # JavaScript cannot access this cookie (XSS protection)
-            secure=True,  # Always use HTTPS (both Vercel and Render use HTTPS)
-            samesite="none",  # Allow cross-site cookies (required for Vercel <-> Render)
+            secure=False if testing else True,
+            # In tests we run over http://testserver; samesite none + secure would prevent sending.
+            samesite="lax" if testing else "none",
             max_age=7 * 24 * 60 * 60,  # 7 days
             path="/",
             domain=None  # Will be set to current domain
@@ -127,8 +129,8 @@ async def logout(response: Response, request: Request):
             key="session_token",
             path="/",
             domain=None,
-            samesite="none",
-            secure=True
+            samesite="lax" if is_test_environment() else "none",
+            secure=False if is_test_environment() else True
         )
         
         return {"success": True, "message": "Logged out successfully"}

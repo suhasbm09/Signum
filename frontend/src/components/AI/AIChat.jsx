@@ -14,6 +14,7 @@ function AIChat({ isOpen, onClose, context = null }) {
   const [inputMessage, setInputMessage] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [dailyLimitReached, setDailyLimitReached] = useState(false);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const recognitionRef = useRef(null);
@@ -63,6 +64,13 @@ function AIChat({ isOpen, onClose, context = null }) {
     }
   }, [isOpen]);
 
+  // If chat closes while confirm is open, reset confirm state
+  useEffect(() => {
+    if (!isOpen) {
+      setShowClearConfirm(false);
+    }
+  }, [isOpen]);
+
   const handleSendMessage = async (e) => {
     e.preventDefault();
     
@@ -71,9 +79,7 @@ function AIChat({ isOpen, onClose, context = null }) {
     const message = inputMessage.trim();
     setInputMessage('');
 
-    console.log('Sending message:', message); // Debug
     const result = await chat(message, context);
-    console.log('Chat result:', result); // Debug
     
     // Check if daily limit was reached
     if (result && result.error === 'daily_limit_reached') {
@@ -81,7 +87,14 @@ function AIChat({ isOpen, onClose, context = null }) {
     }
   };
 
-  const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const requestClose = () => {
+    // If a confirm modal is open, close it first instead of the whole chat.
+    if (showClearConfirm) {
+      setShowClearConfirm(false);
+      return;
+    }
+    onClose?.();
+  };
 
   const handleClearHistory = () => {
     setShowClearConfirm(true);
@@ -113,8 +126,17 @@ function AIChat({ isOpen, onClose, context = null }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm p-2 sm:p-4 animate-fade-in">
-      <div className="w-full max-w-5xl h-[90vh] sm:h-[85vh] bg-gradient-to-br from-black/25 via-black/40 to-black/60 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-emerald-400/12 shadow-[0_0_75px_-35px_rgba(16,185,129,0.85)] flex flex-col overflow-hidden">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-2 sm:p-4 animate-fade-in"
+      onMouseDown={requestClose}
+      role="presentation"
+    >
+      <div
+        className="w-full max-w-5xl h-[90vh] sm:h-[85vh] bg-gradient-to-br from-black/90 via-black/95 to-emerald-950/30 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-emerald-400/20 shadow-[0_0_100px_-20px_rgba(16,185,129,0.6)] flex flex-col overflow-hidden"
+        onMouseDown={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+      >
 
         {/* Testing Mode Banner */}
         {testingMode && (
@@ -147,7 +169,7 @@ function AIChat({ isOpen, onClose, context = null }) {
         )}
 
         {/* Sleek Header */}
-        <div className="relative p-3 sm:p-5 border-b border-emerald-400/10 bg-black/12">
+        <div className="relative p-3 sm:p-5 border-b border-emerald-400/10 bg-black/20">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center space-x-4">
               <div className="relative w-10 h-10 flex items-center justify-center">
@@ -181,7 +203,7 @@ function AIChat({ isOpen, onClose, context = null }) {
                 </button>
               )}
               <button
-                onClick={onClose}
+                onClick={requestClose}
                 className="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-600/80 to-red-500/80 hover:from-rose-500/90 hover:to-red-400/90 text-gray-100 text-sm font-quantico-bold transition-all duration-300 shadow-[0_8px_20px_-12px_rgba(248,113,113,0.7)]"
               >
                 Close
@@ -191,7 +213,7 @@ function AIChat({ isOpen, onClose, context = null }) {
         </div>
 
         {/* Messages Area */}
-  <div className="flex-1 overflow-y-auto p-8 space-y-6 scrollbar-thin scrollbar-thumb-emerald-400/25 scrollbar-track-transparent bg-black/6">
+  <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-6 scrollbar-thin scrollbar-thumb-emerald-400/25 scrollbar-track-transparent bg-black/10">
           {conversationHistory.length === 0 ? (
             <div className="h-full flex items-center justify-center animate-fade-in-slow">
               <div className="text-center space-y-10 max-w-md">
@@ -322,7 +344,7 @@ function AIChat({ isOpen, onClose, context = null }) {
                 onChange={(e) => setInputMessage(e.target.value)}
                 placeholder="Ask anything about your learning path..."
                 disabled={isLoading}
-                className="w-full bg-transparent text-slate-100 placeholder-slate-400 font-quantico focus:outline-none"
+                className="ai-chat-input w-full bg-transparent text-slate-100 placeholder-slate-400 font-quantico focus:outline-none"
               />
               
               {/* Microphone Button - Only show if voice input is enabled */}
@@ -362,23 +384,28 @@ function AIChat({ isOpen, onClose, context = null }) {
                 )}
               </button>
             </div>
-            {conversationHistory.length === 0 && (
-              <button
-                type="button"
-                onClick={() => setInputMessage(context ? `Help me with ${context.topic ?? 'this topic'}` : 'How should I study today?')}
-                className="px-4 py-2 rounded-2xl bg-black/12 border border-emerald-400/15 text-emerald-200 text-xs font-quantico transition-all duration-300 hover:bg-black/20 backdrop-blur-2xl"
-              >
-                Inspire me
-              </button>
-            )}
           </form>
         </div>
       </div>
 
       {/* Clear Confirmation Modal - No more alert()! */}
       {showClearConfirm && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-black/90 backdrop-blur-xl border border-emerald-500/30 rounded-2xl p-6 max-w-sm mx-4 shadow-2xl">
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in"
+          onMouseDown={(e) => {
+            // Prevent bubbling to the main overlay (which would close the chat)
+            e.stopPropagation();
+            // Clicking the confirm backdrop dismisses only the confirm dialog
+            if (e.target === e.currentTarget) setShowClearConfirm(false);
+          }}
+          role="presentation"
+        >
+          <div
+            className="bg-black/90 backdrop-blur-xl border border-emerald-500/30 rounded-2xl p-6 max-w-sm mx-4 shadow-2xl"
+            onMouseDown={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+          >
             <div className="flex items-start gap-4">
               <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
                 <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -390,12 +417,14 @@ function AIChat({ isOpen, onClose, context = null }) {
                 <p className="text-sm text-slate-300 font-quantico mb-4">This will remove all conversation messages. This action cannot be undone.</p>
                 <div className="flex gap-3 justify-end">
                   <button
+                    onMouseDown={(e) => e.stopPropagation()}
                     onClick={() => setShowClearConfirm(false)}
                     className="px-4 py-2 rounded-lg bg-slate-700/50 hover:bg-slate-600/50 text-gray-100 text-sm font-quantico transition-all"
                   >
                     Cancel
                   </button>
                   <button
+                    onMouseDown={(e) => e.stopPropagation()}
                     onClick={confirmClear}
                     className="px-4 py-2 rounded-lg bg-red-500/80 hover:bg-red-500 text-gray-100 text-sm font-quantico-bold transition-all"
                   >

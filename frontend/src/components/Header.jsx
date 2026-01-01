@@ -13,7 +13,7 @@ function Header({ user, onLogout, currentPage, onNavigate }) {
       } else {
         onLogout();
       }
-    } catch (error) {
+    } catch {
       onLogout();
     }
   };
@@ -24,15 +24,15 @@ function Header({ user, onLogout, currentPage, onNavigate }) {
   };
 
   return (
-    <header className="bg-glossy-header sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+    <header className="bg-glossy-header sticky top-0 z-50" data-app-header role="banner">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-3 sm:py-4">
           {/* Logo and Brand */}
           <div className="flex items-center space-x-2 sm:space-x-4">
             <img 
               src={signumLogo} 
               alt="Signum Logo" 
-              className="w-8 h-8 sm:w-10 sm:h-10 object-contain brightness-110"
+              className="w-10 h-10 sm:w-12 sm:h-12 object-contain brightness-110"
             />
             <h1 className="text-xl sm:text-2xl md:text-3xl font-quantico-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
               Signum 
@@ -40,34 +40,40 @@ function Header({ user, onLogout, currentPage, onNavigate }) {
           </div>
           
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-4">
+          <nav className="hidden md:flex items-center space-x-4" role="navigation" aria-label="Main navigation">
             <button
               onClick={() => onNavigate('dashboard')}
-              className={`px-4 py-2 rounded-lg transition-all duration-300 font-quantico-bold text-sm ${
+              className={`min-h-[44px] px-4 py-2 rounded-lg transition-all duration-300 font-quantico-bold text-sm ${
                 currentPage === 'dashboard'
                   ? 'bg-gradient-to-r from-emerald-600/30 to-green-600/30 border border-emerald-500/50 text-emerald-200'
-                  : 'text-gray-300 hover:text-gray-100 hover:bg-gray-700/50 border border-transparent'
+                  : 'text-gray-200 hover:text-gray-100 hover:bg-gray-700/50 border border-transparent'
               }`}
+              aria-label="Go to Dashboard"
+              aria-current={currentPage === 'dashboard' ? 'page' : undefined}
             >
               Dashboard
             </button>
             <button
               onClick={() => onNavigate('profile')}
-              className={`px-4 py-2 rounded-lg transition-all duration-300 font-quantico-bold text-sm ${
+              className={`min-h-[44px] px-4 py-2 rounded-lg transition-all duration-300 font-quantico-bold text-sm ${
                 currentPage === 'profile'
                   ? 'bg-gradient-to-r from-emerald-600/30 to-green-600/30 border border-emerald-500/50 text-emerald-200'
-                  : 'text-gray-300 hover:text-gray-100 hover:bg-gray-700/50 border border-transparent'
+                  : 'text-gray-200 hover:text-gray-100 hover:bg-gray-700/50 border border-transparent'
               }`}
+              aria-label="Go to Profile"
+              aria-current={currentPage === 'profile' ? 'page' : undefined}
             >
               Profile
             </button>
             <button
               onClick={() => onNavigate('about')}
-              className={`px-4 py-2 rounded-lg transition-all duration-300 font-quantico-bold text-sm ${
+              className={`min-h-[44px] px-4 py-2 rounded-lg transition-all duration-300 font-quantico-bold text-sm ${
                 currentPage === 'about'
                   ? 'bg-gradient-to-r from-emerald-600/30 to-green-600/30 border border-emerald-500/50 text-emerald-200'
-                  : 'text-gray-300 hover:text-gray-100 hover:bg-gray-700/50 border border-transparent'
+                  : 'text-gray-200 hover:text-gray-100 hover:bg-gray-700/50 border border-transparent'
               }`}
+              aria-label="Go to About page"
+              aria-current={currentPage === 'about' ? 'page' : undefined}
             >
               About
             </button>
@@ -79,25 +85,30 @@ function Header({ user, onLogout, currentPage, onNavigate }) {
               {user?.photoURL ? (
                 <img 
                   src={user.photoURL} 
-                  alt="Profile"
-                  className="w-7 h-7 rounded-full border-2 border-emerald-500/50 hover:border-emerald-500 transition-all duration-300 object-cover shadow-md shadow-emerald-500/20"
+                  alt={`${user?.displayName || 'User'} profile picture`}
+                  className="w-8 h-8 rounded-full border-2 border-emerald-500/50 hover:border-emerald-500 transition-all duration-300 object-cover shadow-md shadow-emerald-500/20"
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user?.displayName || 'User') + '&background=10b981&color=fff&size=32';
                   }}
                 />
               ) : (
-                <div className="w-7 h-7 rounded-full border-2 border-emerald-500/50 bg-emerald-600 flex items-center justify-center shadow-md shadow-emerald-500/20">
+                <div 
+                  className="w-8 h-8 rounded-full border-2 border-emerald-500/50 bg-emerald-600 flex items-center justify-center shadow-md shadow-emerald-500/20"
+                  role="img"
+                  aria-label={`${user?.displayName || 'User'} avatar`}
+                >
                   <span className="text-xs font-bold text-white">
                     {user?.displayName?.charAt(0)?.toUpperCase() || 'U'}
                   </span>
                 </div>
               )}
-              <span className="text-gray-300 font-quantico text-sm hidden lg:inline">{user?.displayName || 'User'}</span>
+              <span className="text-gray-200 font-quantico text-sm hidden lg:inline">{user?.displayName || 'User'}</span>
             </div>
             <button
               onClick={handleLogout}
-              className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-gray-100 px-4 py-1.5 rounded-lg transition-all duration-300 font-quantico-bold text-sm transform hover:scale-105"
+              className="min-h-[44px] bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-gray-100 px-4 py-1.5 rounded-lg transition-all duration-300 font-quantico-bold text-sm transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 focus:ring-offset-black"
+              aria-label="Logout from account"
             >
               Logout
             </button>
@@ -107,10 +118,12 @@ function Header({ user, onLogout, currentPage, onNavigate }) {
           <div className="flex md:hidden items-center space-x-2">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-gray-300 hover:text-gray-100 hover:bg-gray-700/50 transition-all duration-300"
-              aria-label="Toggle menu"
+              className="min-h-[44px] min-w-[44px] p-2 rounded-lg text-gray-200 hover:text-gray-100 hover:bg-gray-700/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-black"
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-menu"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 {mobileMenuOpen ? (
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 ) : (
@@ -127,21 +140,28 @@ function Header({ user, onLogout, currentPage, onNavigate }) {
         <>
           {/* Backdrop */}
           <div 
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 md:hidden"
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 md:hidden animate-fadeIn"
             onClick={() => setMobileMenuOpen(false)}
+            aria-hidden="true"
           />
           
           {/* Drawer */}
-            <div className="fixed top-0 right-0 bottom-0 w-full max-w-[320px] bg-black border-l border-emerald-500/50 z-50 md:hidden shadow-[0_0_60px_rgba(16,185,129,0.7)]">
+          <nav 
+            id="mobile-menu"
+            className="fixed top-0 right-0 bottom-0 w-full max-w-[320px] bg-black border-l border-emerald-500/50 z-50 md:hidden shadow-[0_0_60px_rgba(16,185,129,0.7)] animate-slideInRight"
+            role="navigation"
+            aria-label="Mobile navigation"
+          >
             <div className="flex flex-col h-full p-5 space-y-3 text-sm">
               {/* Close Button */}
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-lg font-quantico-bold text-emerald-300 tracking-wide">Menu</h2>
                 <button
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-2 rounded-lg text-gray-300 hover:text-gray-100 hover:bg-gray-700/50 transition-all duration-300"
+                  className="min-h-[44px] min-w-[44px] p-2 rounded-lg text-gray-200 hover:text-gray-100 hover:bg-gray-700/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  aria-label="Close menu"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
@@ -152,69 +172,80 @@ function Header({ user, onLogout, currentPage, onNavigate }) {
                 {user?.photoURL ? (
                   <img 
                     src={user.photoURL} 
-                    alt="Profile"
-                    className="w-10 h-10 rounded-full border-2 border-emerald-500/50 object-cover"
+                    alt={`${user?.displayName || 'User'} profile picture`}
+                    className="w-12 h-12 rounded-full border-2 border-emerald-500/50 object-cover"
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user?.displayName || 'User') + '&background=10b981&color=fff&size=40';
+                      e.target.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user?.displayName || 'User') + '&background=10b981&color=fff&size=48';
                     }}
                   />
                 ) : (
-                  <div className="w-10 h-10 rounded-full border-2 border-emerald-500/50 bg-emerald-600 flex items-center justify-center">
-                    <span className="text-sm font-bold text-white">
+                  <div 
+                    className="w-12 h-12 rounded-full border-2 border-emerald-500/50 bg-emerald-600 flex items-center justify-center"
+                    role="img"
+                    aria-label={`${user?.displayName || 'User'} avatar`}
+                  >
+                    <span className="text-base font-bold text-white">
                       {user?.displayName?.charAt(0)?.toUpperCase() || 'U'}
                     </span>
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="text-gray-100 font-quantico text-sm truncate">{user?.displayName || 'User'}</p>
-                  <p className="text-gray-400 text-xs truncate">{user?.email}</p>
+                  <p className="text-gray-100 font-quantico text-base truncate">{user?.displayName || 'User'}</p>
+                  <p className="text-gray-400 text-sm truncate">{user?.email}</p>
                 </div>
               </div>
 
-              {/* Navigation Links */}
-              <nav className="flex-1 space-y-2">
-                  <button
-                    onClick={() => handleNavigate('dashboard')}
-                    className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-300 font-quantico-bold text-sm border text-gray-200 ${
-                      currentPage === 'dashboard'
-                        ? 'bg-emerald-900 border-emerald-500/60 text-emerald-200 shadow-[0_0_20px_rgba(16,185,129,0.5)]'
-                        : 'border-transparent hover:bg-emerald-900 hover:border-emerald-400 hover:text-emerald-100'
-                    }`}
-                  >
-                    📊 Dashboard
-                  </button>
+              {/* Navigation Links with Better Touch Targets */}
+              <nav className="flex-1 space-y-2" role="navigation" aria-label="Mobile menu items">
+                <button
+                  onClick={() => handleNavigate('dashboard')}
+                  className={`w-full text-left min-h-[52px] px-4 py-3 rounded-lg transition-all duration-300 font-quantico-bold text-base border ${
+                    currentPage === 'dashboard'
+                      ? 'bg-emerald-900 border-emerald-500/60 text-emerald-200 shadow-[0_0_20px_rgba(16,185,129,0.5)]'
+                      : 'border-transparent text-gray-200 hover:bg-emerald-900 hover:border-emerald-400 hover:text-emerald-100'
+                  } focus:outline-none focus:ring-2 focus:ring-emerald-400`}
+                  aria-label="Go to Dashboard"
+                  aria-current={currentPage === 'dashboard' ? 'page' : undefined}
+                >
+                  📊 Dashboard
+                </button>
                 <button
                   onClick={() => handleNavigate('profile')}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-300 font-quantico-bold text-sm border text-gray-200 ${
+                  className={`w-full text-left min-h-[52px] px-4 py-3 rounded-lg transition-all duration-300 font-quantico-bold text-base border ${
                     currentPage === 'profile'
                       ? 'bg-emerald-900 border-emerald-500/60 text-emerald-200 shadow-[0_0_20px_rgba(16,185,129,0.5)]'
-                      : 'border-transparent hover:bg-emerald-900 hover:border-emerald-400 hover:text-emerald-100'
-                  }`}
+                      : 'border-transparent text-gray-200 hover:bg-emerald-900 hover:border-emerald-400 hover:text-emerald-100'
+                  } focus:outline-none focus:ring-2 focus:ring-emerald-400`}
+                  aria-label="Go to Profile"
+                  aria-current={currentPage === 'profile' ? 'page' : undefined}
                 >
                   👤 Profile
                 </button>
                 <button
                   onClick={() => handleNavigate('about')}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-300 font-quantico-bold text-sm border text-gray-200 ${
+                  className={`w-full text-left min-h-[52px] px-4 py-3 rounded-lg transition-all duration-300 font-quantico-bold text-base border ${
                     currentPage === 'about'
                       ? 'bg-emerald-900 border-emerald-500/60 text-emerald-200 shadow-[0_0_20px_rgba(16,185,129,0.5)]'
-                      : 'border-transparent hover:bg-emerald-900 hover:border-emerald-400 hover:text-emerald-100'
-                  }`}
+                      : 'border-transparent text-gray-200 hover:bg-emerald-900 hover:border-emerald-400 hover:text-emerald-100'
+                  } focus:outline-none focus:ring-2 focus:ring-emerald-400`}
+                  aria-label="Go to About page"
+                  aria-current={currentPage === 'about' ? 'page' : undefined}
                 >
                   ℹ️ About
                 </button>
               </nav>
 
-              {/* Logout Button */}
+              {/* Logout Button with Better Touch Target */}
               <button
                 onClick={handleLogout}
-                className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-gray-100 px-4 py-3 rounded-lg transition-all duration-300 font-quantico-bold text-sm mt-4"
+                className="w-full min-h-[52px] bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-gray-100 px-4 py-3 rounded-lg transition-all duration-300 font-quantico-bold text-base mt-4 focus:outline-none focus:ring-2 focus:ring-red-400"
+                aria-label="Logout from account"
               >
                 🚪 Logout
               </button>
             </div>
-          </div>
+          </nav>
         </>
       )}
     </header>

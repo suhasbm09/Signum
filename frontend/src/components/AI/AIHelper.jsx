@@ -6,7 +6,7 @@
 import { useState } from 'react';
 import { useAI } from '../../contexts/AIContext';
 
-function AIHelper({ topic, courseId }) {
+function AIHelper({ topic }) {
   const { explain, createQuiz, helpWithCode, isLoading } = useAI();
   const [result, setResult] = useState(null);
   const [showHelper, setShowHelper] = useState(false);

@@ -43,7 +43,8 @@ async def mint_certificate(course_id: str, data: MintRequest):
             completion_percentage=learning_progress,
             final_score=final_score,
             wallet_address=data.wallet_address,
-            user_name=data.user_name
+            user_name=data.user_name,
+            mint_address=data.mint_address  # Pass mint address for QR code
         )
         
         image_url = metadata_result.get('image_uri') or metadata_result['metadata'].get('image', '')

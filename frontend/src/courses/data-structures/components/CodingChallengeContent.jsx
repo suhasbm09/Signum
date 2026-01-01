@@ -65,8 +65,17 @@ int main() {
 }`
 };
 
-const CodingChallengeContent = ({ courseId, user, onChallengeComplete }) => {
-  const userId = user?.uid || user?.email || 'user_123';
+const CodingChallengeContent = ({ courseId, user, onChallengeComplete, violations = [] }) => {
+  // Get user ID from prop OR window.currentUser
+  const getUserId = () => {
+    if (user?.uid) return user.uid;
+    if (user?.email) return user.email;
+    if (typeof window !== 'undefined' && window.currentUser) {
+      return window.currentUser.uid || window.currentUser.email;
+    }
+    return null;
+  };
+  const userId = getUserId();
   
   const [selectedLanguage, setSelectedLanguage] = useState('python');
   const [code, setCode] = useState(codeTemplates['python']);
@@ -158,11 +167,13 @@ You can implement this using any method (iterative, recursive, etc.)`,
     setIsSubmitting(true);
     
     try {
-      // Collect anti-cheat data (will be passed from parent wrapper)
+      // Calculate anti-cheat data from violations passed by parent
       const antiCheatData = {
-        tab_switches: 0,  // This will be tracked by parent
-        copy_attempts: 0,
-        paste_attempts: 0
+        tab_switches: violations.filter(v => 
+          v.type?.includes('Tab') || v.type?.includes('Window') || v.type?.includes('Focus')
+        ).length,
+        copy_attempts: violations.filter(v => v.type?.includes('Copy')).length,
+        paste_attempts: violations.filter(v => v.type?.includes('Paste')).length
       };
 
       const response = await fetch(`${API_BASE_URL}/assessment/${courseId}/coding/submit`, {
@@ -187,7 +198,13 @@ You can implement this using any method (iterative, recursive, etc.)`,
           tests_passed: result.tests_passed,
           test_results: result.test_results,
           feedback: result.feedback,
-          anti_cheat_penalty: result.anti_cheat_penalty
+          anti_cheat_penalty: result.anti_cheat_penalty,
+          time_taken: result.time_taken,
+          time_complexity: result.time_complexity_analysis,
+          ai_report: result.ai_report,
+          submission_id: result.submission_id,
+          code: code,
+          language: selectedLanguage
         });
       } else {
         setOutput(`❌ Submission error: ${result.message || 'Unknown error'}`);
@@ -330,7 +347,15 @@ You can implement this using any method (iterative, recursive, etc.)`,
                 scrollBeyondLastLine: false,
                 automaticLayout: true,
                 tabSize: 4,
-                wordWrap: 'on'
+                wordWrap: 'on',
+                scrollbar: {
+                  vertical: 'auto',
+                  horizontal: 'auto',
+                  handleMouseWheel: true,
+                  alwaysConsumeMouseWheel: false
+                },
+                mouseWheelZoom: false,
+                fastScrollSensitivity: 5
               }}
             />
           </Suspense>

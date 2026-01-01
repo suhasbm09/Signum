@@ -25,8 +25,8 @@ const Arrays2DContent = ({ onNavigate, courseId }) => {
           onClick={() => setLang(lang.toLowerCase())}
           className={`px-3 py-1 rounded-lg text-xs font-quantico-bold transition-all ${
             currentLang === lang.toLowerCase()
-              ? 'bg-emerald-500 text-black'
-              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/30'
+              : 'bg-black/60 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/20 hover:border-emerald-500/50'
           }`}
         >
           {lang}
@@ -194,8 +194,11 @@ const Arrays2DContent = ({ onNavigate, courseId }) => {
       </section>
 
       {/* Interactive Visualizer */}
-      <section className="mb-10 bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl border border-emerald-500/20 shadow-xl shadow-emerald-500/10 overflow-hidden">
-        <Array2DVisualization />
+      <section className="mb-10 bg-black/80 rounded-xl p-4 sm:p-6 border border-emerald-500/20">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-emerald-400">Interactive 2D Array Visualizer</h2>
+        <div className="bg-black/60 rounded-lg border border-emerald-500/30 p-3 min-w-0">
+          <Array2DVisualization embedded={true} />
+        </div>
       </section>
 
       {/* Declaration and Initialization */}

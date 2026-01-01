@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { CheckCircle2, Clock, TrendingUp, AlertCircle } from 'lucide-react';
 import CompletionTracker from '../../../components/CompletionTracker';
+import CodeView from '../../../components/CodeView';
 import SinglyLinkedListVisualization from '../visualizations/SinglyLinkedListVisualization';
-import { CheckCircle2, AlertCircle } from 'lucide-react';
 
 const LinkedListSinglyContent = ({ courseId, onNavigate }) => {
   const moduleId = 'linked-list-singly';
@@ -16,15 +17,15 @@ const LinkedListSinglyContent = ({ courseId, onNavigate }) => {
   
   // Language selector component
   const LanguageSelector = ({ currentLang, setLang }) => (
-    <div className="flex gap-2 mb-3">
+    <div className="flex gap-2 mb-4">
       {['C', 'C++', 'Python', 'Java'].map((lang) => (
         <button
           key={lang}
           onClick={() => setLang(lang.toLowerCase().replace('++', 'pp'))}
-          className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+          className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
             currentLang === lang.toLowerCase().replace('++', 'pp')
-              ? 'bg-emerald-500 text-black'
-              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/30'
+              : 'bg-black/60 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/20 hover:border-emerald-500/50'
           }`}
         >
           {lang}
@@ -34,26 +35,23 @@ const LinkedListSinglyContent = ({ courseId, onNavigate }) => {
   );
   
   return (
-    <CompletionTracker 
-      courseId={courseId} 
-      moduleId={moduleId} 
-      contentLength="x-long"
-    >
-    <div className="min-h-screen text-white p-4 sm:p-6 lg:p-8">
-      <div className="w-full mx-auto space-y-6">
+    <CompletionTracker courseId={courseId} moduleId={moduleId} contentLength="x-long">
+      <div className="text-white p-4 sm:p-6 lg:p-8" style={{ contain: 'layout style' }}>
+        <div className="w-full mx-auto space-y-6 sm:space-y-8">
         
-        {/* Header */}
-        <div className="text-center space-y-4 animate-slideInDown">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-emerald-400 to-green-600 bg-clip-text text-transparent">
-            Linked Lists - Dynamic Data Structure
-          </h1>
-          <p className="text-lg sm:text-xl text-gray-300">
-            Master linear data structures with efficient insertions and deletions
-          </p>
-        </div>
+          {/* Header */}
+          <div className="text-center space-y-3">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-emerald-400">
+              Singly Linked Lists
+            </h1>
+            <p className="text-lg sm:text-xl text-gray-300">
+              Master dynamic data structures with efficient insertions and deletions
+            </p>
+          </div>
 
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-emerald-500/20 shadow-xl shadow-emerald-500/10 animate-slideInUp">
-  <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-emerald-400">What is a Singly Linked List?</h2>
+        {/* Introduction */}
+        <section className="bg-black/80 rounded-xl p-6 sm:p-8 border border-emerald-500/20">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-emerald-400">What is a Singly Linked List?</h2>
   
   <div className="space-y-6">
     <p className="text-lg text-gray-300 leading-relaxed">
@@ -62,8 +60,8 @@ const LinkedListSinglyContent = ({ courseId, onNavigate }) => {
       This enables unidirectional traversal from head to tail.
     </p>
 
-    {/* Visual Representation */}
-    <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/30">
+            {/* Visual Representation */}
+            <div className="bg-black/80 rounded-xl p-6 border border-emerald-500/20">
       <h3 className="text-xl font-semibold mb-4 text-emerald-300">Visual Representation</h3>
       <div className="flex justify-center items-center gap-4">
         {/* Singly Linked List visualization */}
@@ -98,19 +96,19 @@ const LinkedListSinglyContent = ({ courseId, onNavigate }) => {
       </div>
     </div>
 
-    <p className="text-gray-300 leading-relaxed">
-      Singly linked lists provide <span className="text-emerald-400 font-semibold">O(1)</span> insertions/deletions at head and 
-      efficient dynamic memory allocation, at the cost of <span className="text-yellow-400 font-semibold">unidirectional traversal</span>.
-    </p>
-  </div>
-</section>
+            <p className="text-gray-300 leading-relaxed">
+              Singly linked lists provide <span className="text-emerald-400">O(1) insertion/deletion at head</span> and 
+              efficient dynamic memory allocation. Unlike arrays, they require <span className="text-yellow-400">O(n) traversal</span> to access elements.
+            </p>
+          </div>
+        </section>
 
         {/* Key Concepts */}
-        <section className="animate-slideInUp">
-          <h2 className="text-3xl font-bold mb-6 text-emerald-400">Core Operations</h2>
-          <div className="grid md:grid-cols-2 gap-6">
+        <section>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-emerald-400">Core Operations</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             
-            <div className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all hover-lift">
+            <div className="bg-black/80 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 shadow-lg shadow-emerald-500/10 transition-colors">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
                   <span className="text-2xl">⤴️</span>
@@ -118,10 +116,10 @@ const LinkedListSinglyContent = ({ courseId, onNavigate }) => {
                 <h3 className="text-xl font-semibold text-emerald-300">Insert at Head</h3>
               </div>
               <p className="text-gray-300 mb-2">Add element at the beginning</p>
-              <code className="text-emerald-400 bg-gray-800 px-2 py-1 rounded text-sm">Time: O(1)</code>
+              <code className="text-emerald-400 bg-black/80 px-2 py-1 rounded text-sm">Time: O(1)</code>
             </div>
 
-            <div className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all hover-lift">
+            <div className="bg-black/80 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 shadow-lg shadow-emerald-500/10 transition-colors">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
                   <span className="text-2xl">⤵️</span>
@@ -129,10 +127,10 @@ const LinkedListSinglyContent = ({ courseId, onNavigate }) => {
                 <h3 className="text-xl font-semibold text-emerald-300">Insert at Tail</h3>
               </div>
               <p className="text-gray-300 mb-2">Add element at the end</p>
-              <code className="text-yellow-400 bg-gray-800 px-2 py-1 rounded text-sm">Time: O(n)</code>
+              <code className="text-yellow-400 bg-black/80 px-2 py-1 rounded text-sm">Time: O(n)</code>
             </div>
 
-            <div className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all hover-lift">
+            <div className="bg-black/80 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 shadow-lg shadow-emerald-500/10 transition-colors">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
                   <span className="text-2xl">🗑️</span>
@@ -140,10 +138,10 @@ const LinkedListSinglyContent = ({ courseId, onNavigate }) => {
                 <h3 className="text-xl font-semibold text-emerald-300">Delete Head</h3>
               </div>
               <p className="text-gray-300 mb-2">Remove first element</p>
-              <code className="text-emerald-400 bg-gray-800 px-2 py-1 rounded text-sm">Time: O(1)</code>
+              <code className="text-emerald-400 bg-black/80 px-2 py-1 rounded text-sm">Time: O(1)</code>
             </div>
 
-            <div className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all hover-lift">
+            <div className="bg-black/80 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 shadow-lg shadow-emerald-500/10 transition-colors">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
                   <span className="text-2xl">🔍</span>
@@ -151,19 +149,22 @@ const LinkedListSinglyContent = ({ courseId, onNavigate }) => {
                 <h3 className="text-xl font-semibold text-emerald-300">Search</h3>
               </div>
               <p className="text-gray-300 mb-2">Find element by value</p>
-              <code className="text-yellow-400 bg-gray-800 px-2 py-1 rounded text-sm">Time: O(n)</code>
+              <code className="text-yellow-400 bg-black/80 px-2 py-1 rounded text-sm">Time: O(n)</code>
             </div>
 
           </div>
         </section>
 
         {/* Interactive Visualizer */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl border border-emerald-500/20 shadow-xl shadow-emerald-500/10 overflow-hidden">
-          <SinglyLinkedListVisualization />
+        <section className="bg-black/80 rounded-xl p-4 sm:p-6 border border-emerald-500/20">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-emerald-400">Interactive Singly Linked List Visualizer</h2>
+          <div className="bg-black/60 rounded-lg border border-emerald-500/30 p-3 min-w-0">
+            <SinglyLinkedListVisualization embedded={true} />
+          </div>
         </section>
 
         {/* Implementation */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-6 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+        <section className="bg-black/80 rounded-2xl p-8 border border-emerald-500/20 ">
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Implementation</h2>
           
           <div className="space-y-6">
@@ -174,9 +175,8 @@ const LinkedListSinglyContent = ({ courseId, onNavigate }) => {
             <LanguageSelector currentLang={implementationLang} setLang={setImplementationLang} />
 
             {implementationLang === 'c' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`#include <stdio.h>
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
+                <CodeView code={`#include <stdio.h>
 #include <stdlib.h>
 
 typedef struct Node {
@@ -257,15 +257,13 @@ int main() {
     printList(&list);  // Output: 20 -> 30 -> 40 -> NULL
     
     return 0;
-}`}
-                </pre>
+}`} language={implementationLang} />
               </div>
             )}
 
             {implementationLang === 'cpp' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`#include <iostream>
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
+                <CodeView code={`#include <iostream>
 using namespace std;
 
 class Node {
@@ -356,15 +354,13 @@ int main() {
     cout << "Search 20: " << list.search(20) << endl;  // Output: 1 (true)
     
     return 0;
-}`}
-                </pre>
+}`} language={implementationLang} />
               </div>
             )}
 
             {implementationLang === 'python' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`class Node:
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
+                <CodeView code={`class Node:
     def __init__(self, data):
         self.data = data
         self.next = None
@@ -427,15 +423,13 @@ ll.insert_at_tail(40)
 ll.print_list()  # Output: 10 -> 20 -> 30 -> 40 -> None
 
 print(f"Deleted: {ll.delete_head()}")  # Output: 10
-print(f"Search 20: {ll.search(20)}")   # Output: True`}
-                </pre>
+print(f"Search 20: {ll.search(20)}")   # Output: True`} language={implementationLang} />
               </div>
             )}
 
             {implementationLang === 'java' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`class Node {
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
+                <CodeView code={`class Node {
     int data;
     Node next;
     
@@ -517,15 +511,14 @@ public class Main {
         System.out.println("Deleted: " + list.deleteHead());  // Output: 10
         System.out.println("Search 20: " + list.search(20));  // Output: true
     }
-}`}
-                </pre>
+}`} language={implementationLang} />
               </div>
             )}
           </div>
         </section>
 
         {/* Insertion Operations */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-6 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+        <section className="bg-black/80 rounded-2xl p-6 border border-emerald-500/20 shadow-md shadow-emerald-500/5">
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Insertion Operations</h2>
           
           <div className="space-y-6">
@@ -536,9 +529,8 @@ public class Main {
             <LanguageSelector currentLang={insertionLang} setLang={setInsertionLang} />
 
             {insertionLang === 'c' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`// Insert at head - O(1)
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
+                <CodeView code={`// Insert at head - O(1)
 void insertAtHead(LinkedList* list, int data) {
     Node* newNode = createNode(data);
     newNode->next = list->head;
@@ -567,15 +559,13 @@ void insertAfter(Node* prevNode, int data) {
     Node* newNode = createNode(data);
     newNode->next = prevNode->next;
     prevNode->next = newNode;
-}`}
-                </pre>
+}`} language={insertionLang} />
               </div>
             )}
 
             {insertionLang === 'cpp' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`// Insert at head - O(1)
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
+                <CodeView code={`// Insert at head - O(1)
 void insertAtHead(int data) {
     Node* newNode = new Node(data);
     newNode->next = head;
@@ -604,15 +594,13 @@ void insertAfter(Node* prevNode, int data) {
     Node* newNode = new Node(data);
     newNode->next = prevNode->next;
     prevNode->next = newNode;
-}`}
-                </pre>
+}`} language={insertionLang} />
               </div>
             )}
 
             {insertionLang === 'python' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`def insert_at_head(self, data):
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
+                <CodeView code={`def insert_at_head(self, data):
     """Insert at beginning - O(1)"""
     new_node = Node(data)
     new_node.next = self.head
@@ -637,15 +625,13 @@ def insert_after(self, prev_node, data):
     
     new_node = Node(data)
     new_node.next = prev_node.next
-    prev_node.next = new_node`}
-                </pre>
+    prev_node.next = new_node`} language={insertionLang} />
               </div>
             )}
 
             {insertionLang === 'java' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`// Insert at head - O(1)
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
+                <CodeView code={`// Insert at head - O(1)
 public void insertAtHead(int data) {
     Node newNode = new Node(data);
     newNode.next = head;
@@ -674,19 +660,18 @@ public void insertAfter(Node prevNode, int data) {
     Node newNode = new Node(data);
     newNode.next = prevNode.next;
     prevNode.next = newNode;
-}`}
-                </pre>
+}`} language={insertionLang} />
               </div>
             )}
           </div>
         </section>
 
         {/* Real-World Applications */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-6 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+        <section className="bg-black/80 rounded-2xl p-6 border border-emerald-500/20 shadow-md shadow-emerald-500/5">
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Real-World Applications</h2>
           
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">📱</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">Music Playlist</h3>
               <p className="text-gray-300">
@@ -694,7 +679,7 @@ public void insertAfter(Node prevNode, int data) {
               </p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">🌐</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">Web Browser History</h3>
               <p className="text-gray-300">
@@ -702,7 +687,7 @@ public void insertAfter(Node prevNode, int data) {
               </p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">📚</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">File Systems</h3>
               <p className="text-gray-300">
@@ -710,7 +695,7 @@ public void insertAfter(Node prevNode, int data) {
               </p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">🎮</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">Game Development</h3>
               <p className="text-gray-300">
@@ -718,7 +703,7 @@ public void insertAfter(Node prevNode, int data) {
               </p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">📊</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">Hash Tables</h3>
               <p className="text-gray-300">
@@ -726,7 +711,7 @@ public void insertAfter(Node prevNode, int data) {
               </p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">🔄</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">Memory Management</h3>
               <p className="text-gray-300">
@@ -737,7 +722,7 @@ public void insertAfter(Node prevNode, int data) {
         </section>
 
         {/* Reverse Linked List Example */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-6 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+        <section className="bg-black/80 rounded-2xl p-6 border border-emerald-500/20 shadow-md shadow-emerald-500/5">
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Example: Reverse Linked List</h2>
           
           <div className="space-y-6">
@@ -748,9 +733,8 @@ public void insertAfter(Node prevNode, int data) {
             <LanguageSelector currentLang={applicationsLang} setLang={setApplicationsLang} />
 
             {applicationsLang === 'c' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`Node* reverseList(Node* head) {
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
+                <CodeView code={`Node* reverseList(Node* head) {
     Node* prev = NULL;
     Node* current = head;
     Node* next = NULL;
@@ -782,15 +766,13 @@ int main() {
     printList(&list);  // 30 -> 20 -> 10 -> NULL
     
     return 0;
-}`}
-                </pre>
+}`} language={applicationsLang} />
               </div>
             )}
 
             {applicationsLang === 'cpp' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`Node* reverseList(Node* head) {
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
+                <CodeView code={`Node* reverseList(Node* head) {
     Node* prev = nullptr;
     Node* current = head;
     Node* next = nullptr;
@@ -815,15 +797,13 @@ Node* reverseListRecursive(Node* head) {
     head->next->next = head;
     head->next = nullptr;
     return newHead;
-}`}
-                </pre>
+}`} language={applicationsLang} />
               </div>
             )}
 
             {applicationsLang === 'python' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`def reverse_list(head):
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
+                <CodeView code={`def reverse_list(head):
     """Reverse linked list iteratively"""
     prev = None
     current = head
@@ -857,15 +837,13 @@ ll.print_list()  # 10 -> 20 -> 30 -> None
 
 ll.head = reverse_list(ll.head)
 print("Reversed:", end=" ")
-ll.print_list()  # 30 -> 20 -> 10 -> None`}
-                </pre>
+ll.print_list()  # 30 -> 20 -> 10 -> None`} language={applicationsLang} />
               </div>
             )}
 
             {applicationsLang === 'java' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`public Node reverseList(Node head) {
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
+                <CodeView code={`public Node reverseList(Node head) {
     Node prev = null;
     Node current = head;
     Node next = null;
@@ -903,15 +881,14 @@ list.printList();  // 10 -> 20 -> 30 -> NULL
 
 list.head = reverseList(list.head);
 System.out.print("Reversed: ");
-list.printList();  // 30 -> 20 -> 10 -> NULL`}
-                </pre>
+list.printList();  // 30 -> 20 -> 10 -> NULL`} language={applicationsLang} />
               </div>
             )}
           </div>
         </section>
 
         {/* Time Complexity */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-6 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+        <section className="bg-black/80 rounded-2xl p-6 border border-emerald-500/20 shadow-md shadow-emerald-500/5">
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Time & Space Complexity</h2>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
@@ -923,56 +900,56 @@ list.printList();  // 30 -> 20 -> 10 -> NULL`}
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-gray-700 hover:bg-emerald-500/5 transition-colors">
+                <tr className="border-b border-emerald-500/10 hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">Insert at Head</td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                 </tr>
-                <tr className="border-b border-gray-700 hover:bg-emerald-500/5 transition-colors">
+                <tr className="border-b border-emerald-500/10 hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">Insert at Tail</td>
                   <td className="p-4">
-                    <code className="text-yellow-400 bg-gray-800 px-3 py-1 rounded">O(n)</code>
+                    <code className="text-yellow-400 bg-black/80 px-3 py-1 rounded">O(n)</code>
                   </td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                 </tr>
-                <tr className="border-b border-gray-700 hover:bg-emerald-500/5 transition-colors">
+                <tr className="border-b border-emerald-500/10 hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">Delete Head</td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                 </tr>
-                <tr className="border-b border-gray-700 hover:bg-emerald-500/5 transition-colors">
+                <tr className="border-b border-emerald-500/10 hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">Delete Tail</td>
                   <td className="p-4">
-                    <code className="text-yellow-400 bg-gray-800 px-3 py-1 rounded">O(n)</code>
+                    <code className="text-yellow-400 bg-black/80 px-3 py-1 rounded">O(n)</code>
                   </td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                 </tr>
-                <tr className="border-b border-gray-700 hover:bg-emerald-500/5 transition-colors">
+                <tr className="border-b border-emerald-500/10 hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">Search</td>
                   <td className="p-4">
-                    <code className="text-yellow-400 bg-gray-800 px-3 py-1 rounded">O(n)</code>
+                    <code className="text-yellow-400 bg-black/80 px-3 py-1 rounded">O(n)</code>
                   </td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                 </tr>
                 <tr className="hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">Overall Space</td>
                   <td className="p-4 text-gray-400">-</td>
                   <td className="p-4">
-                    <code className="text-yellow-400 bg-gray-800 px-3 py-1 rounded">O(n)</code>
+                    <code className="text-yellow-400 bg-black/80 px-3 py-1 rounded">O(n)</code>
                   </td>
                 </tr>
               </tbody>
@@ -1034,12 +1011,12 @@ list.printList();  // 30 -> 20 -> 10 -> NULL`}
         </section>
 
         {/* Practice Problems */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-6 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+        <section className="bg-black/80 rounded-2xl p-6 border border-emerald-500/20 shadow-md shadow-emerald-500/5">
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Practice Problems</h2>
 
           <div className="space-y-6">
             {/* 1. Reverse Linked List */}
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
               <div className="flex items-start justify-between mb-3">
                 <h3 className="text-xl font-semibold text-emerald-300">
                   1. Reverse Linked List
@@ -1066,7 +1043,7 @@ list.printList();  // 30 -> 20 -> 10 -> NULL`}
             </div>
 
             {/* 2. Detect Cycle */}
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
               <div className="flex items-start justify-between mb-3">
                 <h3 className="text-xl font-semibold text-emerald-300">
                   2. Linked List Cycle
@@ -1092,7 +1069,7 @@ list.printList();  // 30 -> 20 -> 10 -> NULL`}
             </div>
 
             {/* 3. Merge Two Sorted Lists */}
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
               <div className="flex items-start justify-between mb-3">
                 <h3 className="text-xl font-semibold text-emerald-300">
                   3. Merge Two Sorted Lists
@@ -1118,7 +1095,7 @@ list.printList();  // 30 -> 20 -> 10 -> NULL`}
             </div>
 
             {/* 4. Remove Nth Node From End */}
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
               <div className="flex items-start justify-between mb-3">
                 <h3 className="text-xl font-semibold text-emerald-300">
                   4. Remove Nth Node From End

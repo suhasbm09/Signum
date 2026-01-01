@@ -43,13 +43,13 @@ export default function CodeView({ code = '', language = null, height = null, re
   }, [code, height]);
 
   const fallback = (
-    <pre className="text-emerald-300 font-mono text-sm p-3 whitespace-pre-wrap">
+    <pre className="text-emerald-300 font-mono text-sm p-3 whitespace-pre-wrap overflow-x-auto">
       {code}
     </pre>
   );
 
   return (
-    <div className="rounded-lg border border-emerald-500/10 bg-[#0B0F0E] overflow-hidden">
+    <div className="rounded-lg border border-emerald-500/10 bg-[#0B0F0E] overflow-hidden" style={{ contain: 'layout style' }}>
       <Suspense fallback={fallback}>
         <MonacoEditor
           height={calcHeight}
@@ -65,6 +65,17 @@ export default function CodeView({ code = '', language = null, height = null, re
             contextmenu: false,
             wordWrap: 'on',
             scrollBeyondLastLine: false,
+            scrollbar: {
+              vertical: 'auto',
+              horizontal: 'auto',
+              handleMouseWheel: true,
+              alwaysConsumeMouseWheel: false
+            },
+            mouseWheelZoom: false,
+            fastScrollSensitivity: 5,
+            smoothScrolling: true,
+            renderValidationDecorations: 'off',
+            renderWhitespace: 'none'
           }}
         />
       </Suspense>

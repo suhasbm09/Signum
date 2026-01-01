@@ -1,6 +1,9 @@
-"""
-Simple Course Content Store - For RAG
-Loads course content and makes it searchable
+"""Legacy Course Content Store.
+
+This file previously powered a keyword-based "RAG".
+The production RAG now lives in `app.services.ai.rag` (Chroma + chunking).
+
+Kept for backward compatibility / emergency fallback.
 """
 
 from typing import List, Dict

@@ -28,17 +28,6 @@ function CompletionTracker({ courseId, moduleId, children, contentLength = 'medi
 
   const requiredTime = getRequiredTime();
 
-  // Estimate reading time (SURVEY MODE: Quick completion)
-  const getEstimatedReadTime = () => {
-    const timeMap = {
-      short: '<1',
-      medium: '<1',
-      long: '<1',
-      'x-long': '<1'
-    };
-    return timeMap[contentLength] || '<1';
-  };
-
   // Check if already completed
   useEffect(() => {
     const checkCompletion = async () => {
@@ -84,15 +73,6 @@ function CompletionTracker({ courseId, moduleId, children, contentLength = 'medi
     }
   };
 
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const getProgressPercentage = () => {
-    return Math.min((timeSpent / requiredTime) * 100, 100);
-  };
 
   return (
     <div ref={contentRef} className="relative">

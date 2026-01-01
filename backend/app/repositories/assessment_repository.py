@@ -39,6 +39,9 @@ class AssessmentRepository(BaseRepository):
             data['language'] = language
             data['test_results'] = metadata.get('test_results', []) if metadata else []
             data['time_complexity'] = metadata.get('time_complexity', {}) if metadata else {}
+            data['time_taken'] = metadata.get('time_taken') if metadata else None
+            # AI Analysis Report
+            data['ai_report'] = metadata.get('ai_report') if metadata else None
         
         self.collection.document(submission_id).set(data)
         return data

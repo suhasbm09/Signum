@@ -4,10 +4,12 @@ Three pipelines: Q&A with RAG, Evaluation, Anti-Cheat
 """
 
 import os
+import re
 from typing import List, Dict, Optional
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from dotenv import load_dotenv
-from .course_content_store import course_store
+from .rag.rag_service import rag_service
 
 # Load environment variables
 load_dotenv()
@@ -15,14 +17,15 @@ load_dotenv()
 # Configure Gemini
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
-genai.configure(api_key=GEMINI_API_KEY)
+client = genai.Client(api_key=GEMINI_API_KEY)
 
 
 class AIService:
     """Main AI Service with 3 pipelines"""
     
     def __init__(self):
-        self.model = genai.GenerativeModel(GEMINI_MODEL)
+        self.client = client
+        self.model_name = GEMINI_MODEL
         
         # System prompt for Q&A - FORMATTED RESPONSES
         self.qa_system_prompt = """You are an AI tutor for Signum Learning Platform.
@@ -104,6 +107,38 @@ Screen Content: {screen_content}
 """
     
     # ============ PIPELINE 1: Q&A with RAG ============
+    def is_in_scope(self, message: str, context: str = "", screen_content: str = "") -> bool:
+        """Strict scope guard.
+
+        IMPORTANT: We never send unrelated questions to Gemini.
+
+        Logic:
+        - Allow obvious Signum/platform/course questions (keyword match)
+        - Otherwise require RAG similarity to be strong enough
+        - If index is missing, fail closed (out-of-scope) to avoid hallucinations
+        """
+
+        in_scope, _reason = rag_service.in_scope(
+            message=message,
+            context=context,
+            screen_content=screen_content,
+        )
+        return in_scope
+
+    def out_of_scope_response(self) -> Dict:
+        return {
+            "success": True,
+            "response": (
+                "I can only help with Signum courses and features.\n\n"
+                "**Try asking about:**\n"
+                "• Course concepts (e.g., arrays, stacks, queues)\n"
+                "• Quizzes and scoring\n"
+                "• Coding challenges and test cases\n"
+                "• Certificates / NFT minting on Solana\n"
+            ),
+            "filtered": "out_of_scope"
+        }
+
     async def chat(
         self, 
         message: str, 
@@ -124,19 +159,32 @@ Screen Content: {screen_content}
             Dict with success, response, context
         """
         try:
+            # STEP 0: Scope guard (skip Gemini call if out-of-scope)
+            if not self.is_in_scope(message=message, context=context, screen_content=screen_content):
+                return self.out_of_scope_response()
+
             # STEP 1: Get relevant course content (RAG)
-            course_content = course_store.get_relevant_content(message, context)
+            rag_context, sources, _best_distance = rag_service.retrieve(
+                question=message,
+                context=context,
+                screen_content=screen_content,
+            )
             
             # STEP 2: Build system prompt with ALL context
             system_prompt = self.qa_system_prompt.format(
                 context=context,
-                screen_content=screen_content[:500] if screen_content else "No screen content provided"
+                screen_content=screen_content[:1500] if screen_content else "No screen content provided"
+            )
+
+            system_prompt += (
+                "\n\nCITATIONS RULE: If you used any provided sources, end with **Sources:** and list the source IDs you used (e.g., S1, S2). "
+                "Never invent sources."
             )
             
             # Add course content if found
-            if course_content:
-                system_prompt += f"\n\n**Relevant Course Material:**\n{course_content}\n"
-                system_prompt += "Use this course material to answer the question accurately.\n"
+            if rag_context:
+                system_prompt += f"\n\n**Relevant Signum Material (RAG):**\n{rag_context}\n"
+                system_prompt += "Use this material to answer accurately. Prefer it over general knowledge.\n"
             
             # Build conversation
             full_prompt = f"{system_prompt}\n\n"
@@ -151,13 +199,25 @@ Screen Content: {screen_content}
             full_prompt += f"\nUser: {message}\nAssistant:"
             
             # Generate response
-            response = self.model.generate_content(full_prompt)
+            response = self.client.models.generate_content(
+                model=self.model_name,
+                contents=full_prompt
+            )
             
             return {
                 "success": True,
                 "response": response.text,
                 "context": context,
-                "model": GEMINI_MODEL
+                "model": GEMINI_MODEL,
+                "sources": [
+                    {
+                        "id": s.source_id,
+                        "title": s.title,
+                        "path": s.path,
+                        "distance": s.distance,
+                    }
+                    for s in sources
+                ],
             }
             
         except Exception as e:
@@ -210,7 +270,10 @@ Provide a JSON response with:
 
 Return ONLY valid JSON, no markdown formatting."""
 
-            response = self.model.generate_content(prompt)
+            response = self.client.models.generate_content(
+                model=self.model_name,
+                contents=prompt
+            )
             analysis_text = response.text.strip()
             
             # Remove markdown code blocks if present

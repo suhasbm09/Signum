@@ -1,3 +1,6 @@
+import Button from './Button';
+import Card from './Card';
+
 function CourseCard({
   id,
   title,
@@ -27,18 +30,18 @@ function CourseCard({
   };
 
   return (
-    <div className="bg-glossy-black-ultra backdrop-blur-xl rounded-2xl p-6 lg:p-7 shadow-2xl ring-1 ring-white/5 flex flex-col gap-6 hover:ring-emerald-500/30 transition-all duration-300 hover-lift">
+    <Card variant="default" hover={true} className="gap-6">
       <div className="flex flex-col gap-3">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h3 className="text-2xl font-quantico-bold text-gray-100">{title}</h3>
+            <h3 className="text-xl sm:text-2xl font-quantico-bold text-gray-100">{title}</h3>
             {tagline && (
-              <p className="text-sm text-emerald-300 uppercase tracking-widest mt-1">{tagline}</p>
+              <p className="text-xs sm:text-sm text-emerald-300 uppercase tracking-widest mt-1">{tagline}</p>
             )}
           </div>
         </div>
         {description && (
-          <p className="text-gray-400 text-sm leading-relaxed">{description}</p>
+          <p className="text-gray-300 text-sm sm:text-base leading-relaxed">{description}</p>
         )}
       </div>
 
@@ -47,10 +50,10 @@ function CourseCard({
           {stats.map((stat) => (
             <div
               key={`${id}-${stat.label}`}
-              className="bg-black/40 border border-white/5 rounded-xl px-4 py-3 flex flex-col"
+              className="bg-black/40 border border-white/5 rounded-xl px-3 sm:px-4 py-2 sm:py-3 flex flex-col"
             >
-              <span className="text-xs uppercase tracking-wide text-gray-500">{stat.label}</span>
-              <span className="text-sm text-gray-100 font-quantico-bold mt-1">{stat.value}</span>
+              <span className="text-xs uppercase tracking-wide text-gray-400">{stat.label}</span>
+              <span className="text-sm sm:text-base text-gray-100 font-quantico-bold mt-1">{stat.value}</span>
             </div>
           ))}
         </div>
@@ -61,7 +64,7 @@ function CourseCard({
           {topics.map((topic) => (
             <span
               key={`${id}-${topic}`}
-              className="px-3 py-1 rounded-full text-xs font-quantico bg-emerald-500/10 text-emerald-200 border border-emerald-500/20"
+              className="px-3 py-1.5 rounded-full text-xs sm:text-sm font-quantico bg-emerald-500/10 text-emerald-200 border border-emerald-500/20"
             >
               {topic}
             </span>
@@ -99,7 +102,7 @@ function CourseCard({
               
               {codingCompleted && (
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-400">• Coding (50%):</span>
+                  <span className="text-gray-300">• Coding (50%):</span>
                   <span className="font-quantico-bold text-emerald-400">
                     Complete ✓
                   </span>
@@ -110,39 +113,41 @@ function CourseCard({
         </div>
       )}
 
-      <div className="pt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="pt-2 flex flex-col gap-3">
         {enrolled ? (
           <>
-            <span className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-quantico border ${
-              completed 
-                ? 'bg-emerald-500/20 text-emerald-200 border-emerald-500/40' 
-                : 'bg-emerald-500/15 text-emerald-200 border-emerald-500/30'
-            }`}>
-              {completed ? '✓ Completed' : 'Enrolled'}
-            </span>
-            <button
-              type="button"
+            <div className="flex items-center justify-between">
+              <span className={`inline-flex items-center justify-center px-3 py-1.5 rounded-full text-xs sm:text-sm font-quantico border ${
+                completed 
+                  ? 'bg-emerald-500/20 text-emerald-200 border-emerald-500/40' 
+                  : 'bg-emerald-500/15 text-emerald-200 border-emerald-500/30'
+              }`}>
+                {completed ? '✓ Completed' : 'Enrolled'}
+              </span>
+            </div>
+            <Button
+              variant={completed ? "outline" : "primary"}
+              size="lg"
+              fullWidth
               onClick={handleStart}
-              className={`px-5 py-2.5 rounded-xl text-sm font-quantico-bold w-full sm:w-auto transition-all duration-300 ${
-                completed
-                  ? 'bg-gradient-to-r from-emerald-500/20 to-green-500/20 hover:from-emerald-500/30 hover:to-green-500/30 text-emerald-200 border border-emerald-400/30'
-                  : 'btn-primary text-gray-100'
-              }`}
+              ariaLabel={completed ? "Revisit course" : "Continue learning journey"}
             >
               {completed ? '📚 Revisit Course' : '🚀 Continue Journey'}
-            </button>
+            </Button>
           </>
         ) : (
-          <button
-            type="button"
+          <Button
+            variant="primary"
+            size="lg"
+            fullWidth
             onClick={handleEnroll}
-            className="btn-primary text-gray-100 px-5 py-2.5 rounded-xl text-sm font-quantico-bold w-full sm:w-auto"
+            ariaLabel={`Enroll in ${title}`}
           >
             {ctaText}
-          </button>
+          </Button>
         )}
       </div>
-    </div>
+    </Card>
   );
 }
 

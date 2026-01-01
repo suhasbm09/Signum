@@ -4,7 +4,27 @@ import ProgressBar from '../components/ProgressBar';
 import { courseRegistry } from '../courses';
 import { useProgress } from '../contexts/ProgressContext';
 
-// Small, local utility: auto-hide Layout header/footer based on a specific scroll container
+// Throttle helper for better performance
+function throttle(func, delay) {
+  let timeoutId;
+  let lastRan;
+  return function(...args) {
+    if (!lastRan) {
+      func.apply(this, args);
+      lastRan = Date.now();
+    } else {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        if ((Date.now() - lastRan) >= delay) {
+          func.apply(this, args);
+          lastRan = Date.now();
+        }
+      }, delay - (Date.now() - lastRan));
+    }
+  };
+}
+
+// Optimized auto-hide with throttling
 function useAutoHideChrome(scrollElRef, { threshold = 8 } = {}) {
   useEffect(() => {
     const el = scrollElRef.current;
@@ -13,33 +33,28 @@ function useAutoHideChrome(scrollElRef, { threshold = 8 } = {}) {
     const header = document.querySelector('[data-app-header]');
     const footer = document.querySelector('[data-app-footer]');
 
-    // If Layout doesn't expose these markers, fail silently
     if (!header && !footer) return;
 
     let lastY = 0;
 
-    const onScroll = () => {
+    const onScroll = throttle(() => {
       const y = el.scrollTop;
       const dy = y - lastY;
 
-      // scrolling down → hide both
       if (dy > threshold) {
         if (header) header.style.transform = 'translateY(-100%)';
         if (footer) footer.style.transform = 'translateY(100%)';
-      }
-      // scrolling up → show both
-      if (dy < -threshold) {
+      } else if (dy < -threshold) {
         if (header) header.style.transform = 'translateY(0)';
         if (footer) footer.style.transform = 'translateY(0)';
       }
 
-      // snap visible at top/bottom
       if (y <= 0 && header) header.style.transform = 'translateY(0)';
       const atBottom = Math.ceil(y + el.clientHeight) >= el.scrollHeight;
       if (atBottom && footer) footer.style.transform = 'translateY(0)';
 
       lastY = y;
-    };
+    }, 100); // Throttle to 100ms
 
     el.addEventListener('scroll', onScroll, { passive: true });
     return () => el.removeEventListener('scroll', onScroll);
@@ -73,6 +88,34 @@ function CourseContent({ user, onLogout, onNavigate, courseId, topic }) {
 
   const outline = courseData?.outline || [];
   const courseContent = courseData?.content || {};
+
+  // --- state (must be declared unconditionally for hooks rules) ---
+  const [activeTopic, setActiveTopic] = useState(topic || outline?.[0]?.id || null);
+  const [expandedSections, setExpandedSections] = useState({});
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // RIGHT content scroll ref (independent scroller)
+  const contentRef = useRef(null);
+
+  // ensure right-pane scroll-to-top on topic change (this page uses inner scroller)
+  useEffect(() => {
+    if (topic) {
+      setActiveTopic(topic);
+      contentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [topic]);
+
+  // initialize progress and default topic when outline changes
+  useEffect(() => {
+    if (!courseData) return;
+    setActiveTopic(outline?.[0]?.id || null);
+    if (courseId) initializeCourseProgress(courseId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [outline, courseId, courseData]);
+
+  // auto-hide Layout header/footer when RIGHT pane scrolls (only this page needed)
+  useAutoHideChrome(contentRef, { threshold: 8 });
 
   // --- unknown course placeholder ---
   if (!courseData) {
@@ -111,48 +154,9 @@ function CourseContent({ user, onLogout, onNavigate, courseId, topic }) {
     );
   }
 
-  // --- state ---
-  const [activeTopic, setActiveTopic] = useState(topic || outline?.[0]?.id || null);
-  const [expandedSections, setExpandedSections] = useState({});
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  // RIGHT content scroll ref (independent scroller)
-  const contentRef = useRef(null);
-
-  // ensure right-pane scroll-to-top on topic change (this page uses inner scroller)
-  useEffect(() => {
-    if (topic) {
-      setActiveTopic(topic);
-      contentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [topic]);
-
-  // initialize progress and default topic when outline changes
-  useEffect(() => {
-    setActiveTopic(outline?.[0]?.id || null);
-    if (courseId) initializeCourseProgress(courseId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [outline, courseId]);
-
-  // auto-hide Layout header/footer when RIGHT pane scrolls (only this page needed)
-  useAutoHideChrome(contentRef, { threshold: 8 });
-
   const toggleSection = (sectionId) => {
     setExpandedSections(prev => ({ ...prev, [sectionId]: !prev[sectionId] }));
   };
-
-  const activeTopicTitle = useMemo(() => {
-    if (!activeTopic) return null;
-    for (const section of outline) {
-      if (section.id === activeTopic) return section.title;
-      if (section.children) {
-        const match = section.children.find((child) => child.id === activeTopic);
-        if (match) return match.title;
-      }
-    }
-    return null;
-  }, [activeTopic, outline]);
 
   return (
     <Layout user={user} onLogout={onLogout} currentPage="course" onNavigate={onNavigate}>
@@ -161,9 +165,10 @@ function CourseContent({ user, onLogout, onNavigate, courseId, topic }) {
         <div className="flex h-full min-h-0 overflow-hidden">
           {/* Desktop Sidebar — independent scroll */}
           <aside
-            className={`hidden lg:block bg-glossy-black-ultra backdrop-blur-xl border-r border-white/10 shadow-2xl transition-all duration-300 overflow-y-auto min-h-0 ${
-              sidebarCollapsed ? 'w-[2%]' : 'w-[25%]'
+            className={`hidden lg:block bg-black/95 border-r border-emerald-500/20 shadow-xl transition-all duration-300 overflow-y-auto min-h-0 ${
+              sidebarCollapsed ? 'w-16' : 'w-80'
             }`}
+            style={{ contain: 'layout style paint' }}
           >
             <div
               className={`p-6 h-full transition-opacity duration-300 ${
@@ -198,11 +203,11 @@ function CourseContent({ user, onLogout, onNavigate, courseId, topic }) {
                         className={`w-full text-left px-4 py-2 rounded-xl font-quantico text-sm transition-all duration-200 flex items-center justify-between ${
                           activeTopic === section.id
                             ? isCertification
-                              ? 'bg-yellow-500/20 text-yellow-200 border border-yellow-500/40'
-                              : 'bg-emerald-500/20 text-emerald-200 border border-emerald-500/40'
+                              ? 'bg-yellow-500/20 text-yellow-200 border border-yellow-500/50 shadow-lg shadow-yellow-500/20'
+                              : 'bg-emerald-500/20 text-emerald-200 border border-emerald-500/50 shadow-lg shadow-emerald-500/20'
                             : isCertification
-                              ? 'bg-yellow-500/10 text-yellow-300 border border-yellow-500/20 hover:border-yellow-500/40'
-                              : 'bg-black/40 text-gray-200 border border-white/5 hover:border-emerald-500/30'
+                              ? 'bg-yellow-500/5 text-yellow-300 border border-yellow-500/20 hover:border-yellow-500/40 hover:bg-yellow-500/10'
+                              : 'bg-black/60 text-gray-200 border border-emerald-500/10 hover:border-emerald-500/30 hover:bg-black/80'
                         }`}
                         onClick={() => {
                           setActiveTopic(section.id);
@@ -287,7 +292,7 @@ function CourseContent({ user, onLogout, onNavigate, courseId, topic }) {
               />
               
               {/* Drawer */}
-              <aside className="fixed top-0 left-0 bottom-0 w-80 max-w-[85vw] bg-glossy-black-ultra border-r border-white/10 shadow-2xl z-50 lg:hidden overflow-y-auto">
+              <aside className="fixed top-0 left-0 bottom-0 w-80 max-w-[85vw] bg-black/98 border-r border-emerald-500/20 shadow-2xl z-50 lg:hidden overflow-y-auto" style={{ contain: 'layout style paint' }}>
                 <div className="p-4">
                   {/* Header */}
                   <div className="flex justify-between items-center mb-4">
@@ -408,8 +413,8 @@ function CourseContent({ user, onLogout, onNavigate, courseId, topic }) {
           {/* Toggle Sidebar Button - Floating (Desktop only) */}
           <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className={`hidden lg:block fixed top-20 z-50 bg-gradient-to-r from-emerald-800/80 to-green-800/80 hover:from-emerald-700/90 hover:to-green-700/90 text-gray-200 p-3 rounded-r-xl shadow-lg transition-all duration-300 border-y border-r border-emerald-400/40 ${
-              sidebarCollapsed ? 'left-[2%]' : 'left-[25%]'
+            className={`hidden lg:block fixed top-20 z-50 bg-emerald-700/90 hover:bg-emerald-600 text-gray-200 p-3 rounded-r-xl shadow-lg transition-colors duration-200 border-y border-r border-emerald-400/40 ${
+              sidebarCollapsed ? 'left-16' : 'left-80'
             }`}
             title={sidebarCollapsed ? 'Show Table of Contents' : 'Hide Table of Contents'}
           >
@@ -432,9 +437,8 @@ function CourseContent({ user, onLogout, onNavigate, courseId, topic }) {
           {/* RIGHT content — independent scroll + auto-hide header/footer */}
           <section
             ref={contentRef}
-            className={`bg-glossy-black-ultra backdrop-blur-xl shadow-2xl overflow-y-auto min-h-0 transition-all duration-300 w-full ${
-              sidebarCollapsed ? 'lg:w-full' : 'lg:w-[75%]'
-            }`}
+            className="flex-1 bg-black/95 shadow-xl overflow-y-auto min-h-0 w-full"
+            style={{ contain: 'layout style', scrollBehavior: 'smooth' }}
           >
             <div className="p-4 sm:p-6 md:p-10">
               {courseContent[activeTopic] ? (

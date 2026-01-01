@@ -18,23 +18,33 @@ class TestQuizService:
              patch('app.domains.assessment.quiz_service.ProgressRepository') as mock_progress:
             
             quiz_service = QuizService()
-            
-            # Mock successful submission
+
+            # Mock successful persistence calls
             mock_assessment.return_value.create_submission.return_value = {"id": "submission_1"}
             mock_progress.return_value.update_quiz_progress.return_value = {"success": True}
-            
-            # Submit answers (real quiz questions exist in quiz_service.py)
-            result = quiz_service.submit_quiz(
+
+            # Start session (NEW API)
+            start = quiz_service.start_quiz_session(
                 user_id="test_user",
                 course_id="data-structures",
-                quiz_id="quiz-1",  # Actual quiz_id from quiz_service.py
-                answers=["a", "b", "c", "d", "c"],  # All correct answers
-                time_taken=300
+                num_questions=5
+            )
+            assert start["success"] is True
+            session_id = start["session_id"]
+
+            # Build perfect answers using server-side stored correct indices
+            session_questions = quiz_service.active_sessions[session_id]["questions"]
+            answers = {q["id"]: q["correct"] for q in session_questions}
+
+            result = quiz_service.submit_quiz(
+                user_id="test_user",
+                session_id=session_id,
+                answers=answers
             )
             
             assert 'score' in result
             assert 'passed' in result
-            assert result['score'] == 100.0  # All correct
+            assert result['score'] == 100  # Perfect score capped at 100
             assert result['passed'] is True
             print(f"✅ Quiz submission grading: {result['score']}%")
     
@@ -51,16 +61,23 @@ class TestQuizService:
     
     @pytest.mark.unit
     def test_get_quiz_questions(self):
-        """Test retrieving quiz questions"""
+        """Test retrieving quiz questions (NEW: start_quiz_session returns questions without answers)"""
         from app.domains.assessment.quiz_service import QuizService
         
         quiz_service = QuizService()
-        questions = quiz_service.get_quiz_questions(
+        start = quiz_service.start_quiz_session(
+            user_id="test_user",
             course_id="data-structures",
-            quiz_id="module1-quiz"
+            num_questions=5
         )
-        
-        assert 'quiz_id' in questions or 'questions' in questions or 'error' in questions
+
+        assert start["success"] is True
+        assert 'questions' in start
+        assert len(start['questions']) == 5
+
+        # Ensure correct answers are NOT leaked to frontend
+        assert 'correct' not in start['questions'][0]
+        assert 'explanation' not in start['questions'][0]
         print("✅ Get Quiz Questions: PASS")
     
     
@@ -79,8 +96,7 @@ class TestQuizService:
             quiz_service = QuizService()
             attempts = quiz_service.get_quiz_attempts(
                 user_id="test_user",
-                course_id="data-structures",
-                quiz_id="module1-quiz"
+                course_id="data-structures"
             )
             
             assert isinstance(attempts, list)

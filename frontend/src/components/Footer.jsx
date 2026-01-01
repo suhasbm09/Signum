@@ -1,10 +1,9 @@
-
 function Footer() {
   return (
-    <footer className="bg-glossy-footer mt-auto">
+    <footer className="bg-glossy-footer mt-auto" data-app-footer role="contentinfo">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
         <div className="text-center">
-          <p className="text-gray-400 text-sm font-quantico">
+          <p className="text-gray-300 text-sm font-quantico">
             © 2025 Signum. All rights reserved.
           </p>
         </div>

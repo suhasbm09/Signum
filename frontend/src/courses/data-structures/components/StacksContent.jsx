@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle2, AlertCircle } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Clock, TrendingUp } from 'lucide-react';
 import StackVisualization from '../visualizations/StackVisualization';
 import CompletionTracker from '../../../components/CompletionTracker';
 import CodeView from '../../../components/CodeView';
@@ -20,15 +20,15 @@ const StacksContent = ({ onNavigate, courseId }) => {
 
   // Language selector component
   const LanguageSelector = ({ currentLang, setLang }) => (
-    <div className="flex gap-2 mb-3">
+    <div className="flex gap-2 mb-4">
       {['C', 'C++', 'Python', 'Java'].map((lang) => (
         <button
           key={lang}
           onClick={() => setLang(lang.toLowerCase().replace('++', 'pp'))}
-          className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+          className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
             currentLang === lang.toLowerCase().replace('++', 'pp')
-              ? 'bg-emerald-500 text-black'
-              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/30'
+              : 'bg-black/60 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/20 hover:border-emerald-500/50'
           }`}
         >
           {lang}
@@ -43,12 +43,12 @@ const StacksContent = ({ onNavigate, courseId }) => {
       moduleId={moduleId} 
       contentLength="x-long"
     >
-    <div className="min-h-screen  text-white p-4 sm:p-6 lg:p-8">
-      <div className="w-full mx-auto space-y-8 sm:space-y-10 lg:space-y-12">
+    <div className="min-h-screen text-white p-4 sm:p-6 lg:p-8" style={{ contain: 'layout style' }}>
+      <div className="w-full mx-auto space-y-6 sm:space-y-8">
         
         {/* Header */}
-        <div className="text-center space-y-4 animate-slideInDown">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-emerald-400 to-green-600 bg-clip-text text-transparent">
+        <div className="text-center space-y-4">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-emerald-400">
             Stacks - LIFO Data Structure
           </h1>
           <p className="text-lg sm:text-xl text-gray-300">
@@ -57,7 +57,7 @@ const StacksContent = ({ onNavigate, courseId }) => {
         </div>
 
         {/* Introduction */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10 animate-slideInUp">
+        <section className="bg-black/80 rounded-2xl p-6 sm:p-8 border border-emerald-500/20">
           <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-emerald-400">What is a Stack?</h2>
           
           <div className="space-y-6">
@@ -67,7 +67,7 @@ const StacksContent = ({ onNavigate, courseId }) => {
             </p>
 
             {/* Visual Representation */}
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/30">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/30">
               <h3 className="text-xl font-semibold mb-4 text-emerald-300">Visual Representation</h3>
               <div className="flex justify-center items-end gap-8">
                 {/* Stack visualization */}
@@ -110,7 +110,7 @@ const StacksContent = ({ onNavigate, courseId }) => {
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Core Operations</h2>
           <div className="grid md:grid-cols-2 gap-6">
             
-            <div className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all hover-lift">
+            <div className="bg-black/80 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
                   <span className="text-2xl">⬆️</span>
@@ -118,10 +118,10 @@ const StacksContent = ({ onNavigate, courseId }) => {
                 <h3 className="text-xl font-semibold text-emerald-300">Push</h3>
               </div>
               <p className="text-gray-300 mb-2">Add element to the top of stack</p>
-              <code className="text-emerald-400 bg-gray-800 px-2 py-1 rounded text-sm">Time: O(1)</code>
+              <code className="text-emerald-400 bg-black/80 px-2 py-1 rounded text-sm">Time: O(1)</code>
             </div>
 
-            <div className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all hover-lift">
+            <div className="bg-black/80 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
                   <span className="text-2xl">⬇️</span>
@@ -129,10 +129,10 @@ const StacksContent = ({ onNavigate, courseId }) => {
                 <h3 className="text-xl font-semibold text-emerald-300">Pop</h3>
               </div>
               <p className="text-gray-300 mb-2">Remove and return top element</p>
-              <code className="text-emerald-400 bg-gray-800 px-2 py-1 rounded text-sm">Time: O(1)</code>
+              <code className="text-emerald-400 bg-black/80 px-2 py-1 rounded text-sm">Time: O(1)</code>
             </div>
 
-            <div className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all hover-lift">
+            <div className="bg-black/80 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
                   <span className="text-2xl">👁️</span>
@@ -140,10 +140,10 @@ const StacksContent = ({ onNavigate, courseId }) => {
                 <h3 className="text-xl font-semibold text-emerald-300">Peek / Top</h3>
               </div>
               <p className="text-gray-300 mb-2">View top element without removing</p>
-              <code className="text-emerald-400 bg-gray-800 px-2 py-1 rounded text-sm">Time: O(1)</code>
+              <code className="text-emerald-400 bg-black/80 px-2 py-1 rounded text-sm">Time: O(1)</code>
             </div>
 
-            <div className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all hover-lift">
+            <div className="bg-black/80 rounded-xl p-6 border border-emerald-500/30 hover:border-emerald-500/50 transition-all">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
                   <span className="text-2xl">❓</span>
@@ -151,19 +151,22 @@ const StacksContent = ({ onNavigate, courseId }) => {
                 <h3 className="text-xl font-semibold text-emerald-300">isEmpty</h3>
               </div>
               <p className="text-gray-300 mb-2">Check if stack is empty</p>
-              <code className="text-emerald-400 bg-gray-800 px-2 py-1 rounded text-sm">Time: O(1)</code>
+              <code className="text-emerald-400 bg-black/80 px-2 py-1 rounded text-sm">Time: O(1)</code>
             </div>
 
           </div>
         </section>
 
         {/* Interactive Visualizer */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl border border-emerald-500/20 shadow-xl shadow-emerald-500/10 overflow-hidden">
-          <StackVisualization />
+        <section className="bg-black/80 rounded-xl p-4 sm:p-6 border border-emerald-500/20">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-emerald-400">Interactive Stack Visualizer</h2>
+          <div className="bg-black/60 rounded-lg border border-emerald-500/30 p-3 min-w-0">
+            <StackVisualization embedded={true} />
+          </div>
         </section>
 
         {/* Implementation */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+        <section className="bg-black/80 rounded-xl p-4 sm:p-6 border border-emerald-500/20 shadow-md shadow-emerald-500/5">
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Implementation</h2>
           
           <div className="space-y-6">
@@ -174,7 +177,7 @@ const StacksContent = ({ onNavigate, courseId }) => {
             <LanguageSelector currentLang={implementationLang} setLang={setImplementationLang} />
 
             {implementationLang === 'c' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
               <CodeView code={`#include <stdio.h>
       #include <stdlib.h>
       #include <stdbool.h>
@@ -247,7 +250,7 @@ const StacksContent = ({ onNavigate, courseId }) => {
             )}
 
             {implementationLang === 'cpp' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
               <CodeView code={`#include <iostream>
       #include <stack>
       #include <vector>
@@ -317,7 +320,7 @@ const StacksContent = ({ onNavigate, courseId }) => {
             )}
 
             {implementationLang === 'python' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
               <CodeView code={`class Stack:
         def __init__(self):
           self.items = []
@@ -366,7 +369,7 @@ const StacksContent = ({ onNavigate, courseId }) => {
             )}
 
             {implementationLang === 'java' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
               <CodeView code={`import java.util.Stack;
       import java.util.ArrayList;
 
@@ -438,11 +441,11 @@ const StacksContent = ({ onNavigate, courseId }) => {
         </section>
 
         {/* Real-World Applications */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+        <section className="bg-black/80 rounded-xl p-4 sm:p-6 border border-emerald-500/20 shadow-md shadow-emerald-500/5">
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Real-World Applications</h2>
           
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">🔙</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">Browser History</h3>
               <p className="text-gray-300">
@@ -450,7 +453,7 @@ const StacksContent = ({ onNavigate, courseId }) => {
               </p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">↩️</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">Undo/Redo</h3>
               <p className="text-gray-300">
@@ -458,7 +461,7 @@ const StacksContent = ({ onNavigate, courseId }) => {
               </p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">📞</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">Function Calls</h3>
               <p className="text-gray-300">
@@ -466,7 +469,7 @@ const StacksContent = ({ onNavigate, courseId }) => {
               </p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">🧮</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">Expression Evaluation</h3>
               <p className="text-gray-300">
@@ -474,7 +477,7 @@ const StacksContent = ({ onNavigate, courseId }) => {
               </p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">🔍</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">DFS Algorithm</h3>
               <p className="text-gray-300">
@@ -482,7 +485,7 @@ const StacksContent = ({ onNavigate, courseId }) => {
               </p>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover-lift">
               <div className="text-3xl mb-3">✓</div>
               <h3 className="text-xl font-semibold text-emerald-300 mb-2">Syntax Parsing</h3>
               <p className="text-gray-300">
@@ -493,7 +496,7 @@ const StacksContent = ({ onNavigate, courseId }) => {
         </section>
 
         {/* Bracket Matching Example */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+        <section className="bg-black/80 rounded-xl p-4 sm:p-6 border border-emerald-500/20 shadow-md shadow-emerald-500/5">
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Example: Valid Parentheses</h2>
           
           <div className="space-y-6">
@@ -504,7 +507,7 @@ const StacksContent = ({ onNavigate, courseId }) => {
             <LanguageSelector currentLang={applicationsLang} setLang={setApplicationsLang} />
 
             {applicationsLang === 'c' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
               <CodeView code={`#include <stdio.h>
       #include <string.h>
       #include <stdbool.h>
@@ -548,7 +551,7 @@ const StacksContent = ({ onNavigate, courseId }) => {
             )}
 
             {applicationsLang === 'cpp' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
                 <CodeView code={`#include <iostream>
 #include <stack>
 #include <string>
@@ -590,9 +593,8 @@ int main() {
             )}
 
             {applicationsLang === 'python' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`def is_valid(s):
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
+                <CodeView code={`def is_valid(s):
     """Check if parentheses are balanced"""
     stack = []
     mapping = {')': '(', '}': '{', ']': '['}
@@ -615,15 +617,13 @@ int main() {
 print(is_valid("()[]{}"))    # True
 print(is_valid("([)]"))      # False
 print(is_valid("{[()]}"))    # True
-print(is_valid("(("))        # False`}
-                </pre>
+print(is_valid("(("))        # False`} language={applicationsLang} />
               </div>
             )}
 
             {applicationsLang === 'java' && (
-              <div className="bg-gray-900 rounded-lg p-6 border border-emerald-500/30 overflow-x-auto">
-                <pre className="text-emerald-300 font-mono text-sm">
-{`import java.util.Stack;
+              <div className="bg-black/90 rounded-lg p-5 border border-emerald-500/40 shadow-md shadow-emerald-500/5 overflow-x-auto">
+                <CodeView code={`import java.util.Stack;
 import java.util.HashMap;
 
 public class ValidParentheses {
@@ -656,15 +656,14 @@ public class ValidParentheses {
         System.out.println(isValid("([)]"));      // false
         System.out.println(isValid("{[()]}"));    // true
     }
-}`}
-                </pre>
+}`} language={applicationsLang} />
               </div>
             )}
           </div>
         </section>
 
         {/* Time Complexity */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+        <section className="bg-black/80 rounded-xl p-4 sm:p-6 border border-emerald-500/20 shadow-md shadow-emerald-500/5">
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Time & Space Complexity</h2>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
@@ -676,47 +675,47 @@ public class ValidParentheses {
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-gray-700 hover:bg-emerald-500/5 transition-colors">
+                <tr className="border-b border-emerald-500/10 hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">Push</td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                 </tr>
-                <tr className="border-b border-gray-700 hover:bg-emerald-500/5 transition-colors">
+                <tr className="border-b border-emerald-500/10 hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">Pop</td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                 </tr>
-                <tr className="border-b border-gray-700 hover:bg-emerald-500/5 transition-colors">
+                <tr className="border-b border-emerald-500/10 hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">Peek/Top</td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                 </tr>
-                <tr className="border-b border-gray-700 hover:bg-emerald-500/5 transition-colors">
+                <tr className="border-b border-emerald-500/10 hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">isEmpty</td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                   <td className="p-4">
-                    <code className="text-emerald-400 bg-gray-800 px-3 py-1 rounded">O(1)</code>
+                    <code className="text-emerald-400 bg-black/80 px-3 py-1 rounded">O(1)</code>
                   </td>
                 </tr>
                 <tr className="hover:bg-emerald-500/5 transition-colors">
                   <td className="p-4 text-gray-300">Overall Space</td>
                   <td className="p-4 text-gray-400">-</td>
                   <td className="p-4">
-                    <code className="text-yellow-400 bg-gray-800 px-3 py-1 rounded">O(n)</code>
+                    <code className="text-yellow-400 bg-black/80 px-3 py-1 rounded">O(n)</code>
                   </td>
                 </tr>
               </tbody>
@@ -726,7 +725,7 @@ public class ValidParentheses {
 
         {/* Advantages and Disadvantages */}
         <section className="grid md:grid-cols-2 gap-6">
-          <div className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-2xl p-8 border border-emerald-500/30">
+          <div className="bg-gradient-to-br from-emerald-900/30 to-gray-800/30 rounded-xl p-4 sm:p-6 border border-emerald-500/30">
             <h3 className="text-2xl font-semibold mb-6 text-emerald-300 flex items-center gap-3">
               <CheckCircle2 className="w-8 h-8" />
               Advantages
@@ -751,7 +750,7 @@ public class ValidParentheses {
             </ul>
           </div>
 
-          <div className="bg-gradient-to-br from-red-900/30 to-gray-800/30 rounded-2xl p-8 border border-red-500/30">
+          <div className="bg-gradient-to-br from-red-900/30 to-gray-800/30 rounded-xl p-4 sm:p-6 border border-red-500/30">
             <h3 className="text-2xl font-semibold mb-6 text-red-300 flex items-center gap-3">
               <AlertCircle className="w-8 h-8" />
               Disadvantages
@@ -778,11 +777,11 @@ public class ValidParentheses {
         </section>
 
         {/* Practice Problems */}
-        <section className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+        <section className="bg-black/80 rounded-xl p-4 sm:p-6 border border-emerald-500/20 shadow-md shadow-emerald-500/5">
           <h2 className="text-3xl font-bold mb-6 text-emerald-400">Practice Problems</h2>
           
           <div className="space-y-6">
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
               <div className="flex items-start justify-between mb-3">
                 <h3 className="text-xl font-semibold text-emerald-300">1. Min Stack</h3>
                 <span className="px-3 py-1 bg-yellow-500/20 text-yellow-300 rounded-full text-sm">Medium</span>
@@ -805,7 +804,7 @@ public class ValidParentheses {
               </a>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
               <div className="flex items-start justify-between mb-3">
                 <h3 className="text-xl font-semibold text-emerald-300">2. Evaluate Postfix Expression</h3>
                 <span className="px-3 py-1 bg-yellow-500/20 text-yellow-300 rounded-full text-sm">Medium</span>
@@ -828,7 +827,7 @@ public class ValidParentheses {
               </a>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
               <div className="flex items-start justify-between mb-3">
                 <h3 className="text-xl font-semibold text-emerald-300">3. Next Greater Element</h3>
                 <span className="px-3 py-1 bg-yellow-500/20 text-yellow-300 rounded-full text-sm">Medium</span>
@@ -851,7 +850,7 @@ public class ValidParentheses {
               </a>
             </div>
 
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
+            <div className="bg-black/80/50 rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all hover-lift">
               <div className="flex items-start justify-between mb-3">
                 <h3 className="text-xl font-semibold text-emerald-300">4. Largest Rectangle in Histogram</h3>
                 <span className="px-3 py-1 bg-red-500/20 text-red-300 rounded-full text-sm">Hard</span>
