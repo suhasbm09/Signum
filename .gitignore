@@ -70,9 +70,8 @@ build/
 .dmypy.json
 dmypy.json
 
-# RAG / Vector DB (generated locally)
-backend/app/services/ai/rag_storage/
-backend/app/services/ai/rag_storage/**
+# NOTE: rag_storage is committed to avoid rebuild on deploy
+# If you need to regenerate: cd backend && python scripts/build_rag_index.py
 
 # ========================================
 # NODE.JS / FRONTEND
