@@ -24,3 +24,5 @@ services:
         sync: false
       - key: PINATA_JWT
         sync: false
+      - key: FIREBASE_SERVICE_ACCOUNT_PATH
+        value: /etc/secrets/serviceAccountKey.json

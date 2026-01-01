@@ -23,8 +23,8 @@ COPY BLOCKCHAIN_CERTIFICATE_SYSTEM.md ./BLOCKCHAIN_CERTIFICATE_SYSTEM.md
 COPY DATABASE_SCHEMA.md ./DATABASE_SCHEMA.md
 COPY INTERACTIVE_LEARNING.md ./INTERACTIVE_LEARNING.md
 
-# Copy Firebase service account key (if you rely on file-based creds)
-COPY backend/serviceAccountKey.json ./backend/serviceAccountKey.json
+# NOTE: serviceAccountKey.json is mounted via Render Secret Files at runtime
+# Do NOT copy it during build - it's not in git for security reasons
 
 # Create non-root user for security
 RUN useradd -m -u 1000 signum && chown -R signum:signum /app
