@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Array2DVisualization from '../visualizations/Array2DVisualization';
 import CompletionTracker from '../../../components/CompletionTracker';
+import CodeView from '../../../components/CodeView';
 
 const Arrays2DContent = ({ onNavigate, courseId }) => {
   const moduleId = 'arrays-2d';
@@ -213,10 +214,9 @@ const Arrays2DContent = ({ onNavigate, courseId }) => {
             <LanguageSelector currentLang={declarationLang} setLang={setDeclarationLang} />
           </div>
 
-          <div className="bg-black/60 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+          <div className="bg-black/60 rounded-lg overflow-x-auto">
             {declarationLang === 'c' && (
-              <pre className="text-emerald-300">
-{`// Method 1: Direct initialization
+              <CodeView code={`// Method 1: Direct initialization
 int matrix[3][3] = {
     {1, 2, 3},
     {4, 5, 6},
@@ -238,13 +238,11 @@ int matrix[3][3] = {0};
 
 // Get dimensions
 int rows = sizeof(matrix) / sizeof(matrix[0]);        // 3
-int cols = sizeof(matrix[0]) / sizeof(matrix[0][0]);  // 3`}
-              </pre>
+int cols = sizeof(matrix[0]) / sizeof(matrix[0][0]);  // 3`} language="c" />
             )}
             
             {declarationLang === 'c++' && (
-              <pre className="text-emerald-300">
-{`// Method 1: Static array (traditional)
+              <CodeView code={`// Method 1: Static array (traditional)
 int matrix[3][3] = {
     {1, 2, 3},
     {4, 5, 6},
@@ -273,13 +271,11 @@ std::vector<std::vector<int>> matrix(rows, std::vector<int>(cols, 0));
 
 // Get dimensions
 int numRows = matrix.size();        // 3
-int numCols = matrix[0].size();     // 4`}
-              </pre>
+int numCols = matrix[0].size();     // 4`} language="cpp" />
             )}
             
             {declarationLang === 'python' && (
-              <pre className="text-emerald-300">
-{`# Method 1: Direct initialization (List of lists)
+              <CodeView code={`# Method 1: Direct initialization (List of lists)
 matrix = [
     [1, 2, 3],
     [4, 5, 6],
@@ -310,13 +306,11 @@ matrix = np.eye(3)          # 3×3 identity matrix
 # Get dimensions
 rows = len(matrix)          # 3
 cols = len(matrix[0])       # 4
-# Or with NumPy: matrix.shape → (3, 4)`}
-              </pre>
+# Or with NumPy: matrix.shape → (3, 4)`} language="python" />
             )}
             
             {declarationLang === 'java' && (
-              <pre className="text-emerald-300">
-{`// Method 1: Direct initialization
+              <CodeView code={`// Method 1: Direct initialization
 int[][] matrix = {
     {1, 2, 3},
     {4, 5, 6},
@@ -343,8 +337,7 @@ jaggedMatrix[2] = new int[3];  // Row 2 has 3 columns
 
 // Get dimensions
 int numRows = matrix.length;           // 3
-int numCols = matrix[0].length;        // 4`}
-              </pre>
+int numCols = matrix[0].length;        // 4`} language="java" />
             )}
           </div>
           
@@ -374,10 +367,9 @@ int numCols = matrix[0].length;        // 4`}
               <LanguageSelector currentLang={accessLang} setLang={setAccessLang} />
             </div>
 
-            <div className="bg-black/60 rounded-lg p-4 font-mono text-sm">
+            <div className="bg-black/60 rounded-lg">
               {accessLang === 'c' && (
-                <pre className="text-emerald-300">
-{`int matrix[3][3] = {
+                <CodeView code={`int matrix[3][3] = {
     {1, 2, 3},
     {4, 5, 6},
     {7, 8, 9}
@@ -394,13 +386,11 @@ int rows = 3, cols = 3;
 int last = matrix[rows-1][cols-1];  // 9
 
 // Modify element
-matrix[1][2] = 99;  // Matrix becomes {..., {4, 5, 99}, ...}`}
-                </pre>
+matrix[1][2] = 99;  // Matrix becomes {..., {4, 5, 99}, ...}`} language="c" />
               )}
               
               {accessLang === 'c++' && (
-                <pre className="text-emerald-300">
-{`std::vector<std::vector<int>> matrix = {
+                <CodeView code={`std::vector<std::vector<int>> matrix = {
     {1, 2, 3},
     {4, 5, 6},
     {7, 8, 9}
@@ -416,13 +406,11 @@ int elem = matrix.at(1).at(2);  // 6 (throws exception if out of bounds)
 int last = matrix.back().back();  // 9
 
 // Modify element
-matrix[1][2] = 99;`}
-                </pre>
+matrix[1][2] = 99;`} language="cpp" />
               )}
               
               {accessLang === 'python' && (
-                <pre className="text-emerald-300">
-{`matrix = [
+                <CodeView code={`matrix = [
     [1, 2, 3],
     [4, 5, 6],
     [7, 8, 9]
@@ -442,13 +430,11 @@ matrix[1][2] = 99  # [[1, 2, 3], [4, 5, 99], [7, 8, 9]]
 try:
     elem = matrix[10][10]
 except IndexError:
-    print("Index out of bounds!")`}
-                </pre>
+    print("Index out of bounds!")`} language="python" />
               )}
               
               {accessLang === 'java' && (
-                <pre className="text-emerald-300">
-{`int[][] matrix = {
+                <CodeView code={`int[][] matrix = {
     {1, 2, 3},
     {4, 5, 6},
     {7, 8, 9}
@@ -469,8 +455,7 @@ matrix[1][2] = 99;
 int row = 1, col = 2;
 if (row < matrix.length && col < matrix[0].length) {
     int elem = matrix[row][col];
-}`}
-                </pre>
+}`} language="java" />
               )}
             </div>
           </div>
@@ -485,10 +470,9 @@ if (row < matrix.length && col < matrix[0].length) {
               <LanguageSelector currentLang={traversalLang} setLang={setTraversalLang} />
             </div>
 
-            <div className="bg-black/60 rounded-lg p-4 font-mono text-sm">
+            <div className="bg-black/60 rounded-lg">
               {traversalLang === 'c' && (
-                <pre className="text-emerald-300">
-{`int matrix[3][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+                <CodeView code={`int matrix[3][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
 
 // 📌 ROW-WISE Traversal (left to right, top to bottom)
 for (int i = 0; i < 3; i++) {
@@ -512,13 +496,11 @@ for (int j = 0; j < 3; j++) {
 // Output:
 // 1 4 7
 // 2 5 8
-// 3 6 9`}
-                </pre>
+// 3 6 9`} language="c" />
               )}
               
               {traversalLang === 'c++' && (
-                <pre className="text-emerald-300">
-{`std::vector<std::vector<int>> matrix = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+                <CodeView code={`std::vector<std::vector<int>> matrix = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
 
 // 📌 ROW-WISE Traversal (using range-based for)
 for (const auto& row : matrix) {
@@ -542,13 +524,11 @@ for (int j = 0; j < matrix[0].size(); j++) {
         std::cout << matrix[i][j] << " ";
     }
     std::cout << "\\n";
-}`}
-                </pre>
+}`} language="cpp" />
               )}
               
               {traversalLang === 'python' && (
-                <pre className="text-emerald-300">
-{`matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+                <CodeView code={`matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 
 # 📌 ROW-WISE Traversal (Pythonic way)
 for row in matrix:
@@ -574,13 +554,11 @@ np_matrix = np.array(matrix)
 for row in np_matrix:       # Row-wise
     print(row)
 for col in np_matrix.T:     # Column-wise (using transpose)
-    print(col)`}
-                </pre>
+    print(col)`} language="python" />
               )}
               
               {traversalLang === 'java' && (
-                <pre className="text-emerald-300">
-{`int[][] matrix = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+                <CodeView code={`int[][] matrix = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
 
 // 📌 ROW-WISE Traversal (enhanced for loop)
 for (int[] row : matrix) {
@@ -604,8 +582,7 @@ for (int j = 0; j < matrix[0].length; j++) {
         System.out.print(matrix[i][j] + " ");
     }
     System.out.println();
-}`}
-                </pre>
+}`} language="java" />
               )}
             </div>
 
@@ -631,10 +608,9 @@ for (int j = 0; j < matrix[0].length; j++) {
               <LanguageSelector currentLang={transposeLang} setLang={setTransposeLang} />
             </div>
 
-            <div className="bg-black/60 rounded-lg p-4 font-mono text-sm">
+            <div className="bg-black/60 rounded-lg p-4">
               {transposeLang === 'c' && (
-                <pre className="text-emerald-300">
-{`int matrix[3][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+                <CodeView code={`int matrix[3][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
 int transposed[3][3];
 
 // Create transposed matrix
@@ -651,13 +627,11 @@ for (int i = 0; i < 3; i++) {
         matrix[i][j] = matrix[j][i];
         matrix[j][i] = temp;
     }
-}`}
-                </pre>
+}`} language="c" />
               )}
               
               {transposeLang === 'c++' && (
-                <pre className="text-emerald-300">
-{`std::vector<std::vector<int>> matrix = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+                <CodeView code={`std::vector<std::vector<int>> matrix = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
 
 // Create transposed matrix
 int rows = matrix.size();
@@ -675,13 +649,11 @@ for (int i = 0; i < matrix.size(); i++) {
     for (int j = i + 1; j < matrix[i].size(); j++) {
         std::swap(matrix[i][j], matrix[j][i]);
     }
-}`}
-                </pre>
+}`} language="cpp" />
               )}
               
               {transposeLang === 'python' && (
-                <pre className="text-emerald-300">
-{`matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+                <CodeView code={`matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 
 # Method 1: Using list comprehension (most Pythonic)
 transposed = [[matrix[j][i] for j in range(len(matrix))] 
@@ -696,13 +668,11 @@ np_matrix = np.array(matrix)
 transposed = np_matrix.T  # or np.transpose(np_matrix)
 
 # In-place transpose (NumPy)
-np_matrix = np_matrix.T.copy()`}
-                </pre>
+np_matrix = np_matrix.T.copy()`} language="python" />
               )}
               
               {transposeLang === 'java' && (
-                <pre className="text-emerald-300">
-{`int[][] matrix = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+                <CodeView code={`int[][] matrix = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
 int rows = matrix.length;
 int cols = matrix[0].length;
 
@@ -721,8 +691,7 @@ for (int i = 0; i < matrix.length; i++) {
         matrix[i][j] = matrix[j][i];
         matrix[j][i] = temp;
     }
-}`}
-                </pre>
+}`} language="java" />
               )}
             </div>
 
