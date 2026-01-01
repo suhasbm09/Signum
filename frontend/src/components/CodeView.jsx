@@ -34,6 +34,18 @@ function resolveLanguage(lang, code) {
   return guessLanguage(code);
 }
 
+// Fallback code display component (used while Monaco loads or if it fails)
+function CodeFallback({ code, height }) {
+  return (
+    <pre 
+      className="text-emerald-300 font-mono text-sm p-4 whitespace-pre-wrap overflow-x-auto bg-[#1e1e1e]"
+      style={{ height, minHeight: '80px', margin: 0 }}
+    >
+      {code}
+    </pre>
+  );
+}
+
 export default function CodeView({ code = '', language = null, height = null, readOnly = true }) {
   const resolvedLang = useMemo(() => resolveLanguage(language, code), [language, code]);
   const calcHeight = useMemo(() => {
@@ -42,20 +54,18 @@ export default function CodeView({ code = '', language = null, height = null, re
     return height || `${px}px`;
   }, [code, height]);
 
-  const fallback = (
-    <pre className="text-emerald-300 font-mono text-sm p-3 whitespace-pre-wrap overflow-x-auto">
-      {code}
-    </pre>
-  );
+  // Loading component shown while Monaco is loading from CDN
+  const loadingComponent = <CodeFallback code={code} height={calcHeight} />;
 
   return (
     <div className="rounded-lg border border-emerald-500/10 bg-[#0B0F0E] overflow-hidden" style={{ contain: 'layout style' }}>
-      <Suspense fallback={fallback}>
+      <Suspense fallback={loadingComponent}>
         <MonacoEditor
           height={calcHeight}
           defaultLanguage={resolvedLang}
           defaultValue={code}
           theme="vs-dark"
+          loading={loadingComponent}
           options={{
             readOnly: readOnly,
             minimap: { enabled: false },
