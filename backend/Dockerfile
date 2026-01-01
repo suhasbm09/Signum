@@ -3,11 +3,16 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install dependencies
+# Install system dependencies (fonts for certificate generation)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    fonts-dejavu-core \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy backend code only
+# Copy backend code (includes Quantico fonts in app/services/)
 COPY app/ ./app/
 COPY scripts/ ./scripts/
 

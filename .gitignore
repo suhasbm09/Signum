@@ -264,10 +264,8 @@ cleanup_console.sh
 backend/app/templates/certificates/**/yy.*
 backend/app/templates/certificates/**/zz.*
 
-# Font files copied during build (source in frontend/assets)
-backend/app/services/*.ttf
-backend/app/services/*.otf
-backend/app/services/Quantico-*.ttf
+# NOTE: Quantico fonts ARE committed (needed for certificate generation)
+# They live in backend/app/services/Quantico-*.ttf
 
 # ========================================
 # DOCUMENTATION (DRAFTS/OLD)
